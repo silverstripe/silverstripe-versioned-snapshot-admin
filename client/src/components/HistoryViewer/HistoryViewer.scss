@@ -1,0 +1,85 @@
+.history-viewer {
+  > .panel--padded {
+    padding-top: 0;
+  }
+
+  &.history-viewer__compare-mode .panel--padded {
+    padding-top: 30px;
+  }
+
+  // Used to negate margins added by .panel--padded in some contexts
+  &--no-margins {
+    margin-left: -$panel-padding-x;
+    margin-right: -$panel-padding-x;
+  }
+}
+
+// Used in conjunction with .panel--padded, removes top and bottom padding
+.panel--padded-side {
+  padding-bottom: 0;
+  padding-top: 0;
+}
+
+.history-viewer__form {
+  position: relative;
+}
+
+.history-viewer__version-state .text-muted {
+  margin-right: 10px;
+}
+
+.history-viewer__compare-button {
+  border: 1px solid $white;
+  color: $white;
+  margin-right: 1rem;
+}
+
+.history-viewer__close-button {
+  background: transparent;
+  border: 1px solid $white;
+  border-radius: 50%; // circular
+  color: $white;
+  padding: .4rem .55rem;
+
+  &::before {
+    font-size: 1.4rem;
+  }
+}
+
+.history-viewer__messages .message-box {
+  &:first-child {
+    margin-top: $panel-padding-y;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Todo: remove this when the CMS is React driven and we don't need this hack
+.history-viewer__preview {
+  margin-top: -54px;
+}
+
+.history-viewer__toolbar--condensed {
+  min-width: 50%;
+  width: 50%;
+}
+
+.history-viewer__version-detail-diff {
+  del {
+    color: $red;
+  }
+
+  ins {
+    background-color: lighten($green, 70%);
+    text-decoration: none;
+  }
+}
+
+// Hide preview on small devices. @todo replace this with a view toggle component
+@include media-breakpoint-down(md) {
+  .history-viewer__preview {
+    display: none;
+  }
+}

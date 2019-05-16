@@ -1,0 +1,10 @@
+---
+Name: snapshot-admin-extensions
+After:
+  - versionedadmincmsconfig
+---
+SilverStripe\Core\Injector\Injector:
+  SilverStripe\VersionedAdmin\Forms\HistoryViewerField:
+    class: SilverStripe\Snapshots\SnapshotViewerField
+  SilverStripe\VersionedAdmin\Extensions\CMSMainExtension:
+    class: SilverStripe\Snapshots\CMSMainExtension
