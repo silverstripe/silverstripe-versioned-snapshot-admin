@@ -15,7 +15,7 @@ jQuery.entwine('ss', ($) => {
         ? { context: cmsContent }
         : {};
 
-      const HistoryViewerComponent = loadComponent('HistoryViewer', context);
+      const HistoryViewerComponent = loadComponent('SnapshotViewer', context);
       const schemaData = this.data('schema');
 
       const props = {

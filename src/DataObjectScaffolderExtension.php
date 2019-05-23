@@ -1,19 +1,26 @@
 <?php
 
-namespace SilverStripe\Snapshots;
+namespace SilverStripe\SnapshotAdmin;
 
+use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
-use SilverStripe\Core\Extension;
 use SilverStripe\GraphQL\Manager;
 use SilverStripe\GraphQL\Scaffolding\Scaffolders\DataObjectScaffolder;
 use SilverStripe\GraphQL\Scaffolding\StaticSchema;
 use SilverStripe\Security\Member;
-use SilverStripe\Versioned\GraphQL\Operations\ReadVersions;
+use SilverStripe\Snapshots\ActivityEntry;
+use SilverStripe\Snapshots\SnapshotPublishable;
+use SilverStripe\Versioned\GraphQL\Extensions\DataObjectScaffolderExtension as VersionedDataObjectScaffolderExtension;
 use SilverStripe\Versioned\Versioned;
 
-class DataObjectScaffolderExtension extends Extension
+class DataObjectScaffolderExtension extends VersionedDataObjectScaffolderExtension
 {
+    /**
+     * @var EnumType
+     */
+    protected $activityEnum;
+
     /**
      * Adds the "Version" and "Versions" fields to any dataobject that has the Versioned extension.
      * @param Manager $manager
@@ -22,70 +29,53 @@ class DataObjectScaffolderExtension extends Extension
     {
         /* @var DataObjectScaffolder $owner */
         $owner = $this->owner;
-        $memberType = StaticSchema::inst()->typeNameForDataObject(Member::class);
+
         $instance = $owner->getDataObjectInstance();
         $class = $owner->getDataObjectClass();
-        if (!$instance->hasExtension(Versioned::class)) {
+        if (!$instance->hasExtension(SnapshotPublishable::class) || !$instance->hasExtension(Versioned::class)) {
             return;
         }
-        /* @var ObjectType $rawType */
-        $rawType = $owner->scaffold($manager);
-
-        $versionName = $this->createTypeName($class);
-        $coreFieldsFn = $rawType->config['fields'];
-        // Create the "version" type for this dataobject. Takes the original fields
-        // and augments them with the Versioned_Version specific fields
-        $versionType = new ObjectType([
-            'name' => $versionName,
-            'fields' => function () use ($coreFieldsFn, $manager, $memberType) {
-                $coreFields = $coreFieldsFn();
-                $versionFields = [
-                    'Author' => [
-                        'type' => $manager->getType($memberType),
-                        'resolve' => function ($obj) {
-                            return $obj->Author();
-                        }
-                    ],
-                    'Publisher' => [
-                        'type' => $manager->getType($memberType),
-                        'resolve' => function ($obj) {
-                            return $obj->Publisher();
-                        }
-                    ],
-                    'Published' => [
-                        'type' => Type::boolean(),
-                        'resolve' => function ($obj) {
-                            return $obj->WasPublished;
-                        }
-                    ],
-                    'LiveVersion' => [
-                        'type' => Type::boolean(),
-                        'resolve' => function ($obj) {
-                            return $obj->isLiveVersion();
-                        }
-                    ],
-                    'LatestDraftVersion' => [
-                        'type' => Type::boolean(),
-                        'resolve' => function ($obj) {
-                            return $obj->isLatestDraftVersion();
-                        }
-                    ],
+        $versionTypeName = $this->createVersionedTypeName($class);
+        $memberType = StaticSchema::inst()->typeNameForDataObject(Member::class);
+        $snapshotName = $this->createTypeName($class);
+        $snapshotType = new ObjectType([
+            'name' => $snapshotName,
+            'fields' => function () use ($manager, $versionTypeName, $memberType) {
+                return [
+                    'ID' => Type::id(),
+                    'LastEdited' => Type::string(),
+                    'ActivityDescription' => Type::string(),
+                    'ActivityType' => $this->createActivityEnum(),
+                    'OriginVersion' => $manager->getType($versionTypeName),
+                    'Author' => $manager->getType($memberType),
+                    'IsFullVersion' => Type::boolean(),
+                    'BaseVersion' => Type::int(),
                 ];
-                // Remove this recursive madness.
-                unset($coreFields['Versions']);
-
-                return array_merge($coreFields, $versionFields);
             }
         ]);
 
-        $manager->addType($versionType, $versionName);
+        $manager->addType($snapshotType, $snapshotName);
 
-        // With the version type in the manager now, add the versioning fields to the dataobject type
         $owner
-            ->addFields(['Version'])
-            ->nestedQuery('Versions', new ReadVersions($class, $versionName));
+            ->nestedQuery('SnapshotHistory', new ReadSnapshotHistory($class, $snapshotName));
     }
 
+    protected function createActivityEnum()
+    {
+        if (!$this->activityEnum) {
+            $this->activityEnum = new EnumType([
+                'name' => 'SnapshotActivityType',
+                'values' => [
+                    ActivityEntry::ADDED,
+                    ActivityEntry::CREATED,
+                    ActivityEntry::DELETED,
+                    ActivityEntry::MODIFIED,
+                ]
+            ]);
+        }
+
+        return $this->activityEnum;
+    }
     /**
      * @param string $class
      * @return string

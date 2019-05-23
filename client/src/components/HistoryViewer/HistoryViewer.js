@@ -67,10 +67,15 @@ class HistoryViewer extends Component {
    */
   getVersions() {
     const { versions } = this.props;
-    const edges = (versions && versions.Versions && versions.Versions.edges)
-      ? versions.Versions.edges
+    const edges = (versions && versions.SnapshotHistory && versions.SnapshotHistory.edges)
+      ? versions.SnapshotHistory.edges
       : [];
-    return edges.map((version) => version.node);
+    return edges.map(({ node }) => ({
+      ...node,
+      ...node.OriginVersion,
+      AbsoluteLink: node.IsFullVersion ? node.OriginVersion.AbsoluteLink : versions.AbsoluteLink,
+      Version: node.IsFullVersion ? node.OriginVersion.Version : node.BaseVersion,
+    }));
   }
 
   /**
@@ -201,7 +206,6 @@ class HistoryViewer extends Component {
       compare: { versionFrom = false, versionTo = false },
       previewState,
     } = this.props;
-
     // Insert variables into the schema URL via regex replacements
     const schemaVersionReplacements = {
       ':id': recordId,
@@ -216,7 +220,6 @@ class HistoryViewer extends Component {
     };
     const schemaSearch = compare ? /:id|:class|:from|:to/g : /:id|:class|:version/g;
     const schemaReplacements = compare ? schemaCompareReplacements : schemaVersionReplacements;
-
     const version = compare ? versionFrom : currentVersion;
     const latestVersion = this.getLatestVersion();
 
@@ -326,7 +329,6 @@ class HistoryViewer extends Component {
       compare,
       compare: { versionFrom: hasVersionFrom },
     } = this.props;
-
 
     return (
       <div className={this.getContainerClasses()}>

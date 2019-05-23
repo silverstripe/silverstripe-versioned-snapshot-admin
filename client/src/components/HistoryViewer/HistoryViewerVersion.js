@@ -81,7 +81,6 @@ class HistoryViewerVersion extends Component {
     if (isActive) {
       return false;
     }
-
     onSelect(version, compare);
     return false;
   }
@@ -203,10 +202,8 @@ class HistoryViewerVersion extends Component {
       </span>
     );
   }
-
   render() {
     const { version, isActive, StateComponent } = this.props;
-
     const rowTitle = i18n._t('HistoryViewerVersion.GO_TO_VERSION', 'Go to version {version}');
 
     return (

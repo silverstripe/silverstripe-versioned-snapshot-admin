@@ -1,7 +1,7 @@
 <?php
 
 
-namespace SilverStripe\Snapshots;
+namespace SilverStripe\SnapshotAdmin;
 
 
 use SilverStripe\VersionedAdmin\Forms\HistoryViewerField;
@@ -17,10 +17,7 @@ class SnapshotViewerField extends HistoryViewerField
         parent::__construct($name, $title, $value);
         Requirements::block('silverstripe/versioned-admin:client/dist/js/bundle.js');
 
-        Requirements::javascript('silverstripe/versioned-snapshots:client/dist/js/bundle.js');
-
-
-
+        Requirements::javascript('silverstripe/versioned-snapshot-admin:client/dist/js/bundle.js');
     }
 
 }

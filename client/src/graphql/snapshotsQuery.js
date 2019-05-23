@@ -11,26 +11,40 @@ query ReadSnapshotsPage ($page_id: ID!, $limit: Int!, $offset: Int!) {
     ID: $page_id
   ) {
     ID
+    AbsoluteLink
     SnapshotHistory (limit: $limit, offset: $offset) {
       pageInfo {
         totalCount
       }
       edges {
         node {
-          Version
-          AbsoluteLink
+          ID
+          LastEdited
+          ActivityDescription
+          ActivityType
+          IsFullVersion
+          BaseVersion
           Author {
             FirstName
             Surname
           }
-          Publisher {
-            FirstName
-            Surname
+          OriginVersion {
+            Version
+            AbsoluteLink
+            Author {
+              FirstName
+              Surname
+            }
+            
+            Published
+            Publisher {
+              FirstName
+              Surname
+            }
+            LiveVersion
+            LatestDraftVersion
+            LastEdited
           }
-          Published
-          LiveVersion
-          LatestDraftVersion
-          LastEdited
         }
       }
     }

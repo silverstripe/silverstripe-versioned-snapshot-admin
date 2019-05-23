@@ -2,9 +2,16 @@
 Name: snapshot-admin-extensions
 After:
   - versionedadmincmsconfig
+  - versioned-graphql
 ---
 SilverStripe\Core\Injector\Injector:
   SilverStripe\VersionedAdmin\Forms\HistoryViewerField:
-    class: SilverStripe\Snapshots\SnapshotViewerField
+    class: SilverStripe\SnapshotAdmin\SnapshotViewerField
   SilverStripe\VersionedAdmin\Extensions\CMSMainExtension:
-    class: SilverStripe\Snapshots\CMSMainExtension
+    class: SilverStripe\SnapshotAdmin\CMSMainExtension
+SilverStripe\GraphQL\Scaffolding\Scaffolders\DataObjectScaffolder:
+  extensions:
+    - SilverStripe\SnapshotAdmin\DataObjectScaffolderExtension
+SilverStripe\ORM\DataObject:
+  extensions:
+    - SilverStripe\SnapshotAdmin\SnapshotPublishableExtension

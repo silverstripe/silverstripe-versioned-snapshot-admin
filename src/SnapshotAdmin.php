@@ -1,12 +1,14 @@
 <?php
 
 
-namespace SilverStripe\Snapshots;
+namespace SilverStripe\SnapshotAdmin;
 
 
 use SilverStripe\Admin\LeftAndMain;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\Snapshots\SnapshotPublishable;
+use SilverStripe\Snapshots\SnapshotVersioned;
 
 /**
  * Temporary shim to provide rollback POC

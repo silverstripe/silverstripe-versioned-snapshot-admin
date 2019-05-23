@@ -47,3 +47,34 @@
     }
   }
 }
+
+.history-viewer__row.history-viewer__snapshot {
+  background: transparent;
+  position: relative;
+  padding-left: 8px;
+  &:before {
+    content: '';
+    width: 4px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: #ccc;
+    left: 22px;
+  }
+  &:after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 99px;
+    background: #bbb;
+    position: absolute;
+    left: 19px;
+    top: 50%;
+    margin-top: -5px;
+  }
+  &.history-viewer__row--current {
+    &:before, &:after {
+      display:none;
+    }
+  }
+}

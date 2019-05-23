@@ -147,6 +147,7 @@ class HistoryViewerVersionDetail extends PureComponent {
       schemaUrl,
       CompareWarningComponent,
       previewState,
+      version,
     } = this.props;
 
     // Hide when the preview mode is explicitly enabled
@@ -181,14 +182,20 @@ class HistoryViewerVersionDetail extends PureComponent {
           />
 
           <div className={classnames(formClasses)}>
+            {version.IsFullVersion &&
             <FormBuilderLoader
               identifier="HistoryViewer.VersionDetail"
               schemaUrl={schemaUrl}
             />
+            }
+            {!version.IsFullVersion &&
+              <h3>{`This is a snapshot of activity that happened on version ${version.Version}`}</h3>
+            }
           </div>
+
         </div>
 
-        {this.renderToolbar()}
+        {version.IsFullVersion && this.renderToolbar()}
 
         <CompareWarningComponent fixed />
       </div>

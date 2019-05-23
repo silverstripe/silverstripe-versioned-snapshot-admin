@@ -44,7 +44,6 @@ class HistoryViewerVersionList extends PureComponent {
    */
   isVersionActive(version) {
       const { currentVersion, compare, compare: { versionFrom, versionTo } } = this.props;
-
       const isCurrent = currentVersion && currentVersion.Version === version.Version;
       const isCompareFrom = versionFrom && versionFrom.Version === version.Version;
       const isCompareTo = versionTo && versionTo.Version === version.Version;
@@ -99,22 +98,33 @@ class HistoryViewerVersionList extends PureComponent {
   }
 
   render() {
-    const { VersionComponent, versions, compareModeAvailable, compare } = this.props;
+    const {
+      VersionComponent,
+      SnapshotComponent,
+      versions,
+      compareModeAvailable,
+      compare
+    } = this.props;
 
     return (
       <div className="history-viewer__list">
-        {this.renderMessages()}
         <ul className={this.getClassNames()} role="table">
           {this.renderHeader()}
           {
             versions.map((version) => (
-              <VersionComponent
-                key={version.Version}
-                isActive={this.isVersionActive(version)}
-                version={version}
-                compare={compare}
-                compareModeAvailable={compareModeAvailable}
-              />
+              version.IsFullVersion ?
+                <VersionComponent
+                  key={`${version.ID}--${version.LastEdited}`}
+                  isActive={this.isVersionActive(version)}
+                  version={version}
+                  compare={compare}
+                  compareModeAvailable={compareModeAvailable}
+                /> :
+                <SnapshotComponent
+                  isActive={this.isVersionActive(version)}
+                  key={`${version.ID}--${version.LastEdited}`}
+                  version={version}
+                />
             ))
           }
         </ul>
@@ -157,11 +167,12 @@ export { HistoryViewerVersionList as Component };
 export default compose(
   connect(mapStateToProps),
   inject(
-    ['FormAlert', 'HistoryViewerHeading', 'HistoryViewerVersion'],
-    (FormAlert, HistoryViewerHeading, HistoryViewerVersion) => ({
+    ['FormAlert', 'HistoryViewerHeading', 'HistoryViewerVersion', 'HistoryViewerSnapshot'],
+    (FormAlert, HistoryViewerHeading, HistoryViewerVersion, HistoryViewerSnapshot) => ({
       FormAlertComponent: FormAlert,
       HeadingComponent: HistoryViewerHeading,
       VersionComponent: HistoryViewerVersion,
+      SnapshotComponent: HistoryViewerSnapshot,
     }),
     () => 'VersionedAdmin.HistoryViewer.HistoryViewerVersionList'
   )
