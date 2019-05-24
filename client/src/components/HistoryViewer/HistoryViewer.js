@@ -261,8 +261,8 @@ class HistoryViewer extends Component {
       return null;
     }
 
-    const totalVersions = versions.Versions
-      ? versions.Versions.pageInfo.totalCount
+    const totalVersions = versions.SnapshotHistory
+      ? versions.SnapshotHistory.pageInfo.totalCount
       : 0;
 
     if (totalVersions <= limit) {

@@ -54,12 +54,12 @@
   padding-left: 8px;
   &:before {
     content: '';
-    width: 4px;
+    width: 2px;
     position: absolute;
     top: 0;
     bottom: 0;
     background: #ccc;
-    left: 22px;
+    left: 23px;
   }
   &:after {
     content: '';
