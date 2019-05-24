@@ -21,7 +21,7 @@
     ],
     "require": {
         "silverstripe/framework": "^4",
-        "silverstripe/versioned-snapshots": "dev-master",
+        "silverstripe/versioned-snapshots": "*",
         "silverstripe/versioned-admin": "^1",
         "silverstripe/vendor-plugin": "^1"
     },
