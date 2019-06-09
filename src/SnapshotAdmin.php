@@ -24,6 +24,8 @@ class SnapshotAdmin extends LeftAndMain
 
     private static $required_permission_codes = 'CMS_ACCESS_CMSMain';
 
+    private static $ignore_menuitem = true;
+
     private static $url_handlers = [
         'rollback/$RecordClass!/$RecordID!/$Snapshot!' => 'handleRollback'
     ];
