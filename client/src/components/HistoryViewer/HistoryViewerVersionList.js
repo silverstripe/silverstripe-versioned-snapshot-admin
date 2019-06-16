@@ -111,7 +111,7 @@ class HistoryViewerVersionList extends PureComponent {
         <ul className={this.getClassNames()} role="table">
           {this.renderHeader()}
           {
-            versions.map((version) => (
+            versions.map((version, index) => (
               version.IsFullVersion ?
                 <VersionComponent
                   key={`${version.ID}--${version.LastEdited}`}
@@ -124,6 +124,7 @@ class HistoryViewerVersionList extends PureComponent {
                   isActive={this.isVersionActive(version)}
                   key={`${version.ID}--${version.LastEdited}`}
                   version={version}
+                  initial={index < 1}
                 />
             ))
           }

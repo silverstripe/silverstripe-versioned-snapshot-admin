@@ -48,10 +48,10 @@
   }
 }
 
+// Necessary specificity for overriding history viewer styling
 .history-viewer__row.history-viewer__snapshot {
   background: transparent;
   position: relative;
-  padding-left: 8px;
   &:before {
     content: '';
     width: 2px;
@@ -72,6 +72,13 @@
     top: 50%;
     margin-top: -5px;
   }
+
+  &--initial {
+    &:before {
+      top: ($table-cell-padding * 2 + $line-height-base) / 2;
+    }
+  }
+
   &.history-viewer__row--current {
     &:before, &:after {
       display:none;

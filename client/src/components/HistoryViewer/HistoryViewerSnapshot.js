@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { inject } from 'lib/Injector';
 import i18n from 'i18n';
 import { compose } from 'redux';
@@ -8,7 +9,7 @@ import {
   clearMessages
 } from 'state/historyviewer/HistoryViewerActions';
 import classNames from 'classnames';
-
+import { versionType } from 'types/versionType';
 
 class HistoryViewerSnapshot extends Component {
   constructor(props) {
@@ -19,11 +20,12 @@ class HistoryViewerSnapshot extends Component {
   }
 
   getClassNames() {
-    const { extraClass, isActive } = this.props;
+    const { extraClass, isActive, initial } = this.props;
     const defaultClasses = {
       'history-viewer__row': true,
       'history-viewer__snapshot': true,
       'history-viewer__row--current': isActive,
+      'history-viewer__snapshot--initial': initial,
     };
     return classNames(defaultClasses, extraClass);
   }
@@ -93,6 +95,12 @@ class HistoryViewerSnapshot extends Component {
     );
   }
 }
+
+HistoryViewerSnapshot.propTypes = {
+  isActive: PropTypes.bool,
+  version: versionType,
+  initial: PropTypes.bool,
+};
 
 function mapDispatchToProps(dispatch) {
   return {
