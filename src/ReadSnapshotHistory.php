@@ -32,7 +32,7 @@ class ReadSnapshotHistory extends ListQueryScaffolder implements OperationResolv
 
     public function resolve($object, array $args, $context, ResolveInfo $info)
     {
-        /** @var DataObject|Versioned $object */
+        /** @var DataObject&Versioned&SnapshotPublishable $object */
         if (!$object->hasExtension(SnapshotPublishable::class)) {
             throw new Exception(sprintf(
                 'Types using the %s query scaffolder must have the SnapshotPublishable extension applied. (See %s)',
