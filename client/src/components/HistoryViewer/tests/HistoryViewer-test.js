@@ -23,14 +23,14 @@ describe('HistoryViewer', () => {
   });
 
   const versions = {
-    Versions: {
+    SnapshotHistory: {
       pageInfo: {
         totalCount: 2
       },
       edges: [
         {
           node: {
-            Version: 14,
+            BaseVersion: 14,
             Author: {
               FirstName: 'Michelle',
               Surname: 'Masters'
@@ -39,12 +39,13 @@ describe('HistoryViewer', () => {
             Published: false,
             LatestDraftVersion: false,
             LiveVersion: false,
-            LastEdited: '2018-03-08 11:57:58'
+            LastEdited: '2018-03-08 11:57:58',
+            IsFullVersion: false,
           }
         },
         {
           node: {
-            Version: 13,
+            BaseVersion: 13,
             Author: {
               FirstName: 'Scott',
               Surname: 'Stockman'
@@ -53,7 +54,8 @@ describe('HistoryViewer', () => {
             Published: false,
             LatestDraftVersion: true,
             LiveVersion: false,
-            LastEdited: '2018-03-08 11:57:56'
+            LastEdited: '2018-03-08 11:57:56',
+            IsFullVersion: false,
           }
         },
       ],
