@@ -40,7 +40,7 @@ class DataObjectScaffolderExtension extends VersionedDataObjectScaffolderExtensi
         $snapshotName = $this->createTypeName($class);
         $snapshotType = new ObjectType([
             'name' => $snapshotName,
-            'fields' => function () use ($manager, $versionTypeName, $memberType) {
+            'fields' => function () use ($manager, $versionTypeName, $memberType, $instance) {
                 return [
                     'ID' => Type::id(),
                     'LastEdited' => Type::string(),
@@ -48,7 +48,12 @@ class DataObjectScaffolderExtension extends VersionedDataObjectScaffolderExtensi
                     'ActivityType' => $this->createActivityEnum(),
                     'OriginVersion' => $manager->getType($versionTypeName),
                     'Author' => $manager->getType($memberType),
-                    'IsFullVersion' => Type::boolean(),
+                    'IsFullVersion' => [
+                        'type' => Type::boolean(),
+                        'resolve' => function ($obj) use ($instance) {
+                            return $instance instanceof $obj->OriginClass;
+                        }
+                    ],
                     'BaseVersion' => Type::int(),
                 ];
             }
