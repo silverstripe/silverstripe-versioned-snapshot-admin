@@ -48,7 +48,7 @@ describe('HistoryViewerReducer', () => {
         type: 'HISTORY_VIEWER.SHOW_LIST',
       });
 
-      expect(result.currentVersion).toBe(0);
+      expect(result.currentVersion).toBe(false);
       expect(result.currentPage).toBe(0);
     });
   });

@@ -6,6 +6,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import {
   showVersion,
+  showDate,
   clearMessages
 } from 'state/historyviewer/HistoryViewerActions';
 import classNames from 'classnames';
@@ -105,7 +106,8 @@ HistoryViewerSnapshot.propTypes = {
 function mapDispatchToProps(dispatch) {
   return {
     onSelect(selectedVersion) {
-      dispatch(showVersion(selectedVersion));
+      const func = selectedVersion.IsFullVersion ? showVersion : showDate;
+      dispatch(func(selectedVersion));
       dispatch(clearMessages());
     }
   };

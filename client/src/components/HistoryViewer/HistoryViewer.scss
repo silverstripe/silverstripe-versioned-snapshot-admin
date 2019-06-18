@@ -57,8 +57,55 @@
 }
 
 // Todo: remove this when the CMS is React driven and we don't need this hack
-.history-viewer__preview {
+.history-viewer-preview {
   margin-top: -54px;
+  position: relative;
+  display: flex;
+
+  &__underlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__frame {
+    background-color: rgba(0,0,0,0);
+
+    .preview__iframe {
+      background-color: white;
+    }
+  }
+
+  &__spinner {
+    $loading-indicator-size: 3em;
+    $loading-indicator-border-size: .26em;
+    $loading-indicator-border: $loading-indicator-border-size solid transparent;
+    $loading-indicator-speed: 0.9s;
+    $loading-indicator-animation: spinner-loader $loading-indicator-speed infinite linear;
+
+    &, &:after {
+      border-radius: 50%;
+      width: $loading-indicator-size;
+      height: $loading-indicator-size;
+    }
+
+    margin-bottom: 1em;
+    font-size: $font-size-sm;
+    position: relative;
+    text-indent: -9999em;
+    border: $loading-indicator-border;
+    border-left: $loading-indicator-border-size solid $blue;
+    -webkit-transform: translateZ(0);
+    -ms-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-animation: $loading-indicator-animation;
+    animation: $loading-indicator-animation;
+  }
 }
 
 .history-viewer__toolbar--condensed {
@@ -79,7 +126,29 @@
 
 // Hide preview on small devices. @todo replace this with a view toggle component
 @include media-breakpoint-down(md) {
-  .history-viewer__preview {
+  .history-viewer-preview {
     display: none;
   }
 }
+
+@-webkit-keyframes spinner-loader {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes spinner-loader {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+

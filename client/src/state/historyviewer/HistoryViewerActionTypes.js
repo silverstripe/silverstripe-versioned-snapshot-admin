@@ -3,6 +3,7 @@
 
 export default [
   'SHOW_VERSION',
+  'SHOW_DATE',
   'SHOW_LIST',
   'SET_CURRENT_PAGE',
   'ADD_MESSAGE',

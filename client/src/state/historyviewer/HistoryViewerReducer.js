@@ -1,8 +1,10 @@
 import HISTORY_VIEWER from './HistoryViewerActionTypes';
 import { defaultCompare } from 'types/compareType';
+import { VERSION_MODE_VERSION, VERSION_MODE_DATE } from 'components/HistoryViewer/HistoryViewer';
 
 const initialState = {
   currentPage: 1,
+  previewMode: false, // False for not displayed by default
   currentVersion: false,
   compare: defaultCompare,
   loading: false,
@@ -26,16 +28,29 @@ export default function historyViewerReducer(state = initialState, { type, paylo
     }
 
     case HISTORY_VIEWER.SHOW_VERSION: {
+      const { version } = payload;
       return {
         ...state,
-        currentVersion: payload.version,
+        previewMode: version && VERSION_MODE_VERSION,
+        currentVersion: version,
+      };
+    }
+
+    case HISTORY_VIEWER.SHOW_DATE: {
+      const { version } = payload;
+      return {
+        ...state,
+        previewMode: version && VERSION_MODE_DATE,
+        currentVersion: version,
       };
     }
 
     case HISTORY_VIEWER.SHOW_LIST: {
       return {
         ...state,
-        currentVersion: 0,
+        currentVersion: false,
+        currentDate: false,
+        previewMode: false,
         currentPage: 0,
       };
     }

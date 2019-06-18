@@ -20,6 +20,14 @@ import ResizeAware from 'react-resize-aware';
 import * as viewModeActions from 'state/viewMode/ViewModeActions';
 import PropTypes from 'prop-types';
 
+const VERSION_MODE_VERSION = 'VERSION';
+const VERSION_MODE_DATE = 'DATE';
+
+export {
+  VERSION_MODE_VERSION,
+  VERSION_MODE_DATE,
+};
+
 /**
  * The HistoryViewer component is abstract, and requires an Injector component
  * to be connected providing the GraphQL query implementation for the appropriate
@@ -201,6 +209,7 @@ class HistoryViewer extends Component {
       recordId,
       recordClass,
       schemaUrl,
+      previewMode,
       VersionDetailComponent,
       compare,
       compare: { versionFrom = false, versionTo = false },
@@ -210,16 +219,25 @@ class HistoryViewer extends Component {
     const schemaVersionReplacements = {
       ':id': recordId,
       ':class': recordClass,
-      ':version': currentVersion.Version,
+      ':date': '',
+      ':version': '',
     };
+
+    if (previewMode === VERSION_MODE_DATE) {
+      schemaVersionReplacements[':date'] = currentVersion.LastEdited;
+    } else {
+      schemaVersionReplacements[':version'] = currentVersion.Version;
+    }
+
     const schemaCompareReplacements = {
       ':id': recordId,
       ':class': recordClass,
       ':from': versionFrom.Version || 0,
       ':to': versionTo.Version || 0,
     };
-    const schemaSearch = compare ? /:id|:class|:from|:to/g : /:id|:class|:version/g;
+    const schemaSearch = compare ? /:id|:class|:from|:to/g : /:id|:class|:version|:date/g;
     const schemaReplacements = compare ? schemaCompareReplacements : schemaVersionReplacements;
+
     const version = compare ? versionFrom : currentVersion;
     const latestVersion = this.getLatestVersion();
 
@@ -360,7 +378,7 @@ class HistoryViewer extends Component {
   }
 
   render() {
-    const { loading, compare, currentVersion } = this.props;
+    const { loading, compare, previewMode } = this.props;
 
     if (loading) {
       return <Loading />;
@@ -370,7 +388,7 @@ class HistoryViewer extends Component {
       return this.renderCompareMode();
     }
 
-    if (currentVersion) {
+    if (previewMode) {
       return this.renderVersionDetail();
     }
 
@@ -433,6 +451,7 @@ function mapStateToProps(state) {
   const {
     currentPage,
     currentVersion,
+    previewMode,
     compare,
   } = state.versionedAdmin.historyViewer;
 
@@ -442,6 +461,7 @@ function mapStateToProps(state) {
     page: currentPage,
     currentVersion,
     compare,
+    previewMode,
     previewState: activeState,
   };
 }
