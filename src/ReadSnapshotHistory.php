@@ -49,7 +49,7 @@ class ReadSnapshotHistory extends ListQueryScaffolder implements OperationResolv
 
         // Get all snapshots
         $list = $object->getRelevantSnapshots();
-        $list->sort('"LastEdited"', 'DESC');
+        $list = $list->sort('"LastEdited"', 'DESC');
 
         $this->extend('updateList', $list, $object, $args, $context, $info);
 
