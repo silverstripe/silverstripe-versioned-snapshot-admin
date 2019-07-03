@@ -209,7 +209,7 @@ class HistoryViewer extends Component {
       recordId,
       recordClass,
       schemaUrl,
-      previewMode,
+      // previewMode,
       VersionDetailComponent,
       compare,
       compare: { versionFrom = false, versionTo = false },
@@ -223,11 +223,9 @@ class HistoryViewer extends Component {
       ':version': '',
     };
 
-    if (previewMode === VERSION_MODE_DATE) {
-      schemaVersionReplacements[':date'] = currentVersion.LastEdited;
-    } else {
-      schemaVersionReplacements[':version'] = currentVersion.Version;
-    }
+    // Currently previewMode === MODE_VERSION is disabled as it displays incorrect relations.
+
+    schemaVersionReplacements[':date'] = currentVersion.LastEdited;
 
     const schemaCompareReplacements = {
       ':id': recordId,
