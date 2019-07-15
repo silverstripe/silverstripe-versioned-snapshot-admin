@@ -6,6 +6,7 @@ import FormBuilderLoader from 'containers/FormBuilderLoader/FormBuilderLoader';
 import { inject } from 'lib/Injector';
 import { versionType } from 'types/versionType';
 import PropTypes from 'prop-types';
+import i18n from 'i18n';
 
 class HistoryViewerVersionDetail extends PureComponent {
   componentWillMount() {
@@ -97,18 +98,24 @@ class HistoryViewerVersionDetail extends PureComponent {
     }
 
     return (
-      <PreviewComponent
-        className="history-viewer__preview flexbox-area-grow" // removes default: fill-height
-        itemLinks={{
-          preview: {
-            Stage: {
-              href: `${version.AbsoluteLink}&archiveDate=${version.LastEdited}`,
-              type: 'text/html',
+      <div className="history-viewer-preview flexbox-area-grow">
+        <div className="history-viewer-preview__underlay">
+          <div className="history-viewer-preview__spinner" />
+          { i18n._t('HistoryViewerVersionDetail.LOADING_PREVIEW', 'Generating preview...') }
+        </div>
+        <PreviewComponent
+          className="history-viewer-preview__frame flexbox-area-grow" // removes default: fill-height
+          itemLinks={{
+            preview: {
+              Stage: {
+                href: `${version.AbsoluteLink}&archiveDate=${version.LastEdited}`,
+                type: 'text/html',
+              },
             },
-          },
-        }}
-        itemId={version.Version}
-      />
+          }}
+          itemId={version.Version}
+        />
+      </div>
     );
   }
 
@@ -124,6 +131,11 @@ class HistoryViewerVersionDetail extends PureComponent {
       return null;
     }
 
+    const rollbackMessage = i18n._t(
+      'HistoryViewerVersionDetail.CANNOT_ROLLBACK_SNAPSHOTS',
+      'You can only revert to base versions'
+    );
+
     return (
       <ToolbarComponent
         identifier="HistoryViewer.VersionDetail.Toolbar"
@@ -131,6 +143,8 @@ class HistoryViewerVersionDetail extends PureComponent {
         recordId={recordId}
         versionId={version.Version}
         isPreviewable={this.isPreviewable()}
+        canRollback={version.IsFullVersion}
+        rollbackMessage={rollbackMessage}
       />
     );
   }
@@ -182,20 +196,16 @@ class HistoryViewerVersionDetail extends PureComponent {
           />
 
           <div className={classnames(formClasses)}>
-            {version.IsFullVersion &&
             <FormBuilderLoader
-              identifier="HistoryViewer.VersionDetail"
+              identifier={`HistoryViewer.VersionDetail.${version.ID}`}
               schemaUrl={schemaUrl}
+              refetchSchemaOnMount={false}
             />
-            }
-            {!version.IsFullVersion &&
-              <h3>{`This is a snapshot of activity that happened on version ${version.Version}`}</h3>
-            }
           </div>
 
         </div>
 
-        {version.IsFullVersion && this.renderToolbar()}
+        {this.renderToolbar()}
 
         <CompareWarningComponent fixed />
       </div>

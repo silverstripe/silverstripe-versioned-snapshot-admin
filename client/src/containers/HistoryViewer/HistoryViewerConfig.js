@@ -24,6 +24,7 @@ const historyViewerConfig = (HistoryViewer) => {
         formName: 'versionForm',
         queryParts: [
           'RecordVersion=:version',
+          'RecordDate=:date',
         ],
       };
     }

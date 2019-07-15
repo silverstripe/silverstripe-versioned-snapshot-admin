@@ -2,8 +2,9 @@ import HISTORY_VIEWER from './HistoryViewerActionTypes';
 import uuidv1 from 'uuid/v1';
 
 /**
- * Setting the current version will enable context views for a specific record
- * version in the viewer, i.e. a detail or comparison view
+ * Show the provided version in the viewer, i.e. a detail or comparison view
+ * Fetching specifically by version is a little more deterministic and performant compared to
+ * fetching by date (below)
  *
  * @param {Object} version
  * @returns {Object}
@@ -11,6 +12,19 @@ import uuidv1 from 'uuid/v1';
 export function showVersion(version) {
   return {
     type: HISTORY_VIEWER.SHOW_VERSION,
+    payload: { version },
+  };
+}
+
+/**
+ * Show the provided version in the viewer, i.e. a detail or comparison view
+ *
+ * @param {Object} version
+ * @returns {Object}
+ */
+export function showDate(version) {
+  return {
+    type: HISTORY_VIEWER.SHOW_DATE,
     payload: { version },
   };
 }
