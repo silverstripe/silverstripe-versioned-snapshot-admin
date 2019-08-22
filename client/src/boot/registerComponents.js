@@ -1,4 +1,5 @@
 import Injector from 'lib/Injector';
+import React from 'react';
 import HistoryViewer from 'components/HistoryViewer/HistoryViewer';
 import HistoryViewerHeading from 'components/HistoryViewer/HistoryViewerHeading';
 import HistoryViewerToolbar from 'components/HistoryViewer/HistoryViewerToolbar';
@@ -25,11 +26,21 @@ export default () => {
     HistoryViewerSnapshot,
     HistoryViewerCompareWarning,
   }, { force: true });
+  // Overide the existing namespaced component pages-history
+
+  const HistoryViewerWithSnapshot = () => (props) => {
+    const HistoryViewerWithSnapshotQuery = snapshotQuery(HistoryViewer);
+    // We have all the versions we need from snapshotQuery
+    delete props.versions; // eslint-disable-line
+    return (<HistoryViewerWithSnapshotQuery {...props} />);
+  };
+
   Injector.transform(
-    'snapshot-history',
+    'pages-history',
     (updater) => {
       // Add CMS page history GraphQL query to the HistoryViewer
-      updater.component('SnapshotViewer.pages-controller-cms-content', snapshotQuery, 'PageHistoryViewer');
+      updater.component('SnapshotViewer', HistoryViewerWithSnapshot, 'PageHistoryViewer');
+      updater.component('HistoryViewer', HistoryViewerWithSnapshot, 'PageHistoryViewer');
     }
   );
 };
