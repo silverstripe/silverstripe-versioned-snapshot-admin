@@ -168,7 +168,7 @@ export { HistoryViewerVersionList as Component };
 export default compose(
   connect(mapStateToProps),
   inject(
-    ['FormAlert', 'HistoryViewerHeading', 'HistoryViewerVersion', 'HistoryViewerSnapshot'],
+    ['FormAlert', 'SnapshotHistoryViewerHeading', 'SnapshotHistoryViewerVersion', 'SnapshotHistoryViewerSnapshot'],
     (FormAlert, HistoryViewerHeading, HistoryViewerVersion, HistoryViewerSnapshot) => ({
       FormAlertComponent: FormAlert,
       HeadingComponent: HistoryViewerHeading,

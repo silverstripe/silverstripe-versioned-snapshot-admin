@@ -279,7 +279,7 @@ function mapDispatchToProps(dispatch) {
 export default compose(
   connect(null, mapDispatchToProps),
   inject(
-    ['HistoryViewerVersionState', 'FormAction'],
+    ['SnapshotHistoryViewerVersionState', 'FormAction'],
     (StateComponent, FormActionComponent) => ({
       StateComponent,
       FormActionComponent,

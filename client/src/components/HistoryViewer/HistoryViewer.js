@@ -64,7 +64,7 @@ class HistoryViewer extends Component {
   componentWillUnmount() {
     const { onSelect } = this.props;
     if (typeof onSelect === 'function') {
-      onSelect(0);
+      onSelect(false);
     }
   }
 
@@ -485,7 +485,7 @@ export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   historyViewerConfig,
   inject(
-    ['HistoryViewerVersionList', 'HistoryViewerVersionDetail', 'HistoryViewerCompareWarning'],
+    ['SnapshotHistoryViewerVersionList', 'SnapshotHistoryViewerVersionDetail', 'SnapshotHistoryViewerCompareWarning'],
     (ListComponent, VersionDetailComponent, CompareWarningComponent) => ({
       ListComponent,
       VersionDetailComponent,

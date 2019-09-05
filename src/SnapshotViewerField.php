@@ -20,4 +20,13 @@ class SnapshotViewerField extends HistoryViewerField
         Requirements::javascript('silverstripe/versioned-snapshot-admin:client/dist/js/bundle.js');
     }
 
+    public function Type(): string
+    {
+        return 'snapshot-history-viewer__container';
+    }
+
+    public function getName(): string
+    {
+        return 'snapshot-history-viewer__container';
+    }
 }
