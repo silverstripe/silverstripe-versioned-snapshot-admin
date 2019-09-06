@@ -43,7 +43,6 @@ query ReadSnapshotsPage ($page_id: ID!, $limit: Int!, $offset: Int!) {
             }
             LiveVersion
             LatestDraftVersion
-            LastEdited
           }
         }
       }
