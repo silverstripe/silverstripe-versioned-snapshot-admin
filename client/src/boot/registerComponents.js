@@ -11,25 +11,34 @@ import HistoryViewerSnapshot from 'components/HistoryViewer/HistoryViewerSnapsho
 import HistoryViewerCompareWarning from 'components/HistoryViewer/HistoryViewerCompareWarning';
 import snapshotQuery from 'graphql/snapshotsQuery';
 
+/**
+ * The reason we have not gone down the route of using the same name for components
+ * is that we were running into race conditions with the injector. For example we
+ * had the HistoryViewer component having two graphql HoCs applied to it. The last one
+ * applied would "win" and update it's state
+ *
+ * We've opted to go down the route of renaming references rather than names in the hopes that
+ * in the future when the injector is able to support removing registered HoC's
+ */
 export default () => {
   Injector.component.register('SnapshotViewer', HistoryViewer);
-  Injector.component.register('HistoryViewer', HistoryViewer);
+  Injector.component.register('SnapshotHistoryViewer', HistoryViewer);
   Injector.component.registerMany({
-    HistoryViewerHeading,
-    HistoryViewerToolbar,
-    HistoryViewerVersion,
-    HistoryViewerVersionDetail,
-    HistoryViewerVersionList,
-    HistoryViewerVersionState,
-    HistoryViewerSnapshotState,
-    HistoryViewerSnapshot,
-    HistoryViewerCompareWarning,
+    SnapshotHistoryViewerHeading: HistoryViewerHeading,
+    SnapshotHistoryViewerToolbar: HistoryViewerToolbar,
+    SnapshotHistoryViewerVersion: HistoryViewerVersion,
+    SnapshotHistoryViewerVersionDetail: HistoryViewerVersionDetail,
+    SnapshotHistoryViewerVersionList: HistoryViewerVersionList,
+    SnapshotHistoryViewerVersionState: HistoryViewerVersionState,
+    SnapshotHistoryViewerSnapshotState: HistoryViewerSnapshotState,
+    SnapshotHistoryViewerSnapshot: HistoryViewerSnapshot,
+    SnapshotHistoryViewerCompareWarning: HistoryViewerCompareWarning,
   }, { force: true });
   Injector.transform(
     'snapshot-history',
     (updater) => {
       // Add CMS page history GraphQL query to the HistoryViewer
-      updater.component('SnapshotViewer.pages-controller-cms-content', snapshotQuery, 'PageHistoryViewer');
+      updater.component('SnapshotViewer.pages-controller-cms-content', snapshotQuery);
     }
   );
 };

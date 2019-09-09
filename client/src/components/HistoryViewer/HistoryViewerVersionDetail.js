@@ -252,7 +252,7 @@ HistoryViewerVersionDetail.defaultProps = {
 export { HistoryViewerVersionDetail as Component };
 
 export default inject(
-  ['HistoryViewerVersionList', 'HistoryViewerToolbar', 'Preview', 'HistoryViewerCompareWarning'],
+  ['SnapshotHistoryViewerVersionList', 'SnapshotHistoryViewerToolbar', 'Preview', 'SnapshotHistoryViewerCompareWarning'],
   (ListComponent, ToolbarComponent, PreviewComponent, CompareWarningComponent) => ({
     ListComponent,
     ToolbarComponent,
