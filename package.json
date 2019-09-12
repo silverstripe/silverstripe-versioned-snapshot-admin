@@ -17,7 +17,7 @@
     "node": "^10.x"
   },
   "scripts": {
-    "build": "yarn && yarn lint && yarn test && NODE_ENV=production webpack -p --bail --progress",
+    "build": "NODE_ENV=development yarn && yarn lint && yarn test && NODE_ENV=production webpack -p --bail --progress",
     "dev": "NODE_ENV=development webpack --progress",
     "watch": "NODE_ENV=development webpack --watch --progress",
     "css": "WEBPACK_CHILD=css npm run build",
@@ -35,10 +35,10 @@
     ],
     "modulePaths": [
       "client/src",
-      "../admin/client/src",
-      "../admin/node_modules",
       "vendor/silverstripe/admin/client/src",
-      "vendor/silverstripe/admin/node_modules"
+      "vendor/silverstripe/admin/node_modules",
+      "../admin/client/src",
+      "../admin/node_modules"
     ],
     "testMatch": [
       "**/tests/**/*-test.js?(x)"
