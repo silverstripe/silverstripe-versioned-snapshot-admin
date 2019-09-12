@@ -1,8 +1,6 @@
 <?php
 
-
 namespace SilverStripe\SnapshotAdmin;
-
 
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\DataList;
@@ -17,32 +15,25 @@ class SnapshotPublishableExtension extends DataExtension
 {
     use SnapshotHasher;
 
+    /**
+     * We want to get the version that the snapshots should point to
+     */
     public function updateRelevantSnapshots(DataList &$result)
     {
         $snapshotTable = DataObject::getSchema()->tableName(Snapshot::class);
         $itemTable = DataObject::getSchema()->tableName(SnapshotItem::class);
         $hash = static::hashObjectForSnapshot($this->owner);
-
         $result = $result->alterDataQuery(function (DataQuery $query) use ($hash, $snapshotTable, $itemTable) {
-            $query->selectField(
-                sprintf(
-                    "\"OriginHash\" = '%s'",
-                    DB::get_conn()->escapeString($hash)
-                ),
-                'IsFullVersion'
-            );
             $subquery = <<<SQL
                 (
                   SELECT "Version" FROM "$itemTable" 
-                  WHERE "ObjectHash" = ? AND "SnapshotID" = "$snapshotTable"."ID"
+                  WHERE "ObjectHash" = ? AND "$itemTable"."SnapshotID" = "$snapshotTable"."ID"
                 )
 SQL;
-
             $query->selectField(
                 DB::inline_parameters($subquery, [$hash]),
                 'BaseVersion'
             );
-
             return $query;
         });
     }
