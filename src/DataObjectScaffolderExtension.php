@@ -71,6 +71,7 @@ class DataObjectScaffolderExtension extends VersionedDataObjectScaffolderExtensi
                     ActivityEntry::DELETED,
                     ActivityEntry::MODIFIED,
                     ActivityEntry::PUBLISHED,
+                    ActivityEntry::REMOVED,
                 ]
             ]);
         }
