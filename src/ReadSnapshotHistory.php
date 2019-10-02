@@ -60,7 +60,7 @@ class ReadSnapshotHistory extends ListQueryScaffolder implements OperationResolv
         // To check if the items are the full versions we compare their hashes against the objects hash
         // this is used in the frontend to show the user if the snapshot is from the object itself
         // or one of it's children
-        // The reason for doing this here is so that it behaves nicely with fluent, ideally this would 
+        // The reason for doing this here is so that it behaves nicely with fluent, ideally this would
         // move to the frontend
         $objectHash = static::hashObjectForSnapshot($object);
         $listWithAlterations = ArrayList::create();

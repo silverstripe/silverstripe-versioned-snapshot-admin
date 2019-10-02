@@ -10,6 +10,12 @@
 [![Reference Status](https://www.versioneye.com/php/silverstripe:admin/reference_badge.svg?style=flat)](https://www.versioneye.com/php/silverstripe:admin/references)
 ![helpfulrobot](https://helpfulrobot.io/silverstripe/versioned-snapshot-admin/badge)
 
+## What does this offer over verisioned-admin?
+
+Most of the value of snapshots are explained in the [versioned-snapshots](https://github.com/silverstripe/silverstripe-versioned-snapshots) README file, but the major takeaway is that this history viewer will show you the changes that have happened to objects in your `$owns` tree as if it is native history to the owner object. In other words, it helps authors to see the answer to the question, "What happens when I publish this page?"
+
+Futher, since each snapshot provides a timestamp, it is possible to view a page at a time when a given owned object was added or changed.
+
 ## Overview
 
 Provides a drop-in replacement UI for [versioned-admin](https://github.com/silverstripe/silverstripe-versioned-admin)
