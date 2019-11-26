@@ -56,7 +56,7 @@ class HistoryViewerSnapshot extends Component {
 
   render() {
     const { version, StateComponent, FormActionComponent } = this.props;
-    const { Author: { FirstName, Surname } } = version;
+    const { Message, Author: { FirstName, Surname } } = version;
     const author = `${FirstName || ''} ${Surname || ''}`;
     const rowTitle = i18n._t('HistoryViewerSnapshot.GO_TO_SNAPSHOT', 'Go to snapshot at {date}');
 
@@ -74,6 +74,9 @@ class HistoryViewerSnapshot extends Component {
           <StateComponent
             version={version}
           />
+          <span className="history-viewer__message" role="cell">
+            {Message}
+          </span>
           <span className="history-viewer__author" role="cell">
             {author}
           </span>

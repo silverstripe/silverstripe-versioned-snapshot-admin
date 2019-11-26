@@ -61,6 +61,7 @@
 .history-viewer__version-no,
 .history-viewer__version-state,
 .history-viewer__author,
+.history-viewer__message,
 .history-viewer__actions {
   padding: $table-cell-padding;
 }
@@ -71,6 +72,7 @@
 }
 
 .history-viewer__version-state,
+.history-viewer__message,
 .history-viewer__author {
   flex-grow: 1;
   width: 50%;
