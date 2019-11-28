@@ -10,6 +10,7 @@ import HistoryViewerSnapshotState from 'components/HistoryViewer/HistoryViewerSn
 import HistoryViewerSnapshot from 'components/HistoryViewer/HistoryViewerSnapshot';
 import HistoryViewerCompareWarning from 'components/HistoryViewer/HistoryViewerCompareWarning';
 import snapshotQuery from 'graphql/snapshotsQuery';
+import pageRevertMutation from '../state/historyviewer/pageRevertMutation';
 
 /**
  * The reason we have not gone down the route of using the same name for components
@@ -33,12 +34,20 @@ export default () => {
     SnapshotHistoryViewerSnapshotState: HistoryViewerSnapshotState,
     SnapshotHistoryViewerSnapshot: HistoryViewerSnapshot,
     SnapshotHistoryViewerCompareWarning: HistoryViewerCompareWarning,
-  }, { force: true });
+  });
   Injector.transform(
     'snapshot-history',
     (updater) => {
       // Add CMS page history GraphQL query to the HistoryViewer
       updater.component('SnapshotViewer.pages-controller-cms-content', snapshotQuery);
+      updater.component(
+        'SnapshotHistoryViewerToolbar.VersionedAdmin.HistoryViewer.SiteTree.HistoryViewerVersionDetail',
+        // Copied from CMS, because transforms can only be applied to explicit keys ("HistoryViewerToolbar")
+        // Rather than a named service.
+        pageRevertMutation,
+        'PageRevertMutation'
+      );
+
     }
   );
 };
