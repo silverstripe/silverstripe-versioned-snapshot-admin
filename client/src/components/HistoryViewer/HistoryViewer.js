@@ -81,6 +81,7 @@ class HistoryViewer extends Component {
     return edges.map(({ node }) => ({
       ...node,
       ...node.OriginVersion,
+      Snapshot: node,
       AbsoluteLink: node.IsFullVersion ? node.OriginVersion.AbsoluteLink : versions.AbsoluteLink,
       Version: node.IsFullVersion ? node.OriginVersion.Version : node.BaseVersion,
     }));

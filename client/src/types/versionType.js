@@ -14,6 +14,7 @@ const versionType = PropTypes.shape({
   Published: PropTypes.boolean,
   LiveVersion: PropTypes.boolean,
   LatestDraftVersion: PropTypes.boolean,
+  Message: PropTypes.string,
   Publisher: memberShape,
   Author: memberShape,
 });
@@ -26,6 +27,7 @@ const defaultVersion = {
   Published: false,
   LiveVersion: false,
   LatestDraftVersion: false,
+  Message: '',
   Publisher: {
     FirstName: '',
     Surname: '',

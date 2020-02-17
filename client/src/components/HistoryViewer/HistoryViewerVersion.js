@@ -204,6 +204,7 @@ class HistoryViewerVersion extends Component {
   }
   render() {
     const { version, isActive, StateComponent } = this.props;
+    const { Message } = version;
     const rowTitle = i18n._t('HistoryViewerVersion.GO_TO_VERSION', 'Go to version {version}');
 
     return (
@@ -223,6 +224,9 @@ class HistoryViewerVersion extends Component {
             version={version}
             isActive={isActive}
           />
+          <span className="history-viewer__message" role="cell">
+            {Message}
+          </span>
           <span className="history-viewer__author" role="cell">
             {this.getAuthor()}
           </span>

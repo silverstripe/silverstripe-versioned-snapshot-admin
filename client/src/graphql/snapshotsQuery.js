@@ -24,6 +24,7 @@ query ReadSnapshotsPage ($page_id: ID!, $limit: Int!, $offset: Int!) {
           ActivityType
           IsFullVersion
           BaseVersion
+          Message
           Author {
             FirstName
             Surname
