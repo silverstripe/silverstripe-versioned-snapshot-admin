@@ -53,9 +53,7 @@ const historyViewerConfig = (HistoryViewer) => {
     }
   }
 
-  return inject(
-    ['SnapshotHistoryViewer']
-  )(HistoryViewerConfigProvider);
+  return inject(['SnapshotHistoryViewer'])(HistoryViewerConfigProvider);
 };
 
 export default historyViewerConfig;

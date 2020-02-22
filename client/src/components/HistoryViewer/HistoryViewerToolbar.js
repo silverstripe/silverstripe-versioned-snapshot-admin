@@ -116,12 +116,10 @@ HistoryViewerToolbar.defaultProps = {
 function mapDispatchToProps(dispatch) {
   return {
     onAfterRevert(versionId) {
-      dispatch(addMessage(
-        i18n.sprintf(
+      dispatch(addMessage(i18n.sprintf(
           i18n._t('HistoryViewerToolbar.REVERTED_MESSAGE', 'Successfully reverted to version %s'),
           versionId
-        )
-      ));
+        )));
       dispatch(showList());
     },
   };

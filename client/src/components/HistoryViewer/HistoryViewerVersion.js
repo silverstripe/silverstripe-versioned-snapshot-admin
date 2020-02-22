@@ -14,6 +14,7 @@ import {
   setCompareFrom,
   setCompareTo,
 } from 'state/historyviewer/HistoryViewerActions';
+import moment from 'moment';
 
 class HistoryViewerVersion extends Component {
   constructor(props) {
@@ -57,6 +58,17 @@ class HistoryViewerVersion extends Component {
       'history-viewer__row--comparison-selected': compare && !(compareFrom && compareTo),
     };
     return classNames(defaultClasses, extraClass);
+  }
+
+  /**
+   * Formats the last edited date according to the current locale and return it in the example
+   * format "03/01/2018 2:45 PM"
+   *
+   * @returns {string}
+   */
+  getDate() {
+    moment.locale(i18n.detectLocale());
+    return moment(this.props.version.LastEdited).format('L LT');
   }
 
   /**
@@ -204,7 +216,6 @@ class HistoryViewerVersion extends Component {
   }
   render() {
     const { version, isActive, StateComponent } = this.props;
-    const { Message } = version;
     const rowTitle = i18n._t('HistoryViewerVersion.GO_TO_VERSION', 'Go to version {version}');
 
     return (
@@ -217,16 +228,16 @@ class HistoryViewerVersion extends Component {
           onKeyUp={this.handleKeyUp}
           tabIndex={0}
         >
-          <span className="history-viewer__version-no" role="cell">
-            {version.Version}
+          <span className="history-viewer__message" role="cell">
+            <span>{version.ActivityAgo}</span>
+            {' '}
+            <small className="text-muted">{this.getDate()}</small>
           </span>
+
           <StateComponent
             version={version}
             isActive={isActive}
           />
-          <span className="history-viewer__message" role="cell">
-            {Message}
-          </span>
           <span className="history-viewer__author" role="cell">
             {this.getAuthor()}
           </span>

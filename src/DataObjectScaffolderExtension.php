@@ -46,6 +46,7 @@ class DataObjectScaffolderExtension extends VersionedDataObjectScaffolderExtensi
                     'LastEdited' => Type::string(),
                     'ActivityDescription' => Type::string(),
                     'ActivityType' => $this->createActivityEnum(),
+                    'ActivityAgo' => Type::string(),
                     'OriginVersion' => $manager->getType($versionTypeName),
                     'Author' => $manager->getType($memberType),
                     'IsFullVersion' => Type::boolean(),
@@ -72,6 +73,7 @@ class DataObjectScaffolderExtension extends VersionedDataObjectScaffolderExtensi
                     ActivityEntry::DELETED,
                     ActivityEntry::MODIFIED,
                     ActivityEntry::PUBLISHED,
+                    ActivityEntry::UNPUBLISHED,
                     ActivityEntry::REMOVED,
                 ]
             ]);

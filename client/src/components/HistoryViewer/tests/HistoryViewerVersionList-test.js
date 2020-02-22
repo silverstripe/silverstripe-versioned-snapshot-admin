@@ -9,14 +9,12 @@ describe('HistoryViewerVersionList', () => {
   const HeadingComponent = () => <li />;
   const VersionComponent = () => <div />;
 
-  const component = ReactTestUtils.renderIntoDocument(
-    <HistoryViewerVersionList
-      FormAlertComponent={FormAlertComponent}
-      HeadingComponent={HeadingComponent}
-      VersionComponent={VersionComponent}
-      versions={[]}
-    />
-  );
+  const component = ReactTestUtils.renderIntoDocument(<HistoryViewerVersionList
+    FormAlertComponent={FormAlertComponent}
+    HeadingComponent={HeadingComponent}
+    VersionComponent={VersionComponent}
+    versions={[]}
+  />);
 
   describe('render()', () => {
     it('returns an unordered list', () => {

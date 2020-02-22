@@ -15,26 +15,22 @@ describe('HistoryViewerHeading', () => {
 
   describe('onChange()', () => {
     it('triggers mapDispatchToProps functions to notify and update the Redux store', () => {
-      const wrapper = shallow(
-        <HistoryViewerHeading
-          compareModeSelected
-          onCompareModeSelect={mockOnCompareModeSelect}
-          onCompareModeUnselect={mockOnCompareModeUnselect}
-        />
-      );
+      const wrapper = shallow(<HistoryViewerHeading
+        compareModeSelected
+        onCompareModeSelect={mockOnCompareModeSelect}
+        onCompareModeUnselect={mockOnCompareModeUnselect}
+      />);
 
       wrapper.find('.history-viewer-heading__compare-mode-checkbox').at(0).simulate('change');
       expect(mockOnCompareModeUnselect).toHaveBeenCalled();
     });
 
     it('simulate change event in disabled compare mode', () => {
-      const wrapper = shallow(
-        <HistoryViewerHeading
-          compareModeSelected={false}
-          onCompareModeSelect={mockOnCompareModeSelect}
-          onCompareModeUnselect={mockOnCompareModeUnselect}
-        />
-      );
+      const wrapper = shallow(<HistoryViewerHeading
+        compareModeSelected={false}
+        onCompareModeSelect={mockOnCompareModeSelect}
+        onCompareModeUnselect={mockOnCompareModeUnselect}
+      />);
 
       wrapper.find('.history-viewer-heading__compare-mode-checkbox').at(0).simulate('change');
       expect(mockOnCompareModeSelect).toHaveBeenCalled();

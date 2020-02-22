@@ -9,6 +9,7 @@ use SilverStripe\GraphQL\Scaffolding\Scaffolders\ListQueryScaffolder;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\Snapshots\ActivityEntry;
 use SilverStripe\Snapshots\SnapshotHasher;
 use SilverStripe\Snapshots\SnapshotPublishable;
 use SilverStripe\Versioned\Versioned;
@@ -65,7 +66,8 @@ class ReadSnapshotHistory extends ListQueryScaffolder implements OperationResolv
         $objectHash = static::hashObjectForSnapshot($object);
         $listWithAlterations = ArrayList::create();
         foreach ($list as $item) {
-            $item->IsFullVersion = $item->OriginHash === $objectHash;
+            $item->IsFullVersion = $item->OriginHash === $objectHash &&
+                $item->getActivityType() !== ActivityEntry::DELETED;
             $listWithAlterations->push($item);
         }
         return $listWithAlterations;

@@ -15,6 +15,8 @@ class HistoryViewerSnapshotState extends VersionedState {
         return i18n._t('HistoryViewerSnapshot.ADDED', 'Added');
       case 'REMOVED':
         return i18n._t('HistoryViewerSnapshot.REMOVED', 'Removed');
+      case 'UNPUBLISHED':
+        return i18n._t('HistoryViewerSnapshot.UNPUBLISHED', 'Unpublished');
       case 'PUBLISHED':
         return i18n._t('HistoryViewerSnapshot.PUBLISHED', 'Published');
       default:

@@ -22,6 +22,7 @@ query ReadSnapshotsPage ($page_id: ID!, $limit: Int!, $offset: Int!) {
           LastEdited
           ActivityDescription
           ActivityType
+          ActivityAgo
           IsFullVersion
           BaseVersion
           Message
@@ -36,7 +37,7 @@ query ReadSnapshotsPage ($page_id: ID!, $limit: Int!, $offset: Int!) {
               FirstName
               Surname
             }
-            
+
             Published
             Publisher {
               FirstName
