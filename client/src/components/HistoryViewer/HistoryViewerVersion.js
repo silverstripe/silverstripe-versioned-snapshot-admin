@@ -14,7 +14,7 @@ import {
   setCompareFrom,
   setCompareTo,
 } from 'state/historyviewer/HistoryViewerActions';
-import moment from 'moment';
+import getDateFromVersion from '../../helpers/getDateFromVersion';
 
 class HistoryViewerVersion extends Component {
   constructor(props) {
@@ -58,17 +58,6 @@ class HistoryViewerVersion extends Component {
       'history-viewer__row--comparison-selected': compare && !(compareFrom && compareTo),
     };
     return classNames(defaultClasses, extraClass);
-  }
-
-  /**
-   * Formats the last edited date according to the current locale and return it in the example
-   * format "03/01/2018 2:45 PM"
-   *
-   * @returns {string}
-   */
-  getDate() {
-    moment.locale(i18n.detectLocale());
-    return moment(this.props.version.LastEdited).format('L LT');
   }
 
   /**
@@ -231,7 +220,7 @@ class HistoryViewerVersion extends Component {
           <span className="history-viewer__message" role="cell">
             <span>{version.ActivityAgo}</span>
             {' '}
-            <small className="text-muted">{this.getDate()}</small>
+            <small className="text-muted">{getDateFromVersion(version)}</small>
           </span>
 
           <StateComponent

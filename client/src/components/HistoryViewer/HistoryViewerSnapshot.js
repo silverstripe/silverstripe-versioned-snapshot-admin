@@ -11,6 +11,7 @@ import {
 } from 'state/historyviewer/HistoryViewerActions';
 import classNames from 'classnames';
 import { versionType } from 'types/versionType';
+import getDateFromVersion from '../../helpers/getDateFromVersion';
 
 class HistoryViewerSnapshot extends Component {
   constructor(props) {
@@ -70,9 +71,11 @@ class HistoryViewerSnapshot extends Component {
           onKeyUp={this.handleKeyUp}
           tabIndex={0}
         >
-          <span className="history-viewer__message" role="cell">
-            Three days ago
-          </span>
+            <span className="history-viewer__message" role="cell">
+              <span>{version.ActivityAgo}</span>
+              {' '}
+              <small className="text-muted">{getDateFromVersion(version)}</small>
+            </span>
 
           <StateComponent
             version={version}
