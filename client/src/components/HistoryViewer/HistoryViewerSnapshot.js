@@ -71,11 +71,11 @@ class HistoryViewerSnapshot extends Component {
           onKeyUp={this.handleKeyUp}
           tabIndex={0}
         >
-            <span className="history-viewer__message" role="cell">
-              <span>{version.ActivityAgo}</span>
-              {' '}
-              <small className="text-muted">{getDateFromVersion(version)}</small>
-            </span>
+          <span className="history-viewer__message" role="cell">
+            <span>{version.ActivityAgo}</span>
+            {' '}
+            <small className="text-muted">{getDateFromVersion(version)}</small>
+          </span>
 
           <StateComponent
             version={version}
