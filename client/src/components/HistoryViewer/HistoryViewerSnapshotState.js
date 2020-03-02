@@ -28,10 +28,11 @@ class HistoryViewerSnapshotState extends VersionedState {
     const { ActivityDescription, ActivityType } = this.props.version;
 
     const prefix = this.translateType(ActivityType);
-    const description = ActivityDescription.charAt(0).toLowerCase()
-      + ActivityDescription.substring(1);
-
-    return `${prefix} ${description}`;
+    const lines = ActivityDescription.split('\n');
+    if (lines.length > 1) {
+      return lines.map((l, i) => <div key={i}>{l}</div>);
+    }
+    return `${prefix} ${ActivityDescription}`;
   }
 }
 
