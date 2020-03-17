@@ -125,7 +125,7 @@ class HistoryViewerVersionDetail extends PureComponent {
    * @returns {HistoryViewerToolbar|null}
    */
   renderToolbar() {
-    const { ToolbarComponent, isLatestVersion, recordId, version } = this.props;
+    const { ToolbarComponent, isLatestVersion, recordId, version, typeName } = this.props;
 
     if (this.isCompareMode()) {
       return null;
@@ -141,6 +141,7 @@ class HistoryViewerVersionDetail extends PureComponent {
         identifier="HistoryViewer.VersionDetail.Toolbar"
         isLatestVersion={isLatestVersion}
         recordId={recordId}
+        typeName={typeName}
         versionId={version.Version}
         isPreviewable={this.isPreviewable()}
         canRollback={version.IsFullVersion}
@@ -228,6 +229,7 @@ HistoryViewerVersionDetail.propTypes = {
   ListComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
   PreviewComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
   recordId: PropTypes.number.isRequired,
+  typeName: PropTypes.string.isRequired,
   schemaUrl: PropTypes.string.isRequired,
   ToolbarComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
   version: versionType,

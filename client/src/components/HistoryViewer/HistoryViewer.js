@@ -78,12 +78,18 @@ class HistoryViewer extends Component {
     const edges = (versions && versions.SnapshotHistory && versions.SnapshotHistory.edges)
       ? versions.SnapshotHistory.edges
       : [];
-    return edges.map(({ node }) => ({
-      ...node,
-      ...node.OriginVersion,
-      AbsoluteLink: node.IsFullVersion ? node.OriginVersion.AbsoluteLink : versions.AbsoluteLink,
-      Version: node.IsFullVersion ? node.OriginVersion.Version : node.BaseVersion,
-    }));
+    return edges.map(({ node }) => {
+      return {
+        ...node,
+        ...node.OriginVersion,
+        AbsoluteLink: node.IsFullVersion
+          ? (node.OriginVersion && node.OriginVersion.AbsoluteLink)
+          : versions.AbsoluteLink,
+        Version: node.IsFullVersion
+          ? (node.OriginVersion && node.OriginVersion.Version)
+          : node.BaseVersion,
+      }
+    });
   }
 
   /**
@@ -208,6 +214,7 @@ class HistoryViewer extends Component {
       isPreviewable,
       recordId,
       recordClass,
+      typeName,
       schemaUrl,
       // previewMode,
       VersionDetailComponent,
@@ -238,12 +245,12 @@ class HistoryViewer extends Component {
 
     const version = compare ? versionFrom : currentVersion;
     const latestVersion = this.getLatestVersion();
-
     const props = {
       // comparison shows two versions as one, so by nature cannot be a single 'latest' version.
       isLatestVersion: !compare && latestVersion && latestVersion.Version === version.Version,
       isPreviewable,
       recordId,
+      typeName,
       schemaUrl: schemaUrl.replace(schemaSearch, (match) => schemaReplacements[match]),
       version,
       compare,
@@ -400,6 +407,8 @@ HistoryViewer.propTypes = {
   ListComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
   offset: PropTypes.number,
   recordId: PropTypes.number.isRequired,
+  recordClass: PropTypes.string.isRequired,
+  typeName: PropTypes.string.isRequired,
   currentVersion: PropTypes.oneOfType([PropTypes.bool, versionType]),
   compare: compareType,
   isInGridField: PropTypes.bool,
@@ -433,6 +442,7 @@ HistoryViewer.defaultProps = {
   currentVersion: false,
   isInGridField: false,
   isPreviewable: false,
+  typeName: '',
   schemaUrl: '',
   versions: {
     Versions: {

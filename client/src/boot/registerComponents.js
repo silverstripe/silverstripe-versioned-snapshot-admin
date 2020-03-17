@@ -1,5 +1,6 @@
 import Injector from 'lib/Injector';
 import HistoryViewer from 'components/HistoryViewer/HistoryViewer';
+import SnapshotViewerContainer from 'components/HistoryViewer/SnapshotViewerContainer';
 import HistoryViewerHeading from 'components/HistoryViewer/HistoryViewerHeading';
 import HistoryViewerToolbar from 'components/HistoryViewer/HistoryViewerToolbar';
 import HistoryViewerVersion from 'components/HistoryViewer/HistoryViewerVersion';
@@ -9,8 +10,7 @@ import HistoryViewerVersionState from 'components/HistoryViewer/HistoryViewerVer
 import HistoryViewerSnapshotState from 'components/HistoryViewer/HistoryViewerSnapshotState';
 import HistoryViewerSnapshot from 'components/HistoryViewer/HistoryViewerSnapshot';
 import HistoryViewerCompareWarning from 'components/HistoryViewer/HistoryViewerCompareWarning';
-import snapshotQuery from 'graphql/snapshotsQuery';
-import rollbackPageMutation from 'graphql/rollbackPageMutation';
+import RollbackMutation from 'components/HistoryViewer/RollbackMutation';
 
 /**
  * The reason we have not gone down the route of using the same name for components
@@ -23,7 +23,9 @@ import rollbackPageMutation from 'graphql/rollbackPageMutation';
  */
 export default () => {
   Injector.component.register('SnapshotViewer', HistoryViewer);
+  Injector.component.register('SnapshotViewerContainer', SnapshotViewerContainer);
   Injector.component.register('SnapshotHistoryViewer', HistoryViewer);
+  Injector.component.register('SnapshotRollbackMutation', RollbackMutation);
   Injector.component.registerMany({
     SnapshotHistoryViewerHeading: HistoryViewerHeading,
     SnapshotHistoryViewerToolbar: HistoryViewerToolbar,
@@ -35,27 +37,5 @@ export default () => {
     SnapshotHistoryViewerSnapshot: HistoryViewerSnapshot,
     SnapshotHistoryViewerCompareWarning: HistoryViewerCompareWarning,
   }, { force: true });
-  Injector.transform(
-    'snapshot-history',
-    (updater) => {
-      // Add CMS page history GraphQL query to the HistoryViewer
-      updater.component('SnapshotViewer.pages-controller-cms-content', snapshotQuery);
-    }
-  );
-  Injector.transform(
-    'pages-snapshot-revert',
-    (updater) => {
-      // Add CMS page revert GraphQL mutation to the HistoryViewerToolbar
-      updater.component(
-        'SnapshotHistoryViewerToolbar',
-        // This was using `copyToStage` incorrectly which also provides from and to stage
-        // arguments. The "rollback" mutation correctly handles relations and is a more consumable
-        // API endpoint.
-        rollbackPageMutation,
-        'SnapshotRevertMutation'
-      );
-    }
-  );
-
 };
 

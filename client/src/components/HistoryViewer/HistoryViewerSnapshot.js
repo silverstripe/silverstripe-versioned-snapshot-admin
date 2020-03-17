@@ -22,12 +22,12 @@ class HistoryViewerSnapshot extends Component {
   }
 
   getClassNames() {
-    const { extraClass, isActive, initial } = this.props;
+    const { extraClass, initial, isComparing } = this.props;
     const defaultClasses = {
       'history-viewer__row': true,
       'history-viewer__snapshot': true,
-      'history-viewer__row--current': isActive,
       'history-viewer__snapshot--initial': initial,
+      'history-viewer__snapshot--muted': isComparing,
     };
     return classNames(defaultClasses, extraClass);
   }
@@ -107,6 +107,7 @@ HistoryViewerSnapshot.propTypes = {
   isActive: PropTypes.bool,
   version: versionType,
   initial: PropTypes.bool,
+  isComparing: PropTypes.bool,
 };
 
 function mapDispatchToProps(dispatch) {

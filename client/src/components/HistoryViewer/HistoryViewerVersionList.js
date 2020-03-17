@@ -121,7 +121,7 @@ class HistoryViewerVersionList extends PureComponent {
                   compareModeAvailable={compareModeAvailable}
                 /> :
                 <SnapshotComponent
-                  isActive={this.isVersionActive(version)}
+                  isComparing={!!compare}
                   key={`${version.ID}--${version.LastEdited}`}
                   version={version}
                   initial={index < 1}

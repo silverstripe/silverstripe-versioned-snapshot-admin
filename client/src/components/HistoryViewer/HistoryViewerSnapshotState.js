@@ -34,6 +34,11 @@ class HistoryViewerSnapshotState extends VersionedState {
     }
     return `${prefix} ${ActivityDescription}`;
   }
+
+  getBadges() {
+    // No LIVE badge unless it's a native version
+    return null;
+  }
 }
 
 export { HistoryViewerSnapshotState as Component };

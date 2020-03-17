@@ -3,7 +3,6 @@
 
 namespace SilverStripe\SnapshotAdmin;
 
-
 use SilverStripe\Admin\LeftAndMain;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\ORM\DataObject;
@@ -52,5 +51,4 @@ class SnapshotAdmin extends LeftAndMain
 
         return $this->redirectBack();
     }
-
 }
