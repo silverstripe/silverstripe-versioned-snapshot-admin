@@ -74,9 +74,11 @@ class HistoryViewerHeading extends Component {
   render() {
     return (
       <li className="history-viewer__heading" role="row">
-        <span className="history-viewer__version-no" role="columnheader">#</span>
         <span className="history-viewer__version-state" role="columnheader">
-          {i18n._t('HistoryViewer.Record', 'Record')}
+          {i18n._t('HistoryViewer.Date', 'Date')}
+        </span>
+        <span className="history-viewer__message" role="columnheader">
+          {i18n._t('HistoryViewer.Activity', 'Activity')}
         </span>
         <span className="history-viewer__author" role="columnheader">
           {i18n._t('HistoryViewer.Author', 'Author')}
@@ -119,6 +121,4 @@ function mapDispatchToProps(dispatch) {
 
 export { HistoryViewerHeading as Component };
 
-export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
-)(HistoryViewerHeading);
+export default compose(connect(mapStateToProps, mapDispatchToProps))(HistoryViewerHeading);

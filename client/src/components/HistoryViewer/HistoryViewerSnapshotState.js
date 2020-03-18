@@ -15,6 +15,8 @@ class HistoryViewerSnapshotState extends VersionedState {
         return i18n._t('HistoryViewerSnapshot.ADDED', 'Added');
       case 'REMOVED':
         return i18n._t('HistoryViewerSnapshot.REMOVED', 'Removed');
+      case 'UNPUBLISHED':
+        return i18n._t('HistoryViewerSnapshot.UNPUBLISHED', 'Unpublished');
       case 'PUBLISHED':
         return i18n._t('HistoryViewerSnapshot.PUBLISHED', 'Published');
       default:
@@ -26,10 +28,16 @@ class HistoryViewerSnapshotState extends VersionedState {
     const { ActivityDescription, ActivityType } = this.props.version;
 
     const prefix = this.translateType(ActivityType);
-    const description = ActivityDescription.charAt(0).toLowerCase()
-      + ActivityDescription.substring(1);
+    const lines = ActivityDescription.split('\n');
+    if (lines.length > 1) {
+      return lines.map((l, i) => <div key={i}>{l}</div>);
+    }
+    return `${prefix} ${ActivityDescription}`;
+  }
 
-    return `${prefix} ${description}`;
+  getBadges() {
+    // No LIVE badge unless it's a native version
+    return null;
   }
 }
 

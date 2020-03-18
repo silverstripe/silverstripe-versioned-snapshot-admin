@@ -23,15 +23,19 @@ class HistoryViewerToolbar extends Component {
 
   /**
    * Triggers a revert action to be performed for the current record's version
+   * @param {func} rollback
    * @returns Promise
    */
-  handleRevert() {
-    const { actions: { revertToVersion }, onAfterRevert, recordId, versionId } = this.props;
+  handleRevert(rollback) {
+    const { onAfterRevert, recordId, versionId } = this.props;
 
     this.setState({ isReverting: true });
 
     const handler = typeof onAfterRevert === 'function' ? onAfterRevert : () => {};
-    return revertToVersion(recordId, versionId, 'DRAFT', 'DRAFT').then(() => handler(versionId));
+    return rollback({ variables: {
+      id: recordId,
+      toVersion: versionId
+    }}).then(() => handler(versionId));
   }
 
   handleToggleRevertTooltip() {
@@ -44,10 +48,12 @@ class HistoryViewerToolbar extends Component {
     const {
       FormActionComponent,
       ViewModeComponent,
+      RollbackMutation,
       isLatestVersion,
       isPreviewable,
       canRollback,
       rollbackMessage,
+      typeName,
     } = this.props;
     const { isReverting, revertTooltipOpen } = this.state;
 
@@ -56,37 +62,43 @@ class HistoryViewerToolbar extends Component {
       : i18n._t('HistoryViewerToolbar.REVERT_UNAVAILABLE', 'Unavailable for the current version');
 
     return (
-      <div className="toolbar toolbar--south">
-        <div className="btn-toolbar">
-          <FormActionComponent
-            id="HistoryRevertButton"
-            onClick={this.handleRevert}
-            icon="back-in-time"
-            name="revert"
-            attributes={{
-              title: revertButtonTitle,
-            }}
-            data={{
-              buttonStyle: 'warning'
-            }}
-            disabled={isLatestVersion || isReverting || !canRollback}
-            loading={isReverting}
-            title={i18n._t('HistoryViewerToolbar.REVERT_TO_VERSION', 'Revert to this version')}
-          />
-          { !canRollback && (
-            <Tooltip
-              trigger="click hover focus"
-              placement="top"
-              isOpen={revertTooltipOpen}
-              toggle={this.handleToggleRevertTooltip}
-              target="HistoryRevertButton"
-            >
-              {rollbackMessage}
-            </Tooltip>
-          )}
-          { isPreviewable && <ViewModeComponent id="history-viewer-edit-mode" area="edit" /> }
-        </div>
-      </div>
+      <RollbackMutation typeName={typeName}>
+        {(rollback) => {
+          return (
+            <div className="toolbar toolbar--south">
+              <div className="btn-toolbar">
+                <FormActionComponent
+                  id="HistoryRevertButton"
+                  onClick={() => this.handleRevert(rollback)}
+                  icon="back-in-time"
+                  name="revert"
+                  attributes={{
+                    title: revertButtonTitle,
+                  }}
+                  data={{
+                    buttonStyle: 'warning'
+                  }}
+                  disabled={isLatestVersion || isReverting || !canRollback}
+                  loading={isReverting}
+                  title={i18n._t('HistoryViewerToolbar.REVERT_TO_VERSION', 'Revert to this version')}
+                />
+                { !canRollback && (
+                  <Tooltip
+                    trigger="click hover focus"
+                    placement="top"
+                    isOpen={revertTooltipOpen}
+                    toggle={this.handleToggleRevertTooltip}
+                    target="HistoryRevertButton"
+                  >
+                    {rollbackMessage}
+                  </Tooltip>
+                )}
+                { isPreviewable && <ViewModeComponent id="history-viewer-edit-mode" area="edit" /> }
+            </div>
+          </div>
+          )
+        }}
+      </RollbackMutation>
     );
   }
 }
@@ -101,6 +113,7 @@ HistoryViewerToolbar.propTypes = {
   isPreviewable: PropTypes.bool,
   onAfterRevert: PropTypes.func,
   recordId: PropTypes.number.isRequired,
+  typeName: PropTypes.string.isRequired,
   versionId: PropTypes.number.isRequired,
   canRollback: PropTypes.bool,
   rollbackMessage: PropTypes.string,
@@ -116,12 +129,10 @@ HistoryViewerToolbar.defaultProps = {
 function mapDispatchToProps(dispatch) {
   return {
     onAfterRevert(versionId) {
-      dispatch(addMessage(
-        i18n.sprintf(
+      dispatch(addMessage(i18n.sprintf(
           i18n._t('HistoryViewerToolbar.REVERTED_MESSAGE', 'Successfully reverted to version %s'),
           versionId
-        )
-      ));
+        )));
       dispatch(showList());
     },
   };
@@ -132,10 +143,11 @@ export { HistoryViewerToolbar as Component };
 export default compose(
   connect(null, mapDispatchToProps),
   inject(
-    ['FormAction', 'ViewModeToggle'],
-    (FormActionComponent, ViewModeComponent) => ({
+    ['FormAction', 'ViewModeToggle', 'SnapshotRollbackMutation'],
+    (FormActionComponent, ViewModeComponent, RollbackMutation) => ({
       FormActionComponent,
       ViewModeComponent,
+      RollbackMutation,
     }),
     () => 'VersionedAdmin.HistoryViewer.Toolbar'
   )

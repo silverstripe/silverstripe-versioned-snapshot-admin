@@ -11,6 +11,7 @@ import {
 } from 'state/historyviewer/HistoryViewerActions';
 import classNames from 'classnames';
 import { versionType } from 'types/versionType';
+import getDateFromVersion from '../../helpers/getDateFromVersion';
 
 class HistoryViewerSnapshot extends Component {
   constructor(props) {
@@ -21,12 +22,12 @@ class HistoryViewerSnapshot extends Component {
   }
 
   getClassNames() {
-    const { extraClass, isActive, initial } = this.props;
+    const { extraClass, initial, isComparing } = this.props;
     const defaultClasses = {
       'history-viewer__row': true,
       'history-viewer__snapshot': true,
-      'history-viewer__row--current': isActive,
       'history-viewer__snapshot--initial': initial,
+      'history-viewer__snapshot--muted': isComparing,
     };
     return classNames(defaultClasses, extraClass);
   }
@@ -70,7 +71,12 @@ class HistoryViewerSnapshot extends Component {
           onKeyUp={this.handleKeyUp}
           tabIndex={0}
         >
-          <span className="history-viewer__version-no" role="cell" />
+          <span className="history-viewer__message" role="cell">
+            <span>{version.ActivityAgo}</span>
+            {' '}
+            <small className="text-muted">{getDateFromVersion(version)}</small>
+          </span>
+
           <StateComponent
             version={version}
           />
@@ -101,6 +107,7 @@ HistoryViewerSnapshot.propTypes = {
   isActive: PropTypes.bool,
   version: versionType,
   initial: PropTypes.bool,
+  isComparing: PropTypes.bool,
 };
 
 function mapDispatchToProps(dispatch) {

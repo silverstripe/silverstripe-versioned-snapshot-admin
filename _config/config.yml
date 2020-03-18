@@ -15,3 +15,13 @@ SilverStripe\GraphQL\Scaffolding\Scaffolders\DataObjectScaffolder:
 SilverStripe\ORM\DataObject:
   extensions:
     - SilverStripe\SnapshotAdmin\SnapshotPublishableExtension
+SilverStripe\GraphQL\Manager:
+  schemas:
+    admin:
+      scaffolding_providers:
+        - SilverStripe\SnapshotAdmin\SnapshotScaffoldingProvider
+SilverStripe\Admin\LeftAndMain:
+  extra_requirements_javascript:
+    - 'silverstripe/versioned-snapshot-admin:client/dist/js/bundle.js'
+  extra_requirements_css:
+    - 'silverstripe/versioned-snapshot-admin:client/dist/styles/bundle.css'

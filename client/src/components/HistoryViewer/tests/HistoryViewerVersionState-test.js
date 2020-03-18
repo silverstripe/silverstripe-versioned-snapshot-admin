@@ -10,9 +10,8 @@ describe('HistoryViewerVersionState', () => {
 
   describe('getClassNames()', () => {
     it('adds extra classes to the default class', () => {
-      component = ReactTestUtils.renderIntoDocument(
-        <HistoryViewerVersionState extraClass="foobar" />
-      );
+      component = ReactTestUtils
+        .renderIntoDocument(<HistoryViewerVersionState extraClass="foobar" />);
 
       expect(component.getClassNames()).toContain('foobar');
       expect(component.getClassNames()).toContain('history-viewer__version-state');
@@ -25,17 +24,15 @@ describe('HistoryViewerVersionState', () => {
         Published: true
       };
 
-      component = ReactTestUtils.renderIntoDocument(
-        <HistoryViewerVersionState version={mockVersion} />
-      );
+      component = ReactTestUtils
+          .renderIntoDocument(<HistoryViewerVersionState version={mockVersion} />);
 
       expect(component.getPublishedState()).toBe('Published');
     });
 
     it('defaults to "Modified" if not defined', () => {
-      component = ReactTestUtils.renderIntoDocument(
-        <HistoryViewerVersionState version={{}} />
-      );
+      component = ReactTestUtils
+        .renderIntoDocument(<HistoryViewerVersionState version={{}} />);
 
       expect(component.getPublishedState()).toBe('Saved');
     });
@@ -46,10 +43,8 @@ describe('HistoryViewerVersionState', () => {
       const mockVersion = {
         LastEdited: '2018-05-03 17:12:00'
       };
-
-      component = ReactTestUtils.renderIntoDocument(
-        <HistoryViewerVersionState version={mockVersion} />
-      );
+      component = ReactTestUtils
+        .renderIntoDocument(<HistoryViewerVersionState version={mockVersion} />);
 
       // NB: default locale in i18n is en_US
       expect(component.getDate()).toBe('05/03/2018 5:12 PM');
@@ -61,9 +56,8 @@ describe('HistoryViewerVersionState', () => {
       const mockVersion = {
         LiveVersion: true
       };
-      component = ReactTestUtils.renderIntoDocument(
-        <HistoryViewerVersionState version={mockVersion} />
-      );
+      component = ReactTestUtils
+        .renderIntoDocument(<HistoryViewerVersionState version={mockVersion} />);
 
       const badge = component.getBadges();
       expect(badge.props.message).toEqual('Live');
@@ -71,9 +65,8 @@ describe('HistoryViewerVersionState', () => {
     });
 
     it('returns an empty string when version is not live', () => {
-      component = ReactTestUtils.renderIntoDocument(
-        <HistoryViewerVersionState />
-      );
+      component = ReactTestUtils
+        .renderIntoDocument(<HistoryViewerVersionState />);
 
       expect(component.getBadges()).toBe('');
     });

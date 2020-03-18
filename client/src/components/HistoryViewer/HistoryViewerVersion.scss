@@ -78,6 +78,9 @@
       top: ($table-cell-padding * 2 + $line-height-base) / 2;
     }
   }
+  &--muted {
+    opacity: 0.5;
+  }
 
   &.history-viewer__row--current {
     &:before, &:after {

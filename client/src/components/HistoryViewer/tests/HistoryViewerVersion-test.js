@@ -38,14 +38,12 @@ describe('HistoryViewerVersion', () => {
 
   describe('handleCompare()', () => {
     it('calls onCompareMode to dispatch an action as the result of handleCompare call', () => {
-      const wrapper = shallow(
-        <HistoryViewerVersion
-          version={version}
-          onCompareMode={mockOnCompareMode}
-          StateComponent={StateComponent}
-          FormActionComponent={FormActionComponent}
-        />
-      );
+      const wrapper = shallow(<HistoryViewerVersion
+        version={version}
+        onCompareMode={mockOnCompareMode}
+        StateComponent={StateComponent}
+        FormActionComponent={FormActionComponent}
+      />);
 
       wrapper.instance().handleCompare();
       expect(mockOnCompareMode).toBeCalledWith(version);
@@ -54,28 +52,24 @@ describe('HistoryViewerVersion', () => {
 
   describe('getAuthor()', () => {
     it('returns the author name when unpublished', () => {
-      const wrapper = shallow(
-        <HistoryViewerVersion
-          version={version}
-          StateComponent={StateComponent}
-          FormActionComponent={FormActionComponent}
-        />
-      );
+      const wrapper = shallow(<HistoryViewerVersion
+        version={version}
+        StateComponent={StateComponent}
+        FormActionComponent={FormActionComponent}
+      />);
 
       expect(wrapper.instance().getAuthor()).toEqual('John Smith');
     });
 
     it('returns the publisher name when published', () => {
-      const wrapper = shallow(
-        <HistoryViewerVersion
-          version={{
+      const wrapper = shallow(<HistoryViewerVersion
+        version={{
             ...version,
             Published: true
           }}
-          StateComponent={StateComponent}
-          FormActionComponent={FormActionComponent}
-        />
-      );
+        StateComponent={StateComponent}
+        FormActionComponent={FormActionComponent}
+      />);
 
       expect(wrapper.instance().getAuthor()).toEqual('Sarah Smith');
     });
@@ -83,14 +77,12 @@ describe('HistoryViewerVersion', () => {
 
   describe('handleClick()', () => {
     it('does nothing on row click when the clear button is shown', () => {
-      const wrapper = shallow(
-        <HistoryViewerVersion
-          version={version}
-          StateComponent={StateComponent}
-          FormActionComponent={FormActionComponent}
-          isActive
-        />
-      );
+      const wrapper = shallow(<HistoryViewerVersion
+        version={version}
+        StateComponent={StateComponent}
+        FormActionComponent={FormActionComponent}
+        isActive
+      />);
 
       wrapper.simulate('click');
       expect(mockOnCompareSelect).not.toHaveBeenCalled();
@@ -98,16 +90,14 @@ describe('HistoryViewerVersion', () => {
     });
 
     it('renders version details when version clicked', () => {
-      const wrapper = shallow(
-        <HistoryViewerVersion
-          version={version}
-          StateComponent={StateComponent}
-          FormActionComponent={FormActionComponent}
-          onSelect={mockOnSelect}
-          isActive={false}
-          compare={false}
-        />
-      );
+      const wrapper = shallow(<HistoryViewerVersion
+        version={version}
+        StateComponent={StateComponent}
+        FormActionComponent={FormActionComponent}
+        onSelect={mockOnSelect}
+        isActive={false}
+        compare={false}
+      />);
 
       wrapper.instance().handleClick();
       expect(mockOnCompareSelect).not.toHaveBeenCalled();
@@ -120,16 +110,14 @@ describe('HistoryViewerVersion', () => {
         versionTo: { Version: 0 },
       };
 
-      const wrapper = shallow(
-        <HistoryViewerVersion
-          version={version}
-          StateComponent={StateComponent}
-          FormActionComponent={FormActionComponent}
-          onSelect={mockOnSelect}
-          isActive={false}
-          compare={compare}
-        />
-      );
+      const wrapper = shallow(<HistoryViewerVersion
+        version={version}
+        StateComponent={StateComponent}
+        FormActionComponent={FormActionComponent}
+        onSelect={mockOnSelect}
+        isActive={false}
+        compare={compare}
+      />);
 
       wrapper.instance().handleClick();
       expect(mockOnCompareSelect).not.toHaveBeenCalled();
@@ -137,19 +125,17 @@ describe('HistoryViewerVersion', () => {
     });
 
     it('chooses version when version clicked in compare mode', () => {
-      const wrapper = shallow(
-        <HistoryViewerVersion
-          version={version}
-          StateComponent={StateComponent}
-          FormActionComponent={FormActionComponent}
-          onSelect={mockOnSelect}
-          onCompareSelect={mockOnCompareSelect}
-          compare={{
+      const wrapper = shallow(<HistoryViewerVersion
+        version={version}
+        StateComponent={StateComponent}
+        FormActionComponent={FormActionComponent}
+        onSelect={mockOnSelect}
+        onCompareSelect={mockOnCompareSelect}
+        compare={{
             versionFrom: { Version: 0 },
             versionTo: { Version: 0 },
           }}
-        />
-      );
+      />);
 
       wrapper.instance().handleClick();
       expect(mockOnSelect).toHaveBeenCalled();
@@ -159,29 +145,25 @@ describe('HistoryViewerVersion', () => {
 
   describe('render()', () => {
     it('renders the close button in the version details', () => {
-      const wrapper = shallow(
-        <HistoryViewerVersion
-          version={version}
-          StateComponent={StateComponent}
-          FormActionComponent={FormActionComponent}
-          onSelect={mockOnSelect}
-          isActive
-        />
-      );
+      const wrapper = shallow(<HistoryViewerVersion
+        version={version}
+        StateComponent={StateComponent}
+        FormActionComponent={FormActionComponent}
+        onSelect={mockOnSelect}
+        isActive
+      />);
 
       expect(wrapper.find(FormActionComponent).at(1).props().extraClass).toEqual('history-viewer__close-button');
     });
 
     it('renders the compare button in the version details', () => {
-      const wrapper = shallow(
-        <HistoryViewerVersion
-          version={version}
-          StateComponent={StateComponent}
-          FormActionComponent={FormActionComponent}
-          onSelect={mockOnSelect}
-          isActive
-        />
-      );
+      const wrapper = shallow(<HistoryViewerVersion
+        version={version}
+        StateComponent={StateComponent}
+        FormActionComponent={FormActionComponent}
+        onSelect={mockOnSelect}
+        isActive
+      />);
 
       expect(wrapper.find(FormActionComponent).at(0).props().extraClass).toEqual('history-viewer__compare-button');
     });
@@ -189,36 +171,32 @@ describe('HistoryViewerVersion', () => {
 
   describe('handleClose()', () => {
     it('return back to list view when closing version via action dispatch', () => {
-      const wrapper = shallow(
-        <HistoryViewerVersion
-          version={version}
-          StateComponent={StateComponent}
-          FormActionComponent={FormActionComponent}
-          onSelect={mockOnSelect}
-          isActive
-          compare={false}
-        />
-      );
+      const wrapper = shallow(<HistoryViewerVersion
+        version={version}
+        StateComponent={StateComponent}
+        FormActionComponent={FormActionComponent}
+        onSelect={mockOnSelect}
+        isActive
+        compare={false}
+      />);
 
       wrapper.instance().handleClose();
       expect(mockOnSelect).toHaveBeenCalled();
     });
 
     it('deselect version when closing version in compare mode', () => {
-      const wrapper = shallow(
-        <HistoryViewerVersion
-          version={version}
-          StateComponent={StateComponent}
-          FormActionComponent={FormActionComponent}
-          onSelect={mockOnSelect}
-          onCompareSelect={mockOnCompareSelect}
-          isActive
-          compare={{
+      const wrapper = shallow(<HistoryViewerVersion
+        version={version}
+        StateComponent={StateComponent}
+        FormActionComponent={FormActionComponent}
+        onSelect={mockOnSelect}
+        onCompareSelect={mockOnCompareSelect}
+        isActive
+        compare={{
             versionFrom: { Version: 0 },
             versionTo: { Version: 0 },
           }}
-        />
-      );
+      />);
 
       wrapper.instance().handleClose();
       expect(mockOnSelect).toHaveBeenCalled();
