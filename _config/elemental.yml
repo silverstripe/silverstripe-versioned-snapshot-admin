@@ -1,0 +1,8 @@
+---
+Name: snapshot-admin-elemental
+Only:
+  moduleexists: 'dnadesign/silverstripe-elemental'
+---
+DNADesign\Elemental\Models\BaseElement:
+  extensions:
+    - SilverStripe\SnapshotAdmin\SnapshotHistoryExtension
