@@ -14,14 +14,18 @@
 
 Most of the value of snapshots are explained in the [versioned-snapshots](https://github.com/silverstripe/silverstripe-versioned-snapshots) README file, but the major takeaway is that this history viewer will show you the changes that have happened to objects in your `$owns` tree as if it is native history to the owner object. In other words, it helps authors to see the answer to the question, "What happens when I publish this page?"
 
-Futher, since each snapshot provides a timestamp, it is possible to view a page at a time when a given owned object was added or changed.
+Further, since each snapshot provides a timestamp, it is possible to view a page at a time when a given owned object was added or changed.
 
 ## Overview
 
 Provides a drop-in replacement UI for [versioned-admin](https://github.com/silverstripe/silverstripe-versioned-admin)
 that adds snapshots to the history view.
 
-WARNING: This module is experimental, and not considered stable. 
+WARNING: This module is experimental, and not considered stable.
+
+## History view -- anywhere!
+
+Just add the `SnapshotHistoryExtension` included with this module to your dataobject, and a "History" tab will be provided to its `getCMSFields()` function, offering a list of its snapshot history.
 
 ## Installation
 
