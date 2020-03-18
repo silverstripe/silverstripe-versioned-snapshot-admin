@@ -27,7 +27,9 @@ class SnapshotScaffoldingProvider implements ScaffoldingProvider
             }
             $scaffolder->type($inst->baseClass())
                 ->addFields(['ID', 'AbsoluteLink'])
-                ->operation(SchemaScaffolder::READ_ONE);
+                ->operation(SchemaScaffolder::READ_ONE)
+                    ->end()
+                ->operation('rollback');
         }
     }
 }
