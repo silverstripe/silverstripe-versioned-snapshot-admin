@@ -97,6 +97,7 @@ export function setCompareMode(enabled) {
  * @returns {Object}
  */
 export function setCompareFrom(version) {
+  console.log(`compare from`, version);
   return {
     type: HISTORY_VIEWER.SET_COMPARE_FROM,
     payload: { version },
@@ -110,6 +111,7 @@ export function setCompareFrom(version) {
  * @returns {Object}
  */
 export function setCompareTo(version) {
+  console.log(`compare to`, version);
   return {
     type: HISTORY_VIEWER.SET_COMPARE_TO,
     payload: { version },

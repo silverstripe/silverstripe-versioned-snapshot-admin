@@ -83,10 +83,10 @@ class HistoryViewer extends Component {
         ...node,
         ...node.OriginVersion,
         AbsoluteLink: node.IsFullVersion
-          ? (node.OriginVersion && node.OriginVersion.AbsoluteLink)
+          ? node.OriginVersion.AbsoluteLink
           : versions.AbsoluteLink,
         Version: node.IsFullVersion
-          ? (node.OriginVersion && node.OriginVersion.Version)
+          ? node.OriginVersion.Version
           : node.BaseVersion,
       }
     });
