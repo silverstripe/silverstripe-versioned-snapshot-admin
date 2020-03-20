@@ -270,6 +270,7 @@ function mapDispatchToProps(dispatch) {
         }
       } else {
         dispatch(showVersion(selectedVersion));
+        console.log('show version', selectedVersion);
         dispatch(clearMessages());
       }
     },

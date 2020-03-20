@@ -3,6 +3,11 @@
     cursor: default;
   }
 }
+.history-viewer.history-viewer__compare-mode .history-viewer__snapshot {
+  .history-viewer__version-link:hover {
+    cursor: default;
+  }
+}
 
 // By default hide 'Already selected' message
 .history-viewer__selected-message {
@@ -79,7 +84,9 @@
     }
   }
   &--muted {
-    opacity: 0.5;
+    .history-viewer__version-link * {
+      color: #ddd !important;
+    }
   }
 
   &.history-viewer__row--current {
