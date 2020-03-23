@@ -38,7 +38,6 @@ export default function historyViewerReducer(state = initialState, { type, paylo
 
     case HISTORY_VIEWER.SHOW_DATE: {
       const { version } = payload;
-      console.log('show date', version);
       return {
         ...state,
         previewMode: version && VERSION_MODE_DATE,
