@@ -20,6 +20,7 @@ const createSnapshotsQuery = typeName => {
                 ActivityType
                 ActivityAgo
                 IsFullVersion
+                IsLiveSnapshot
                 BaseVersion
                 Message
                 Author {
@@ -33,13 +34,12 @@ const createSnapshotsQuery = typeName => {
                     FirstName
                     Surname
                   }
-      
+
                   Published
                   Publisher {
                     FirstName
                     Surname
                   }
-                  LiveVersion
                   LatestDraftVersion
                 }
               }
@@ -47,7 +47,7 @@ const createSnapshotsQuery = typeName => {
           }
         }
       }
-  
+
     `;
 };
 

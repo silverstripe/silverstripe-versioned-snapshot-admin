@@ -50,6 +50,7 @@ class DataObjectScaffolderExtension extends VersionedDataObjectScaffolderExtensi
                     'OriginVersion' => $manager->getType($versionTypeName),
                     'Author' => $manager->getType($memberType),
                     'IsFullVersion' => Type::boolean(),
+                    'IsLiveSnapshot' => Type::boolean(),
                     'BaseVersion' => Type::int(),
                     'Message' => Type::string(),
                 ];

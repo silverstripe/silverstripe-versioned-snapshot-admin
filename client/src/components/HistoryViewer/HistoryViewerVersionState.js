@@ -39,7 +39,7 @@ class HistoryViewerVersionState extends Component {
   getBadges() {
     const { version, isActive, BadgeComponent } = this.props;
 
-    if (version.LiveVersion) {
+    if (version.IsLiveSnapshot) {
       return (
         <BadgeComponent
           status="success"

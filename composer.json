@@ -33,7 +33,7 @@
     "autoload": {
         "psr-4": {
             "SilverStripe\\SnapshotAdmin\\": "src/",
-            "SilverStripe\\SnapshotAdmin\\Tests\\": "tests/php/"
+            "SilverStripe\\SnapshotAdmin\\Tests\\": "tests/"
         }
     },
     "extra": {
