@@ -82,6 +82,7 @@ export default function historyViewerReducer(state = initialState, { type, paylo
       return {
         ...state,
         compare: payload.enabled ? initialCompare : false,
+        previewMode: payload.enabled ? state.previewMode : false,
       };
     }
 

@@ -352,7 +352,6 @@ class HistoryViewer extends Component {
       compare,
       compare: { versionFrom: hasVersionFrom },
     } = this.props;
-
     return (
       <div className={this.getContainerClasses()}>
         <CompareWarningComponent />

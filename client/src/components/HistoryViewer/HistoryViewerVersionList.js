@@ -44,8 +44,6 @@ class HistoryViewerVersionList extends PureComponent {
    */
   isVersionActive(version) {
       const { currentVersion, compare, compare: { versionFrom, versionTo } } = this.props;
-      console.log(currentVersion);
-      currentVersion && console.log(currentVersion, currentVersion.ID, version.ID);
       const isCurrent = currentVersion && currentVersion.ID === version.ID;
       const isCompareFrom = versionFrom && versionFrom.ID === version.ID;
       const isCompareTo = versionTo && versionTo.ID === version.ID;
@@ -107,7 +105,6 @@ class HistoryViewerVersionList extends PureComponent {
       compareModeAvailable,
       compare
     } = this.props;
-
     return (
       <div className="history-viewer__list">
         <ul className={this.getClassNames()} role="table">

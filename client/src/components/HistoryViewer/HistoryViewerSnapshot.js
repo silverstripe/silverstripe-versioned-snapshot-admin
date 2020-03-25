@@ -57,7 +57,7 @@ class HistoryViewerSnapshot extends Component {
   }
 
   render() {
-    const { version, StateComponent, FormActionComponent } = this.props;
+    const { version, StateComponent, FormActionComponent, isComparing, isActive } = this.props;
     const { Author: { FirstName, Surname } } = version;
     const author = `${FirstName || ''} ${Surname || ''}`;
     const rowTitle = i18n._t('HistoryViewerSnapshot.GO_TO_SNAPSHOT', 'Go to snapshot at {date}');
@@ -70,7 +70,7 @@ class HistoryViewerSnapshot extends Component {
           title={i18n.inject(rowTitle, { date: version.LastEdited })}
           onClick={this.handleClick}
           onKeyUp={this.handleKeyUp}
-          tabIndex={0}
+          tabIndex={isComparing ? -1 : 0}
         >
           <span className="history-viewer__message" role="cell">
             <span>{version.ActivityAgo}</span>
@@ -85,6 +85,7 @@ class HistoryViewerSnapshot extends Component {
             {author}
           </span>
           <span className="history-viewer__actions" role="cell">
+            {isActive && (
             <FormActionComponent
               onClick={this.handleClose}
               icon="cancel"
@@ -97,6 +98,7 @@ class HistoryViewerSnapshot extends Component {
               buttonStyle="outline-light"
               extraClass="history-viewer__close-button"
             />
+            )}
           </span>
         </span>
       </li>
