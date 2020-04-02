@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 import { inject } from 'lib/Injector';
 import createSnapshotsQuery from '../../graphql/createSnapshotsQuery';
@@ -11,10 +10,11 @@ const SnapshotViewerContainer = ({
     limit,
     page,
     recordClass,
+    isPreviewable,
     actions = { versions: {} },
     SnapshotViewerComponent,
 }) => {
-    const QUERY = useMemo(() => createSnapshotsQuery(typeName), [typeName]);
+    const QUERY = useMemo(() => createSnapshotsQuery(typeName, isPreviewable), [typeName, isPreviewable]);
     
     const variables = {
         limit,
@@ -28,13 +28,13 @@ const SnapshotViewerContainer = ({
                 if (data) {      
                   readOne = data[`readOne${typeName}`];
                 }
-                const versions = readOne || null;
+                const versions = readOne || [];
                 
                 const errors = error && error.graphQLErrors &&
                 error.graphQLErrors.map((graphQLError) => graphQLError.message);
                   
                 const props = { 
-                    loading: loading || !versions,
+                    loading: loading,
                     versions,
                     graphQLErrors: errors,
                     actions: {

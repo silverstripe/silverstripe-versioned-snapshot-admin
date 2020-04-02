@@ -1,13 +1,13 @@
 import gql from 'graphql-tag';
 
-const createSnapshotsQuery = typeName => {
+const createSnapshotsQuery = (typeName, isPreviewable) => {
     return gql`
     query ReadSnapshots${typeName} ($page_id: ID!, $limit: Int!, $offset: Int!) {
         readOne${typeName}(
           ID: $page_id
         ) {
           ID
-          AbsoluteLink
+          ${isPreviewable ? 'AbsoluteLink' : ''}
           SnapshotHistory (limit: $limit, offset: $offset) {
             pageInfo {
               totalCount
@@ -29,7 +29,7 @@ const createSnapshotsQuery = typeName => {
                 }
                 OriginVersion {
                   Version
-                  AbsoluteLink
+                  ${isPreviewable ? AbsoluteLink : ''}
                   Author {
                     FirstName
                     Surname

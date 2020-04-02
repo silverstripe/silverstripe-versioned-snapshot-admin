@@ -4,6 +4,8 @@
 namespace SilverStripe\SnapshotAdmin;
 
 use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\Control\Director;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\Snapshots\SnapshotPublishable;
@@ -19,7 +21,6 @@ class SnapshotHistoryExtension extends DataExtension
         return (
             $this->owner->hasExtension(Versioned::class) &&
             $this->owner->hasExtension(SnapshotPublishable::class) &&
-            $this->owner->hasMethod('AbsoluteLink') &&
             !$this->owner instanceof SiteTree
         );
     }
