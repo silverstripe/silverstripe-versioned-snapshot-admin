@@ -3,6 +3,7 @@
 
 namespace SilverStripe\SnapshotAdmin;
 
+use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\GraphQL\Scaffolding\Interfaces\ScaffoldingProvider;
 use SilverStripe\GraphQL\Scaffolding\Scaffolders\SchemaScaffolder;
@@ -19,7 +20,10 @@ class SnapshotScaffoldingProvider implements ScaffoldingProvider
     {
         $scaffolder->type(Member::class)
             ->addFields(['FirstName','Surname']);
-        
+        if (class_exists(SiteTree::class)) {
+            $scaffolder->type(SiteTree::class)
+                ->addField('ClassName');
+        }
         foreach (ClassInfo::subclassesFor(DataObject::class, false) as $class) {
             /* @var DataObject|SnapshotHistoryExtension $inst */
             $inst = $class::singleton();
@@ -29,7 +33,8 @@ class SnapshotScaffoldingProvider implements ScaffoldingProvider
             if (!$inst->isSnapshotable()) {
                 continue;
             }
-            $fields = ['ID'];
+
+            $fields = ['ID', 'ClassName'];
             if ($inst->hasMethod('AbsoluteLink')) {
                 $fields[] = 'AbsoluteLink';
             }

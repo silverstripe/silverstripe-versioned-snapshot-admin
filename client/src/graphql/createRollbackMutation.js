@@ -9,6 +9,7 @@ const createRollbakMutation = typeName => {
       ToVersion: $toVersion
     ) {
       ID
+      ClassName
     }
   }
   `;

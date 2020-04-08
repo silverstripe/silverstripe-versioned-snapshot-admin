@@ -29,7 +29,7 @@ const createSnapshotsQuery = (typeName, isPreviewable) => {
                 }
                 OriginVersion {
                   Version
-                  ${isPreviewable ? AbsoluteLink : ''}
+                  ${isPreviewable ? 'AbsoluteLink' : ''}
                   Author {
                     FirstName
                     Surname
