@@ -23,9 +23,11 @@ class HistoryViewerVersionState extends Component {
    */
   getPublishedState() {
     const { version } = this.props;
-
-    if (version.Published) {
+    if (version.ActivityType === 'PUBLISHED') {
       return i18n._t('HistoryViewer.Published', 'Published');
+    }
+    if (version.ActivityType === 'UNPUBLISHED') {
+      return i18n._t('HistoryViewer.Unpublished', 'Unpublished');
     }
     return i18n._t('HistoryViewer.Saved', 'Saved');
   }
