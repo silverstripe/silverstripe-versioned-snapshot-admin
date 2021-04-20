@@ -14,12 +14,10 @@ jQuery.entwine('ss', ($) => {
       const context = (cmsContent)
         ? { context: cmsContent }
         : {};
-
       const HistoryViewerComponent = loadComponent('SnapshotViewerContainer', context);
       const schemaData = this.data('schema');
-
       const props = {
-        ...schemaData.data,
+        data: schemaData.data,
         // If the HistoryViewerField is instantiated via a GridFieldDetailForm, it will not
         // have this class attached (see CMSPageHistoryViewerController).
         isInGridField: schemaData.data.isInGridField || !this.hasClass('history-viewer--standalone'),

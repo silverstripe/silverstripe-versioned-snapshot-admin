@@ -5,17 +5,19 @@ import { inject } from 'lib/Injector';
 import createSnapshotsQuery from '../../graphql/createSnapshotsQuery';
 
 const SnapshotViewerContainer = ({
+  data: {
     typeName,
-    recordId, 
+    recordId,
     limit,
     page,
     recordClass,
     isPreviewable,
-    actions = { versions: {} },
-    SnapshotViewerComponent,
+    actions = {versions: {}},
+  },
+  SnapshotViewerComponent,
 }) => {
     const QUERY = useMemo(() => createSnapshotsQuery(typeName, isPreviewable), [typeName, isPreviewable]);
-    
+
     const variables = {
         limit,
         offset: ((page || 1) - 1) * limit,
@@ -25,15 +27,15 @@ const SnapshotViewerContainer = ({
     <Query query={QUERY} variables={variables} fetchPolicy='network-only'>
             {({ loading, error, data, refetch }) => {
                 let readOne = null;
-                if (data) {      
+                if (data) {
                   readOne = data[`readOne${typeName}`];
                 }
-                const versions = readOne || [];
-                
+                const versions = readOne || {};
+
                 const errors = error && error.graphQLErrors &&
                 error.graphQLErrors.map((graphQLError) => graphQLError.message);
-                  
-                const props = { 
+
+                const props = {
                     loading: loading,
                     versions,
                     graphQLErrors: errors,
@@ -50,27 +52,29 @@ const SnapshotViewerContainer = ({
                             }
                         },
                     },
-                    recordId, 
+                    recordId,
                     recordClass,
                     typeName,
                     limit,
                     page,
                 };
-  
+
                 return (
                     <SnapshotViewerComponent {...props} />
                 );
             }}
     </Query>
     );
-};  
+};
 
 SnapshotViewerContainer.propTypes = {
+  data: PropTypes.shape({
     typeName: PropTypes.string.isRequired,
     recordId: PropTypes.number.isRequired,
     limit: PropTypes.number,
     page: PropTypes.number,
     actions: PropTypes.object,
+  }),
 };
 
 export default inject(
