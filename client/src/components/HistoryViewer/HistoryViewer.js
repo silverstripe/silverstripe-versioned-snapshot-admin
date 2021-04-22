@@ -82,6 +82,10 @@ class HistoryViewer extends Component {
       return {
         ...node,
         ...node.OriginVersion,
+        // Snapshots author is authoritative
+        Author: {
+          ...node.Author
+        },
         AbsoluteLink: (node.IsFullVersion && node.OriginVersion)
           ? node.OriginVersion.AbsoluteLink
           : versions.AbsoluteLink,

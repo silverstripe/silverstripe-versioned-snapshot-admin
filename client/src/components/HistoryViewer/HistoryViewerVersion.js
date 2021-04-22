@@ -27,22 +27,14 @@ class HistoryViewerVersion extends Component {
   }
 
   /**
-   * Returns the name of the Member who either published the object or last edited it, depending
-   * on whether the object is published or not
+   * Snapshots tracks its own authors, so no need to rely on the published version
    *
    * @returns {string}
    */
   getAuthor() {
-    const { version } = this.props;
-    let member = {};
+    const { version: { Author } } = this.props;
 
-    if (version.Published && version.Publisher) {
-      member = version.Publisher;
-    } else if (version.Author) {
-      member = version.Author;
-    }
-
-    return `${member.FirstName || ''} ${member.Surname || ''}`;
+    return `${Author.FirstName || ''} ${Author.Surname || ''}`;
   }
 
   /**
