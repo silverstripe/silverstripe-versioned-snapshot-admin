@@ -1,6 +1,6 @@
 ## SilverStripe Versioned Snapshot Admin
 
-[![Build Status](https://api.travis-ci.org/silverstripe/silverstripe-versioned-snapshot-admin.svg?branch=master)](https://travis-ci.org/silverstripe/silverstripe-versioned-snapshot-admin)
+[![Build Status](https://api.travis-ci.com/silverstripe/silverstripe-versioned-snapshot-admin.svg?branch=master)](https://travis-ci.com/silverstripe/silverstripe-versioned-snapshot-admin)
 [![Latest Stable Version](https://poser.pugx.org/silverstripe/versioned/version.svg)](http://www.silverstripe.org/stable-download/)
 [![Latest Unstable Version](https://poser.pugx.org/silverstripe/versioned-snapshot-admin/v/unstable.svg)](https://packagist.org/packages/silverstripe/versioned-snapshot-admin)
 [![Total Downloads](https://poser.pugx.org/silverstripe/versioned-snapshot-admin/downloads.svg)](https://packagist.org/packages/silverstripe/versioned-snapshot-admin)
