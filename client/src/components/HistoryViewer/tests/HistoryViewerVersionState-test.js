@@ -21,7 +21,7 @@ describe('HistoryViewerVersionState', () => {
   describe('getPublishedState', () => {
     it('returns the correct state', () => {
       const mockVersion = {
-        Published: true
+        published: true
       };
 
       component = ReactTestUtils
@@ -41,7 +41,7 @@ describe('HistoryViewerVersionState', () => {
   describe('getDate', () => {
     it('returns a formatted date', () => {
       const mockVersion = {
-        LastEdited: '2018-05-03 17:12:00'
+        lastEdited: '2018-05-03 17:12:00'
       };
       component = ReactTestUtils
         .renderIntoDocument(<HistoryViewerVersionState version={mockVersion} />);
@@ -54,7 +54,7 @@ describe('HistoryViewerVersionState', () => {
   describe('getBadges', () => {
     it('returns a Badge when the version is live', () => {
       const mockVersion = {
-        LiveVersion: true
+        liveVersion: true
       };
       component = ReactTestUtils
         .renderIntoDocument(<HistoryViewerVersionState version={mockVersion} />);
