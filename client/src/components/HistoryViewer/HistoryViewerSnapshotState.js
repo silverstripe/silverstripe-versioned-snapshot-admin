@@ -1,5 +1,6 @@
 import { Component as VersionedState } from './HistoryViewerVersionState';
 import { inject } from 'lib/Injector';
+import React from 'react';
 
 class HistoryViewerSnapshotState extends VersionedState {
   translateType(type) {
@@ -30,6 +31,7 @@ class HistoryViewerSnapshotState extends VersionedState {
     const prefix = this.translateType(activityType);
     const lines = activityDescription.split('\n');
     if (lines.length > 1) {
+      // eslint-disable-next-line react/no-array-index-key
       return lines.map((l, i) => <div key={i}>{l}</div>);
     }
     return `${prefix} ${activityDescription}`;

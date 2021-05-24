@@ -78,8 +78,7 @@ class HistoryViewer extends Component {
     const edges = (versions && versions.snapshotHistory && versions.snapshotHistory.edges)
       ? versions.snapshotHistory.edges
       : [];
-    return edges.map(({ node }) => {
-      return {
+    return edges.map(({ node }) => ({
         ...node,
         ...node.originVersion,
         // Snapshots author is authoritative
@@ -92,8 +91,7 @@ class HistoryViewer extends Component {
         version: node.isFullVersion && node.originVersion
           ? node.originVersion.version
           : node.baseVersion,
-      }
-    });
+      }));
   }
 
   /**
