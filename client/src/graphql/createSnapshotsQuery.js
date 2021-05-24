@@ -1,7 +1,6 @@
 import gql from 'graphql-tag';
 
-const createSnapshotsQuery = (typeName, isPreviewable) => {
-    return gql`
+const createSnapshotsQuery = (typeName, isPreviewable) => gql`
     query ReadSnapshots${typeName} ($page_id: ID!, $limit: Int!, $offset: Int!) {
         readOne${typeName}(
           id: $page_id
@@ -49,6 +48,5 @@ const createSnapshotsQuery = (typeName, isPreviewable) => {
       }
 
     `;
-};
 
 export default createSnapshotsQuery;
