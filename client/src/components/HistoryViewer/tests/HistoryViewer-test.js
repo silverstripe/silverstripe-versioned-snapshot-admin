@@ -79,7 +79,7 @@ describe('HistoryViewer', () => {
   });
 
   describe('getLatestVersion()', () => {
-    it('returns the version marked as LatestDraftVersion', () => {
+    it('returns the version marked as latestDraftVersion', () => {
       const wrapper = shallow(<HistoryViewer
         ListComponent={ListComponent}
         VersionDetailComponent={VersionDetailComponent}

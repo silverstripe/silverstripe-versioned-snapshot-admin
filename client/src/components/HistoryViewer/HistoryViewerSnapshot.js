@@ -58,7 +58,7 @@ class HistoryViewerSnapshot extends Component {
 
   render() {
     const { version, StateComponent, FormActionComponent, isComparing, isActive } = this.props;
-    const { Author: { firstName, surname } } = version;
+    const { author: { firstName, surname } } = version;
     const author = `${firstName || ''} ${surname || ''}`;
     const rowTitle = i18n._t('HistoryViewerSnapshot.GO_TO_SNAPSHOT', 'Go to snapshot at {date}');
 
@@ -73,7 +73,7 @@ class HistoryViewerSnapshot extends Component {
           tabIndex={isComparing ? -1 : 0}
         >
           <span className="history-viewer__message" role="cell">
-            <span>{version.ActivityAgo}</span>
+            <span>{version.activityAgo}</span>
             {' '}
             <small className="text-muted">{getDateFromVersion(version)}</small>
           </span>

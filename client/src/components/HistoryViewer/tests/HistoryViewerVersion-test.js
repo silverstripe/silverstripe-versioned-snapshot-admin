@@ -23,16 +23,16 @@ describe('HistoryViewerVersion', () => {
     mockOnSelect = jest.fn();
 
     version = {
-      Author: {
+      author: {
         firstName: 'John',
         surname: 'Smith',
       },
-      Published: false,
+      published: false,
       publisher: {
         firstName: 'Sarah',
         surname: 'Smith',
       },
-      Version: 3,
+      version: 3,
     };
   });
 
@@ -65,7 +65,7 @@ describe('HistoryViewerVersion', () => {
       const wrapper = shallow(<HistoryViewerVersion
         version={{
             ...version,
-            Published: true
+            published: true
           }}
         StateComponent={StateComponent}
         FormActionComponent={FormActionComponent}
@@ -106,8 +106,8 @@ describe('HistoryViewerVersion', () => {
 
     it('renders version details when version clicked', () => {
       const compare = {
-        versionFrom: { Version: 0 },
-        versionTo: { Version: 0 },
+        versionFrom: { version: 0 },
+        versionTo: { version: 0 },
       };
 
       const wrapper = shallow(<HistoryViewerVersion
@@ -132,8 +132,8 @@ describe('HistoryViewerVersion', () => {
         onSelect={mockOnSelect}
         onCompareSelect={mockOnCompareSelect}
         compare={{
-            versionFrom: { Version: 0 },
-            versionTo: { Version: 0 },
+            versionFrom: { version: 0 },
+            versionTo: { version: 0 },
           }}
       />);
 
@@ -193,8 +193,8 @@ describe('HistoryViewerVersion', () => {
         onCompareSelect={mockOnCompareSelect}
         isActive
         compare={{
-            versionFrom: { Version: 0 },
-            versionTo: { Version: 0 },
+            versionFrom: { version: 0 },
+            versionTo: { version: 0 },
           }}
       />);
 

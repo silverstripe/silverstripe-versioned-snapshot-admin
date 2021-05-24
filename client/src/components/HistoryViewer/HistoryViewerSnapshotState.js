@@ -25,14 +25,14 @@ class HistoryViewerSnapshotState extends VersionedState {
   }
 
   getPublishedState() {
-    const { ActivityDescription, ActivityType } = this.props.version;
+    const { activityDescription, activityType } = this.props.version;
 
-    const prefix = this.translateType(ActivityType);
-    const lines = ActivityDescription.split('\n');
+    const prefix = this.translateType(activityType);
+    const lines = activityDescription.split('\n');
     if (lines.length > 1) {
       return lines.map((l, i) => <div key={i}>{l}</div>);
     }
-    return `${prefix} ${ActivityDescription}`;
+    return `${prefix} ${activityDescription}`;
   }
 
   getBadges() {
