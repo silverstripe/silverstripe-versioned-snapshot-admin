@@ -86,5 +86,5 @@ export { HistoryViewerVersionState as Component };
 export default inject(
   ['Badge'],
   (BadgeComponent) => ({ BadgeComponent }),
-  ({ version }) => `HistoryViewer.HistoryViewerVersionState.${version.Version}`
+  ({ version }) => `HistoryViewer.HistoryViewerVersionState.${version.version}`
 )(HistoryViewerVersionState);

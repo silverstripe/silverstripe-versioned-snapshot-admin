@@ -32,9 +32,9 @@ class HistoryViewerVersion extends Component {
    * @returns {string}
    */
   getAuthor() {
-    const { version: { Author } } = this.props;
+    const { version: { author } } = this.props;
 
-    return `${Author.firstName || ''} ${Author.surname || ''}`;
+    return `${author.firstName || ''} ${author.surname || ''}`;
   }
 
   /**
@@ -88,7 +88,7 @@ class HistoryViewerVersion extends Component {
    */
   handleClose() {
     const { onSelect, version, compare, compare: { versionFrom } } = this.props;
-    if (versionFrom && versionFrom.Version === version.Version) {
+    if (versionFrom && versionFrom.version === version.version) {
       // Ensures we set the correct thing. C.f. logic in mapDispatchToProps -> onSelect
       delete compare.versionFrom;
     }
@@ -204,7 +204,7 @@ class HistoryViewerVersion extends Component {
         <span
           className="history-viewer__version-link"
           role="button"
-          title={i18n.inject(rowTitle, { version: version.Version })}
+          title={i18n.inject(rowTitle, { version: version.version })}
           onClick={this.handleClick}
           onKeyUp={this.handleKeyUp}
           tabIndex={0}
@@ -283,7 +283,7 @@ export default compose(
     ({ version }) => {
       let context = 'VersionedAdmin.HistoryViewer.HistoryViewerVersion';
       if (version) {
-        context += `.${version.Version}`;
+        context += `.${version.version}`;
       }
       return context;
     }
