@@ -5,11 +5,11 @@ const createRollbakMutation = typeName => {
   return gql`
   mutation rollback${typeName}($id:ID!, $toVersion:Int!) {
     rollback${typeName}(
-      ID: $id
-      ToVersion: $toVersion
+      id: $id
+      toVersion: $toVersion
     ) {
-      ID
-      ClassName
+      id
+      className
     }
   }
   `;

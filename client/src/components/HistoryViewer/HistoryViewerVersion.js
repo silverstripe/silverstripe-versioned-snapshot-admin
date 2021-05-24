@@ -34,7 +34,7 @@ class HistoryViewerVersion extends Component {
   getAuthor() {
     const { version: { Author } } = this.props;
 
-    return `${Author.FirstName || ''} ${Author.Surname || ''}`;
+    return `${Author.firstName || ''} ${Author.surname || ''}`;
   }
 
   /**

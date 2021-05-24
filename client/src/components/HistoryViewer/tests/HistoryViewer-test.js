@@ -23,39 +23,39 @@ describe('HistoryViewer', () => {
   });
 
   const versions = {
-    SnapshotHistory: {
+    snapshotHistory: {
       pageInfo: {
         totalCount: 2
       },
       edges: [
         {
           node: {
-            BaseVersion: 14,
-            Author: {
-              FirstName: 'Michelle',
-              Surname: 'Masters'
+            baseVersion: 14,
+            author: {
+              firstName: 'Michelle',
+              surname: 'Masters'
             },
-            Publisher: null,
-            Published: false,
-            LatestDraftVersion: false,
-            LiveVersion: false,
-            LastEdited: '2018-03-08 11:57:58',
-            IsFullVersion: false,
+            publisher: null,
+            published: false,
+            latestDraftVersion: false,
+            liveVersion: false,
+            lastEdited: '2018-03-08 11:57:58',
+            isFullVersion: false,
           }
         },
         {
           node: {
-            BaseVersion: 13,
-            Author: {
-              FirstName: 'Scott',
-              Surname: 'Stockman'
+            baseVersion: 13,
+            author: {
+              firstName: 'Scott',
+              surname: 'Stockman'
             },
-            Publisher: null,
-            Published: false,
-            LatestDraftVersion: true,
-            LiveVersion: false,
-            LastEdited: '2018-03-08 11:57:56',
-            IsFullVersion: false,
+            publisher: null,
+            published: false,
+            latestDraftVersion: true,
+            liveVersion: false,
+            lastEdited: '2018-03-08 11:57:56',
+            isFullVersion: false,
           }
         },
       ],
@@ -74,7 +74,7 @@ describe('HistoryViewer', () => {
         compare={false}
       />);
 
-      expect(wrapper.instance().getVersions().map((version) => version.Version)).toEqual([14, 13]);
+      expect(wrapper.instance().getVersions().map((version) => version.version)).toEqual([14, 13]);
     });
   });
 
@@ -91,7 +91,7 @@ describe('HistoryViewer', () => {
         compare={false}
       />);
 
-      expect(wrapper.instance().getLatestVersion().Version).toEqual(13);
+      expect(wrapper.instance().getLatestVersion().version).toEqual(13);
     });
 
     it('gives priority to the currentVersion', () => {
@@ -105,12 +105,12 @@ describe('HistoryViewer', () => {
         page={1}
         compare={false}
         currentVersion={{
-            Version: 123,
-            LatestDraftVersion: true
+            version: 123,
+            latestDraftVersion: true
           }}
       />);
 
-      expect(wrapper.instance().getLatestVersion().Version).toEqual(123);
+      expect(wrapper.instance().getLatestVersion().version).toEqual(123);
     });
   });
 

@@ -24,13 +24,13 @@ describe('HistoryViewerVersion', () => {
 
     version = {
       Author: {
-        FirstName: 'John',
-        Surname: 'Smith',
+        firstName: 'John',
+        surname: 'Smith',
       },
       Published: false,
-      Publisher: {
-        FirstName: 'Sarah',
-        Surname: 'Smith',
+      publisher: {
+        firstName: 'Sarah',
+        surname: 'Smith',
       },
       Version: 3,
     };

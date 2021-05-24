@@ -75,23 +75,23 @@ class HistoryViewer extends Component {
    */
   getVersions() {
     const { versions } = this.props;
-    const edges = (versions && versions.SnapshotHistory && versions.SnapshotHistory.edges)
-      ? versions.SnapshotHistory.edges
+    const edges = (versions && versions.snapshotHistory && versions.snapshotHistory.edges)
+      ? versions.snapshotHistory.edges
       : [];
     return edges.map(({ node }) => {
       return {
         ...node,
-        ...node.OriginVersion,
+        ...node.originVersion,
         // Snapshots author is authoritative
-        Author: {
-          ...node.Author
+        author: {
+          ...node.author
         },
-        AbsoluteLink: (node.IsFullVersion && node.OriginVersion)
-          ? node.OriginVersion.AbsoluteLink
-          : versions.AbsoluteLink,
-        Version: node.IsFullVersion && node.OriginVersion
-          ? node.OriginVersion.Version
-          : node.BaseVersion,
+        absoluteLink: (node.isFullVersion && node.originVersion)
+          ? node.originVersion.absoluteLink
+          : versions.absoluteLink,
+        version: node.isFullVersion && node.originVersion
+          ? node.originVersion.version
+          : node.baseVersion,
       }
     });
   }
@@ -120,13 +120,13 @@ class HistoryViewer extends Component {
     const { currentVersion } = this.props;
 
     // Check whether the "current version" (in the store) is the latest draft
-    if (currentVersion && currentVersion.LatestDraftVersion === true) {
+    if (currentVersion && currentVersion.latestDraftVersion === true) {
       return currentVersion;
     }
 
     // Look for one in the list of available versions
     const latestDraftVersion = this.getVersions()
-      .filter(version => version.LatestDraftVersion === true);
+      .filter(version => version.latestDraftVersion === true);
 
     if (latestDraftVersion.length) {
       return latestDraftVersion[0];
@@ -236,13 +236,13 @@ class HistoryViewer extends Component {
 
     // Currently previewMode === MODE_VERSION is disabled as it displays incorrect relations.
 
-    schemaVersionReplacements[':date'] = currentVersion.LastEdited;
+    schemaVersionReplacements[':date'] = currentVersion.lastEdited;
 
     const schemaCompareReplacements = {
       ':id': recordId,
       ':class': recordClass,
-      ':from': versionFrom.Version || 0,
-      ':to': versionTo.Version || 0,
+      ':from': versionFrom.version || 0,
+      ':to': versionTo.version || 0,
     };
     const schemaSearch = compare ? /:id|:class|:from|:to/g : /:id|:class|:version|:date/g;
     const schemaReplacements = compare ? schemaCompareReplacements : schemaVersionReplacements;
@@ -251,7 +251,7 @@ class HistoryViewer extends Component {
     const latestVersion = this.getLatestVersion();
     const props = {
       // comparison shows two versions as one, so by nature cannot be a single 'latest' version.
-      isLatestVersion: !compare && latestVersion && latestVersion.Version === version.Version,
+      isLatestVersion: !compare && latestVersion && latestVersion.version === version.version,
       isPreviewable,
       recordId,
       typeName,
@@ -419,7 +419,7 @@ HistoryViewer.propTypes = {
   VersionDetailComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
   CompareWarningComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
   versions: PropTypes.shape({
-    Versions: PropTypes.shape({
+    versions: PropTypes.shape({
       pageInfo: PropTypes.shape({
         totalCount: PropTypes.number,
       }),
@@ -448,7 +448,7 @@ HistoryViewer.defaultProps = {
   typeName: '',
   schemaUrl: '',
   versions: {
-    Versions: {
+    versions: {
       pageInfo: {
         totalCount: 0,
       },
