@@ -3,8 +3,10 @@
 
 namespace SilverStripe\SnapshotAdmin;
 
+use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\GraphQL\Manager;
 use SilverStripe\GraphQL\Scaffolding\StaticSchema;
+use SilverStripe\GraphQL\Schema\SchemaBuilder;
 use SilverStripe\VersionedAdmin\Forms\HistoryViewerField;
 use SilverStripe\View\Requirements;
 
@@ -32,18 +34,16 @@ class SnapshotViewerField extends HistoryViewerField
 
     public function getSchemaDataDefaults()
     {
-        // Holy hack! setTypeNames() only gets applied when the Manager is bootstrapped,
-        // in a /graphql call, so it's not available in the context of a form schema API call.
-        $schemaConfig = Manager::config()->get('schemas');
-        $typeNames = $schemaConfig['admin']['typeNames'] ?? [];
-        StaticSchema::inst()->setTypeNames($typeNames);
-
         $data = parent::getSchemaDataDefaults();
         $record = $this->getSourceRecord();
-        $data['data'] = array_merge($data['data'], [
-            'typeName' => StaticSchema::inst()->typeNameForDataObject($record->baseClass()),
-        ]);
 
+        // GraphQL doesn't have any API for "hide ancestor", which we should support at some point
+        // to avoid things like readSiteTree. "Page" is exposed by default
+        $baseClass = $record->baseClass() === SiteTree::class ? 'Page' : $record->baseClass();
+        $config = SchemaBuilder::singleton()->getConfig('admin');
+        $data['data'] = array_merge($data['data'], [
+            'typeName' => $config->getTypeNameForClass($baseClass),
+        ]);
         return $data;
     }
 }

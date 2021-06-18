@@ -23,10 +23,10 @@ class HistoryViewerVersionState extends Component {
    */
   getPublishedState() {
     const { version } = this.props;
-    if (version.ActivityType === 'PUBLISHED') {
+    if (version.activityType === 'PUBLISHED') {
       return i18n._t('HistoryViewer.Published', 'Published');
     }
-    if (version.ActivityType === 'UNPUBLISHED') {
+    if (version.activityType === 'UNPUBLISHED') {
       return i18n._t('HistoryViewer.Unpublished', 'Unpublished');
     }
     return i18n._t('HistoryViewer.Saved', 'Saved');
@@ -41,7 +41,7 @@ class HistoryViewerVersionState extends Component {
   getBadges() {
     const { version, isActive, BadgeComponent } = this.props;
 
-    if (version.IsLiveSnapshot) {
+    if (version.isLiveSnapshot) {
       return (
         <BadgeComponent
           status="success"

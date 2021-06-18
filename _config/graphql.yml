@@ -1,0 +1,25 @@
+---
+Name: versioned-snapshot-admin-graphql
+---
+SilverStripe\GraphQL\Schema\Schema:
+  schemas:
+    admin:
+      src:
+        - 'silverstripe/versioned-snapshot-admin: _graphql'
+SilverStripe\Core\Injector\Injector:
+  SilverStripe\GraphQL\Schema\Registry\PluginRegistry:
+    constructor:
+      - 'SilverStripe\SnapshotAdmin\SnapshotHistoryPlugin'
+
+---
+Name: versioned-snapshot-admin-sitetree
+Only:
+  moduleexists: silverstripe/cms
+---
+SilverStripe\GraphQL\Schema\Schema:
+  schemas:
+    admin:
+      models:
+        SilverStripe\CMS\Model\SiteTree:
+          fields:
+            className: true

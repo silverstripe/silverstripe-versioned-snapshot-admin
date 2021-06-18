@@ -198,7 +198,7 @@ class HistoryViewerVersionDetail extends PureComponent {
 
           <div className={classnames(formClasses)}>
             <FormBuilderLoader
-              identifier={`HistoryViewer.versionDetail.${version.ID}`}
+              identifier={`HistoryViewer.versionDetail.${version.id}`}
               schemaUrl={schemaUrl}
               refetchSchemaOnMount={false}
             />

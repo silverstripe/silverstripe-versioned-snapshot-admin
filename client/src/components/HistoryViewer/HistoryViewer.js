@@ -75,10 +75,10 @@ class HistoryViewer extends Component {
    */
   getVersions() {
     const { versions } = this.props;
-    const edges = (versions && versions.snapshotHistory && versions.snapshotHistory.edges)
-      ? versions.snapshotHistory.edges
+    const nodes = (versions && versions.snapshotHistory && versions.snapshotHistory.nodes)
+      ? versions.snapshotHistory.nodes
       : [];
-    return edges.map(({ node }) => ({
+    return nodes.map(node => ({
         ...node,
         ...node.originVersion,
         // Snapshots author is authoritative
@@ -286,8 +286,8 @@ class HistoryViewer extends Component {
       return null;
     }
 
-    const totalVersions = versions.SnapshotHistory
-      ? versions.SnapshotHistory.pageInfo.totalCount
+    const totalVersions = versions.snapshotHistory
+      ? versions.snapshotHistory.pageInfo.totalCount
       : 0;
 
     if (totalVersions <= limit) {

@@ -44,9 +44,9 @@ class HistoryViewerVersionList extends PureComponent {
    */
   isVersionActive(version) {
       const { currentVersion, compare, compare: { versionFrom, versionTo } } = this.props;
-      const isCurrent = currentVersion && currentVersion.ID === version.ID;
-      const isCompareFrom = versionFrom && versionFrom.ID === version.ID;
-      const isCompareTo = versionTo && versionTo.ID === version.ID;
+      const isCurrent = currentVersion && currentVersion.id === version.id;
+      const isCompareFrom = versionFrom && versionFrom.id === version.id;
+      const isCompareTo = versionTo && versionTo.id === version.id;
 
       return (!compare && isCurrent) || isCompareFrom || isCompareTo;
   }
@@ -113,7 +113,7 @@ class HistoryViewerVersionList extends PureComponent {
             versions.map((version, index) => (
               version.isFullVersion ?
                 <VersionComponent
-                  key={`${version.ID}--${version.lastEdited}`}
+                  key={`${version.id}--${version.lastEdited}`}
                   isActive={this.isVersionActive(version)}
                   version={version}
                   compare={compare}
@@ -121,7 +121,7 @@ class HistoryViewerVersionList extends PureComponent {
                 /> :
                 <SnapshotComponent
                   isComparing={!!compare}
-                  key={`${version.ID}--${version.lastEdited}`}
+                  key={`${version.id}--${version.lastEdited}`}
                   isActive={this.isVersionActive(version)}
                   version={version}
                   initial={index < 1}
