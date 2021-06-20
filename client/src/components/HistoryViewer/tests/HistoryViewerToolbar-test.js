@@ -25,6 +25,7 @@ describe('HistoryViewerToolbar', () => {
         ViewModeComponent={ViewModeComponent}
         recordId={123}
         versionId={234}
+        typeName="MockType"
       />);
 
       return component.handleRevert()

@@ -38,7 +38,7 @@ describe('HistoryViewerReducer', () => {
         },
       });
 
-      expect(result.currentVersion.Version).toBe(23);
+      expect(result.currentVersion.version).toBe(23);
     });
   });
 
@@ -145,7 +145,7 @@ describe('HistoryViewerReducer', () => {
         },
       });
 
-      expect(result.compare.versionFrom.Version).toBe(47);
+      expect(result.compare.versionFrom.version).toBe(47);
     });
 
     it('uses versionTo for versionFrom when version is zero', () => {
@@ -166,7 +166,7 @@ describe('HistoryViewerReducer', () => {
         payload: {}
       });
 
-      expect(result.compare.versionFrom.Version).toBe(80);
+      expect(result.compare.versionFrom.version).toBe(80);
       expect(result.compare.versionTo).toBe(false);
     });
 
@@ -187,7 +187,7 @@ describe('HistoryViewerReducer', () => {
         },
       });
 
-      expect(result.currentVersion.Version).toBe(60);
+      expect(result.currentVersion.version).toBe(60);
     });
   });
 
@@ -200,7 +200,7 @@ describe('HistoryViewerReducer', () => {
         },
       });
 
-      expect(result.compare.versionTo.Version).toBe(85);
+      expect(result.compare.versionTo.version).toBe(85);
     });
 
     it('flips the versions if a lower version "to" is selected', () => {
@@ -225,8 +225,8 @@ describe('HistoryViewerReducer', () => {
         },
       });
 
-      expect(result.compare.versionFrom.Version).toBe(25);
-      expect(result.compare.versionTo.Version).toBe(50);
+      expect(result.compare.versionFrom.version).toBe(25);
+      expect(result.compare.versionTo.version).toBe(50);
     });
   });
 
@@ -247,6 +247,6 @@ describe('HistoryViewerReducer', () => {
       },
     });
 
-    expect(result.currentVersion.Version).toBe(60);
+    expect(result.currentVersion.version).toBe(60);
   });
 });

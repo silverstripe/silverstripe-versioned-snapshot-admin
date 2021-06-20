@@ -9,7 +9,7 @@ import moment from 'moment';
  */
 const getDateFromVersion = version => {
   moment.locale(i18n.detectLocale());
-  return moment(version.LastEdited).format('L LT');
+  return moment(version.lastEdited).format('L LT');
 };
 
 export default getDateFromVersion;

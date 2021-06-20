@@ -108,8 +108,8 @@ export default function historyViewerReducer(state = initialState, { type, paylo
 
       // A normal `diff` always shows what it takes turn FROM into TO
       // Here, comparisons are always FROM oldest TO newest version
-      // Version IDs (versionObject.Version) are always positive & in creation order.
-      if (versionTo && versionFrom && versionTo.Version < versionFrom.Version) {
+      // Version IDs (versionObject.version) are always positive & in creation order.
+      if (versionTo && versionFrom && versionTo.version < versionFrom.version) {
         versionFrom = versionTo;
         versionTo = state.compare.versionFrom;
       }

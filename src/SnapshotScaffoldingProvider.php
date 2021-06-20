@@ -19,10 +19,10 @@ class SnapshotScaffoldingProvider implements ScaffoldingProvider
     public function provideGraphQLScaffolding(SchemaScaffolder $scaffolder)
     {
         $scaffolder->type(Member::class)
-            ->addFields(['FirstName','Surname']);
+            ->addFields(['firstName','surname']);
         if (class_exists(SiteTree::class)) {
             $scaffolder->type(SiteTree::class)
-                ->addField('ClassName');
+                ->addField('className');
         }
         foreach (ClassInfo::subclassesFor(DataObject::class, false) as $class) {
             /* @var DataObject|SnapshotHistoryExtension $inst */
@@ -34,9 +34,9 @@ class SnapshotScaffoldingProvider implements ScaffoldingProvider
                 continue;
             }
 
-            $fields = ['ID', 'ClassName'];
-            if ($inst->hasMethod('AbsoluteLink')) {
-                $fields[] = 'AbsoluteLink';
+            $fields = ['id', 'className'];
+            if ($inst->hasMethod('absoluteLink')) {
+                $fields[] = 'absoluteLink';
             }
             $scaffolder->type($inst->baseClass())
                 ->addFields($fields)

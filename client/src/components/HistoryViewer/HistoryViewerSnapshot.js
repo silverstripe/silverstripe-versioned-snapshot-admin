@@ -58,8 +58,8 @@ class HistoryViewerSnapshot extends Component {
 
   render() {
     const { version, StateComponent, FormActionComponent, isComparing, isActive } = this.props;
-    const { Author: { FirstName, Surname } } = version;
-    const author = `${FirstName || ''} ${Surname || ''}`;
+    const { author: { firstName, surname } } = version;
+    const author = `${firstName || ''} ${surname || ''}`;
     const rowTitle = i18n._t('HistoryViewerSnapshot.GO_TO_SNAPSHOT', 'Go to snapshot at {date}');
 
     return (
@@ -67,13 +67,13 @@ class HistoryViewerSnapshot extends Component {
         <span
           className="history-viewer__version-link"
           role="button"
-          title={i18n.inject(rowTitle, { date: version.LastEdited })}
+          title={i18n.inject(rowTitle, { date: version.lastEdited })}
           onClick={this.handleClick}
           onKeyUp={this.handleKeyUp}
           tabIndex={isComparing ? -1 : 0}
         >
           <span className="history-viewer__message" role="cell">
-            <span>{version.ActivityAgo}</span>
+            <span>{version.activityAgo}</span>
             {' '}
             <small className="text-muted">{getDateFromVersion(version)}</small>
           </span>
@@ -116,7 +116,7 @@ HistoryViewerSnapshot.propTypes = {
 function mapDispatchToProps(dispatch) {
   return {
     onSelect(selectedVersion) {
-      const func = selectedVersion.IsFullVersion ? showVersion : showDate;
+      const func = selectedVersion.isFullVersion ? showVersion : showDate;
       dispatch(func(selectedVersion));
       dispatch(clearMessages());
     }

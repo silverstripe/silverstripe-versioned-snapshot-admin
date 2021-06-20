@@ -1,46 +1,45 @@
 import gql from 'graphql-tag';
 
-const createSnapshotsQuery = (typeName, isPreviewable) => {
-    return gql`
+const createSnapshotsQuery = (typeName, isPreviewable) => gql`
     query ReadSnapshots${typeName} ($page_id: ID!, $limit: Int!, $offset: Int!) {
         readOne${typeName}(
-          ID: $page_id
+          id: $page_id
         ) {
-          ID
-          ${isPreviewable ? 'AbsoluteLink' : ''}
-          SnapshotHistory (limit: $limit, offset: $offset) {
+          id
+          ${isPreviewable ? 'absoluteLink' : ''}
+          snapshotHistory (limit: $limit, offset: $offset) {
             pageInfo {
               totalCount
             }
             edges {
               node {
-                ID
-                LastEdited
-                ActivityDescription
-                ActivityType
-                ActivityAgo
-                IsFullVersion
-                IsLiveSnapshot
-                BaseVersion
-                Message
-                Author {
-                  FirstName
-                  Surname
+                id
+                lastEdited
+                activityDescription
+                activityType
+                activityAgo
+                isFullVersion
+                isLiveSnapshot
+                baseVersion
+                message
+                author {
+                  firstName
+                  surname
                 }
-                OriginVersion {
-                  Version
-                  ${isPreviewable ? 'AbsoluteLink' : ''}
-                  Author {
-                    FirstName
-                    Surname
+                originVersion {
+                  version
+                  ${isPreviewable ? 'absoluteLink' : ''}
+                  author {
+                    firstName
+                    surname
                   }
 
-                  Published
-                  Publisher {
-                    FirstName
-                    Surname
+                  published
+                  publisher {
+                    firstName
+                    surname
                   }
-                  LatestDraftVersion
+                  latestDraftVersion
                 }
               }
             }
@@ -49,6 +48,5 @@ const createSnapshotsQuery = (typeName, isPreviewable) => {
       }
 
     `;
-};
 
 export default createSnapshotsQuery;

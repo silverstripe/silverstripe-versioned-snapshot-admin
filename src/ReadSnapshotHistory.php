@@ -65,7 +65,7 @@ class ReadSnapshotHistory extends ListQueryScaffolder implements OperationResolv
         $objectHash = static::hashObjectForSnapshot($object);
         $listWithAlterations = ArrayList::create();
         foreach ($list as $item) {
-            $item->IsFullVersion = $item->OriginHash === $objectHash &&
+            $item->isFullVersion = $item->OriginHash === $objectHash &&
                 $item->getActivityType() !== ActivityEntry::DELETED;
             $listWithAlterations->push($item);
         }

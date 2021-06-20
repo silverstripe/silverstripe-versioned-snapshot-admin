@@ -108,12 +108,12 @@ class HistoryViewerVersionDetail extends PureComponent {
           itemLinks={{
             preview: {
               Stage: {
-                href: `${version.AbsoluteLink}&archiveDate=${version.LastEdited}`,
+                href: `${version.AbsoluteLink}&archiveDate=${version.lastEdited}`,
                 type: 'text/html',
               },
             },
           }}
-          itemId={version.Version}
+          itemId={version.version}
         />
       </div>
     );
@@ -138,13 +138,13 @@ class HistoryViewerVersionDetail extends PureComponent {
 
     return (
       <ToolbarComponent
-        identifier="HistoryViewer.VersionDetail.Toolbar"
+        identifier="HistoryViewer.versionDetail.Toolbar"
         isLatestVersion={isLatestVersion}
         recordId={recordId}
         typeName={typeName}
-        versionId={version.Version}
+        versionId={version.version}
         isPreviewable={this.isPreviewable()}
-        canRollback={version.IsFullVersion}
+        canRollback={version.isFullVersion}
         rollbackMessage={rollbackMessage}
       />
     );
@@ -198,7 +198,7 @@ class HistoryViewerVersionDetail extends PureComponent {
 
           <div className={classnames(formClasses)}>
             <FormBuilderLoader
-              identifier={`HistoryViewer.VersionDetail.${version.ID}`}
+              identifier={`HistoryViewer.versionDetail.${version.ID}`}
               schemaUrl={schemaUrl}
               refetchSchemaOnMount={false}
             />
@@ -261,5 +261,5 @@ export default inject(
     PreviewComponent,
     CompareWarningComponent,
   }),
-  ({ version }, context) => `${context}.HistoryViewerVersionDetail.${version.Version}`
+  ({ version }, context) => `${context}.HistoryViewerVersionDetail.${version.version}`
 )(HistoryViewerVersionDetail);

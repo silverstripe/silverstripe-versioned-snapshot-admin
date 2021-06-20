@@ -111,9 +111,9 @@ class HistoryViewerVersionList extends PureComponent {
           {this.renderHeader()}
           {
             versions.map((version, index) => (
-              version.IsFullVersion ?
+              version.isFullVersion ?
                 <VersionComponent
-                  key={`${version.ID}--${version.LastEdited}`}
+                  key={`${version.ID}--${version.lastEdited}`}
                   isActive={this.isVersionActive(version)}
                   version={version}
                   compare={compare}
@@ -121,7 +121,7 @@ class HistoryViewerVersionList extends PureComponent {
                 /> :
                 <SnapshotComponent
                   isComparing={!!compare}
-                  key={`${version.ID}--${version.LastEdited}`}
+                  key={`${version.ID}--${version.lastEdited}`}
                   isActive={this.isVersionActive(version)}
                   version={version}
                   initial={index < 1}

@@ -5,10 +5,10 @@ import createRollbackMutation from '../../graphql/createRollbackMutation';
 const RollbackMutation = ({ typeName, children }) => {
     const ROLLBACK = useMemo(() => createRollbackMutation(typeName), [typeName]);
     return (
-        <Mutation mutation={ROLLBACK} refetchQueries={[`ReadSnapshots${typeName}`]}>
-            {children}
-        </Mutation>
-    )
+      <Mutation mutation={ROLLBACK} refetchQueries={[`ReadSnapshots${typeName}`]}>
+        {children}
+      </Mutation>
+    );
 };
 
 export default RollbackMutation;

@@ -42,17 +42,17 @@ class DataObjectScaffolderExtension extends VersionedDataObjectScaffolderExtensi
             'name' => $snapshotName,
             'fields' => function () use ($manager, $versionTypeName, $memberType) {
                 return [
-                    'ID' => Type::id(),
-                    'LastEdited' => Type::string(),
-                    'ActivityDescription' => Type::string(),
-                    'ActivityType' => $this->createActivityEnum(),
-                    'ActivityAgo' => Type::string(),
-                    'OriginVersion' => $manager->getType($versionTypeName),
-                    'Author' => $manager->getType($memberType),
-                    'IsFullVersion' => Type::boolean(),
-                    'IsLiveSnapshot' => Type::boolean(),
-                    'BaseVersion' => Type::int(),
-                    'Message' => Type::string(),
+                    'id' => Type::id(),
+                    'lastEdited' => Type::string(),
+                    'activityDescription' => Type::string(),
+                    'activityType' => $this->createActivityEnum(),
+                    'activityAgo' => Type::string(),
+                    'originVersion' => $manager->getType($versionTypeName),
+                    'author' => $manager->getType($memberType),
+                    'isFullVersion' => Type::boolean(),
+                    'isLiveSnapshot' => Type::boolean(),
+                    'baseVersion' => Type::int(),
+                    'message' => Type::string(),
                 ];
             }
         ]);
