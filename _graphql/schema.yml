@@ -1,0 +1,20 @@
+config:
+  modelConfig:
+    DataObject:
+      plugins:
+        snapshotHistory: true
+models:
+  SilverStripe\Security\Member:
+    fields:
+      firstName: true
+      surname: true
+enums:
+  SnapshotActivityType:
+    values:
+      - ADDED
+      - CREATED
+      - DELETED
+      - MODIFIED
+      - PUBLISHED
+      - UNPUBLISHED
+      - REMOVED

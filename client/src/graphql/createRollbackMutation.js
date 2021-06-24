@@ -1,18 +1,15 @@
-import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
-const createRollbakMutation = typeName => {
-  return gql`
+const createRollbakMutation = typeName => gql`
   mutation rollback${typeName}($id:ID!, $toVersion:Int!) {
     rollback${typeName}(
-      ID: $id
-      ToVersion: $toVersion
+      id: $id
+      toVersion: $toVersion
     ) {
-      ID
-      ClassName
+      id
+      className
     }
   }
   `;
-};
 
 export default createRollbakMutation;

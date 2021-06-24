@@ -26,13 +26,13 @@ class SnapshotPublishableExtension extends DataExtension
         $result = $result->alterDataQuery(function (DataQuery $query) use ($hash, $snapshotTable, $itemTable) {
             $subquery = <<<SQL
                 (
-                  SELECT "Version" FROM "$itemTable" 
+                  SELECT "Version" FROM "$itemTable"
                   WHERE "ObjectHash" = ? AND "$itemTable"."SnapshotID" = "$snapshotTable"."ID"
                 )
 SQL;
             $query->selectField(
                 DB::inline_parameters($subquery, [$hash]),
-                'BaseVersion'
+                'baseVersion'
             );
             return $query;
         });
