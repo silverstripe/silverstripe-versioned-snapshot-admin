@@ -3,6 +3,7 @@ config:
     DataObject:
       plugins:
         snapshotHistory: true
+  execute: [ SilverStripe\SnapshotAdmin\SnapshotHistoryExtension ]
 models:
   SilverStripe\Security\Member:
     fields:
