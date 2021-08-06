@@ -27,7 +27,7 @@ use SilverStripe\Versioned\Versioned;
 use ReflectionException;
 use Exception;
 
-if (!class_exists(SchemaUpdater::class)) {
+if (!interface_exists(SchemaUpdater::class)) {
     return;
 }
 

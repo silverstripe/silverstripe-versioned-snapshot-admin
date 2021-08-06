@@ -9,4 +9,3 @@ SilverStripe\GraphQL\Manager:
     admin:
       scaffolding_providers:
         - SilverStripe\SnapshotAdmin\SnapshotScaffoldingProvider
-
