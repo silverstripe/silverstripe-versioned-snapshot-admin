@@ -27,6 +27,10 @@ use SilverStripe\Versioned\Versioned;
 use ReflectionException;
 use Exception;
 
+if (!class_exists(SchemaUpdater::class)) {
+    return;
+}
+
 class SnapshotHistoryPlugin implements ModelTypePlugin, SchemaUpdater
 {
     const IDENTIFIER = 'snapshotHistory';

@@ -40,9 +40,24 @@ class SnapshotViewerField extends HistoryViewerField
         // GraphQL doesn't have any API for "hide ancestor", which we should support at some point
         // to avoid things like readSiteTree. "Page" is exposed by default
         $baseClass = $record->baseClass() === SiteTree::class ? 'Page' : $record->baseClass();
-        $config = SchemaBuilder::singleton()->getConfig('admin');
+
+        // GraphQL 4
+        if (class_exists(SchemaBuilder::class)) {
+            $config = SchemaBuilder::singleton()->getConfig('admin');
+            $data['data'] = array_merge($data['data'], [
+                'typeName' => $config->getTypeNameForClass($baseClass),
+            ]);
+            return $data;
+        }
+
+        // GraphQL 3
+        $schemaConfig = Manager::config()->get('schemas');
+        $typeNames = $schemaConfig['admin']['typeNames'] ?? [];
+        StaticSchema::inst()->setTypeNames($typeNames);
+
+        $data = parent::getSchemaDataDefaults();
         $data['data'] = array_merge($data['data'], [
-            'typeName' => $config->getTypeNameForClass($baseClass),
+            'typeName' => StaticSchema::inst()->typeNameForDataObject($baseClass),
         ]);
         return $data;
     }

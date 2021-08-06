@@ -1,0 +1,12 @@
+---
+Name: snapshot-admin-legacy
+---
+SilverStripe\GraphQL\Scaffolding\Scaffolders\DataObjectScaffolder:
+  extensions:
+    - SilverStripe\SnapshotAdmin\DataObjectScaffolderExtension
+SilverStripe\GraphQL\Manager:
+  schemas:
+    admin:
+      scaffolding_providers:
+        - SilverStripe\SnapshotAdmin\SnapshotScaffoldingProvider
+
