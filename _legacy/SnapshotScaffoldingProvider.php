@@ -45,6 +45,7 @@ class SnapshotScaffoldingProvider implements ScaffoldingProvider
             $scaffolder->type($inst->baseClass())
                 ->addFields($fields)
                 ->operation(SchemaScaffolder::READ_ONE)
+                    ->addArg('filter', 'IDFilterType!')
                 ->end()
                 ->operation('rollback');
         }
