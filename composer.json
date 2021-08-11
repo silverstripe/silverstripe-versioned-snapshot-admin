@@ -21,7 +21,7 @@
     ],
     "require": {
         "silverstripe/framework": "^4",
-        "silverstripe/graphql": "^4",
+        "silverstripe/graphql": "^4 | >= 3.5.1",
         "silverstripe/versioned-snapshots": "dev-master",
         "silverstripe/versioned-admin": "^1",
         "silverstripe/admin": ">= 1.7",
@@ -34,7 +34,7 @@
     },
     "autoload": {
         "psr-4": {
-            "SilverStripe\\SnapshotAdmin\\": "src/",
+            "SilverStripe\\SnapshotAdmin\\": ["src/", "_legacy/"],
             "SilverStripe\\SnapshotAdmin\\Tests\\": "tests/"
         }
     },
