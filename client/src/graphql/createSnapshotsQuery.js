@@ -42,7 +42,6 @@ const createSnapshotsQuery = (typeName, isPreviewable) => gql`
                     }
                     latestDraftVersion
                   }
-
               }
             }
           }
