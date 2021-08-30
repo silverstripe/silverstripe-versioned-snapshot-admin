@@ -210,7 +210,7 @@ class HistoryViewerVersion extends Component {
           tabIndex={0}
         >
           <span className="history-viewer__message" role="cell">
-            <span>{version.ActivityAgo}</span>
+            <span>{version.activityAgo}</span>
             {' '}
             <small className="text-muted">{getDateFromVersion(version)}</small>
           </span>
