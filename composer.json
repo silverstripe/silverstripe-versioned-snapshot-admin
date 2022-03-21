@@ -20,7 +20,7 @@
         }
     ],
     "require": {
-        "php": "^7.4",
+        "php": "^7.4 || ^8",
         "silverstripe/framework": "^4.7",
         "silverstripe/graphql": "^4 | >= 3.5.1",
         "silverstripe/versioned-snapshots": "dev-master",
