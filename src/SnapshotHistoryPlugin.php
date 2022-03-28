@@ -1,10 +1,10 @@
 <?php
 
-
 namespace SilverStripe\SnapshotAdmin;
 
-
+use Exception;
 use GraphQL\Type\Definition\ResolveInfo;
+use ReflectionException;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\GraphQL\QueryHandler\UserContextProvider;
@@ -21,11 +21,9 @@ use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Member;
 use SilverStripe\Snapshots\ActivityEntry;
-use SilverStripe\Snapshots\SnapshotHasher;
+use SilverStripe\Snapshots\Snapshot;
 use SilverStripe\Snapshots\SnapshotPublishable;
 use SilverStripe\Versioned\Versioned;
-use ReflectionException;
-use Exception;
 
 if (!interface_exists(SchemaUpdater::class)) {
     return;
@@ -50,25 +48,26 @@ class SnapshotHistoryPlugin implements ModelTypePlugin, SchemaUpdater
         // For dataobjects that have this extension, implicitly add them to the schema
         // and ensure readOne and rollback are activated.
         foreach (ClassInfo::subclassesFor(DataObject::class, false) as $class) {
-            /* @var DataObject|SnapshotHistoryExtension $inst */
+            /** @var DataObject|SnapshotHistoryExtension $inst */
             $inst = $class::singleton();
+
             if (!$inst->hasExtension(SnapshotHistoryExtension::class) || !$inst->isSnapshotable()) {
                 continue;
             }
 
             $fields = ['id', 'className'];
+
             if ($inst->hasMethod('absoluteLink')) {
                 $fields[] = 'absoluteLink';
             }
-            $schema->addModelbyClassName($inst->baseClass(), function (ModelType $model) use ($fields) {
+
+            $schema->addModelbyClassName($inst->baseClass(), static function (ModelType $model) use ($fields): void {
                 $model->addFields($fields)
                     ->addOperation('readOne')
                     ->addOperation('rollback');
             });
         }
-
     }
-
 
     /**
      * @param ModelType $type
@@ -87,10 +86,15 @@ class SnapshotHistoryPlugin implements ModelTypePlugin, SchemaUpdater
 
         $snapshotType = static::createSnapshotType($schema, $class);
         $schema->addType($snapshotType);
-        $type->addField('snapshotHistory', $snapshotType->getName(), function (ModelField $field) use ($schema) {
-           $field->setResolver([static::class, 'resolve']);
-           Paginator::create()->apply($field, $schema);
-        });
+
+        $type->addField(
+            'snapshotHistory',
+            $snapshotType->getName(),
+            static function (ModelField $field) use ($schema): void {
+                $field->setResolver([static::class, 'resolve']);
+                Paginator::create()->apply($field, $schema);
+            }
+        );
     }
 
     /**
@@ -127,9 +131,9 @@ class SnapshotHistoryPlugin implements ModelTypePlugin, SchemaUpdater
     }
 
     /**
-     * @param $object
+     * @param mixed $object
      * @param array $args
-     * @param $context
+     * @param mixed $context
      * @param ResolveInfo $info
      * @return ArrayList
      * @throws SchemaBuilderException
@@ -143,7 +147,9 @@ class SnapshotHistoryPlugin implements ModelTypePlugin, SchemaUpdater
             'Types using snapshot history must have the SnapshotPublishable extension applied. (See %s)',
             get_class($object)
         );
+
         $currentUser = UserContextProvider::get($context);
+
         if (!$object->canViewStage(Versioned::DRAFT, $currentUser)) {
             throw new Exception(sprintf(
                 'Cannot view snapshots on %s',
@@ -156,17 +162,19 @@ class SnapshotHistoryPlugin implements ModelTypePlugin, SchemaUpdater
         $list = $list->sort('"LastEdited"', 'DESC');
         // To check if the items are the full versions we compare their hashes against the objects hash
         // this is used in the frontend to show the user if the snapshot is from the object itself
-        // or one of it's children
+        // or one of its children
         // The reason for doing this here is so that it behaves nicely with fluent, ideally this would
         // move to the frontend
-        $objectHash = SnapshotHasher::hashObjectForSnapshot($object);
+        $objectHash = SnapshotPublishable::singleton()->hashObjectForSnapshot($object);
         $listWithAlterations = ArrayList::create();
+
+        /** @var Snapshot $item */
         foreach ($list as $item) {
             $item->isFullVersion = $item->OriginHash === $objectHash &&
                 $item->getActivityType() !== ActivityEntry::DELETED;
             $listWithAlterations->push($item);
         }
+
         return $listWithAlterations;
     }
-
 }
