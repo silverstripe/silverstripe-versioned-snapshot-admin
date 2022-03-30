@@ -33,7 +33,7 @@
     },
     "autoload": {
         "psr-4": {
-            "SilverStripe\\SnapshotAdmin\\": "src/",
+            "SilverStripe\\SnapshotAdmin\\": ["src/", "_legacy/"],
             "SilverStripe\\SnapshotAdmin\\Tests\\": "tests/"
         }
     },

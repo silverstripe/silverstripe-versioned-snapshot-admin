@@ -20,6 +20,9 @@ if (!class_exists(Manager::class)) {
     return;
 }
 
+/**
+ * @method DataObjectScaffolder|$this getOwner()
+ */
 class DataObjectScaffolderExtension extends VersionedDataObjectScaffolderExtension
 {
     /**
@@ -29,18 +32,21 @@ class DataObjectScaffolderExtension extends VersionedDataObjectScaffolderExtensi
 
     /**
      * Adds the "Version" and "Versions" fields to any dataobject that has the Versioned extension.
+     * Extension point in @see DataObjectScaffolder::addToManager()
+     *
      * @param Manager $manager
      */
-    public function onBeforeAddToManager(Manager $manager)
+    public function onBeforeAddToManager(Manager $manager): void
     {
-        /* @var DataObjectScaffolder $owner */
-        $owner = $this->owner;
+        $owner = $this->getOwner();
 
         $instance = $owner->getDataObjectInstance();
         $class = $owner->getDataObjectClass();
+
         if (!$instance->hasExtension(SnapshotPublishable::class) || !$instance->hasExtension(Versioned::class)) {
             return;
         }
+
         $versionTypeName = $this->createVersionedTypeName($class);
         $memberType = StaticSchema::inst()->typeNameForDataObject(Member::class);
         $snapshotName = $this->createTypeName($class);
@@ -61,9 +67,13 @@ class DataObjectScaffolderExtension extends VersionedDataObjectScaffolderExtensi
                     'message' => Type::string(),
                 ];
             },
-            'resolveField' => function ($obj, $args, $context, ResolveInfo $info) {
-                $fieldName = $info->fieldName === 'id' ? 'ID' : ucfirst($info->fieldName);
+            'resolveField' => static function ($obj, $args, $context, ResolveInfo $info) {
+                $fieldName = $info->fieldName === 'id'
+                    ? 'ID'
+                    : ucfirst($info->fieldName);
+
                 $result = $obj->obj($fieldName);
+
                 if ($result instanceof DBField) {
                     return $result->getValue();
                 }
@@ -78,7 +88,7 @@ class DataObjectScaffolderExtension extends VersionedDataObjectScaffolderExtensi
             ->nestedQuery('SnapshotHistory', new ReadSnapshotHistory($class, $snapshotName));
     }
 
-    protected function createActivityEnum()
+    protected function createActivityEnum(): EnumType
     {
         if (!$this->activityEnum) {
             $this->activityEnum = new EnumType([
@@ -91,18 +101,19 @@ class DataObjectScaffolderExtension extends VersionedDataObjectScaffolderExtensi
                     ActivityEntry::PUBLISHED,
                     ActivityEntry::UNPUBLISHED,
                     ActivityEntry::REMOVED,
-                ]
+                ],
             ]);
         }
 
         return $this->activityEnum;
     }
+
     /**
      * @param string $class
      * @return string
      */
-    protected function createTypeName($class)
+    protected function createTypeName(string $class): string
     {
-        return StaticSchema::inst()->typeNameForDataObject($class).'Snapshot';
+        return StaticSchema::inst()->typeNameForDataObject($class) . 'Snapshot';
     }
 }
