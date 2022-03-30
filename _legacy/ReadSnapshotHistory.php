@@ -19,13 +19,14 @@ if (!class_exists(ListQueryScaffolder::class)) {
 
 class ReadSnapshotHistory extends ListQueryScaffolder implements OperationResolver
 {
+
     use SnapshotHasher;
 
     /**
      * ReadOperationScaffolder constructor.
      *
-     * @param string $dataObjectClass
-     * @param string $snapshotTypeName
+     * @param mixed $dataObjectClass
+     * @param mixed $snapshotTypeName
      */
     public function __construct($dataObjectClass, $snapshotTypeName)
     {
@@ -35,16 +36,25 @@ class ReadSnapshotHistory extends ListQueryScaffolder implements OperationResolv
         parent::__construct($operationName, $snapshotTypeName, $this);
     }
 
+    /**
+     * @param mixed $object
+     * @param array $args
+     * @param mixed $context
+     * @param ResolveInfo $info
+     * @return mixed|ArrayList
+     * @throws Exception
+     */
     public function resolve($object, array $args, $context, ResolveInfo $info)
     {
         /** @var DataObject&Versioned&SnapshotPublishable $object */
         if (!$object->hasExtension(SnapshotPublishable::class)) {
             throw new Exception(sprintf(
                 'Types using the %s query scaffolder must have the SnapshotPublishable extension applied. (See %s)',
-                __CLASS__,
+                self::class,
                 $this->getDataObjectClass()
             ));
         }
+
         if (!$object->canViewStage(Versioned::DRAFT, $context['currentUser'])) {
             throw new Exception(sprintf(
                 'Cannot view snapshots on %s',
@@ -58,16 +68,18 @@ class ReadSnapshotHistory extends ListQueryScaffolder implements OperationResolv
         $this->extend('updateList', $list, $object, $args, $context, $info);
         // To check if the items are the full versions we compare their hashes against the objects hash
         // this is used in the frontend to show the user if the snapshot is from the object itself
-        // or one of it's children
+        // or one of its children
         // The reason for doing this here is so that it behaves nicely with fluent, ideally this would
         // move to the frontend
-        $objectHash = static::hashObjectForSnapshot($object);
+        $objectHash = $this->hashObjectForSnapshot($object);
         $listWithAlterations = ArrayList::create();
+
         foreach ($list as $item) {
             $item->IsFullVersion = $item->OriginHash === $objectHash &&
                 $item->getActivityType() !== ActivityEntry::DELETED;
             $listWithAlterations->push($item);
         }
+
         return $listWithAlterations;
     }
 }
