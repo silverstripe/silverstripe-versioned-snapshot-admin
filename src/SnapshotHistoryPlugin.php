@@ -159,7 +159,7 @@ class SnapshotHistoryPlugin implements ModelTypePlugin, SchemaUpdater
 
         // Get all snapshots
         $list = $object->getRelevantSnapshots();
-        $list = $list->sort('"LastEdited"', 'DESC');
+        $list = $list->sort('LastEdited', 'DESC');
         // To check if the items are the full versions we compare their hashes against the objects hash
         // this is used in the frontend to show the user if the snapshot is from the object itself
         // or one of its children
