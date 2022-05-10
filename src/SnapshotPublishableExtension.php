@@ -23,7 +23,7 @@ class SnapshotPublishableExtension extends DataExtension
     {
         $itemVersionColumn = null;
         $result = $result
-            ->applyRelation('Items.Version', $itemVersionColumn)
+            ->applyRelation('Items.ObjectVersion', $itemVersionColumn)
             ->alterDataQuery(static function (DataQuery $query) use ($itemVersionColumn) {
                 $query->selectField($itemVersionColumn, 'baseVersion');
             });
