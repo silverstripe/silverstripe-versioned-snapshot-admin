@@ -3,6 +3,7 @@
 namespace SilverStripe\SnapshotAdmin;
 
 use ReflectionException;
+use SilverStripe\Admin\GraphQL\ReadOneLegacyResolver;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\GraphQL\Scaffolding\Interfaces\ScaffoldingProvider;
@@ -10,7 +11,7 @@ use SilverStripe\GraphQL\Scaffolding\Scaffolders\SchemaScaffolder;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Member;
 
-if (!interface_exists(ScaffoldingProvider::class)) {
+if (!interface_exists(ScaffoldingProvider::class) || !class_exists(ReadOneLegacyResolver::class)) {
     return;
 }
 
@@ -52,6 +53,7 @@ class SnapshotScaffoldingProvider implements ScaffoldingProvider
                 ->addFields($fields)
                 ->operation(SchemaScaffolder::READ_ONE)
                     ->addArg('filter', 'IDFilterType!')
+                    ->setResolver(new ReadOneLegacyResolver($inst))
                 ->end()
                 ->operation('rollback');
         }
