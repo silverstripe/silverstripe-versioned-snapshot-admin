@@ -20,16 +20,13 @@
         }
     ],
     "require": {
-        "silverstripe/framework": "^4",
         "silverstripe/graphql": "^4 | >= 3.5.1",
-        "silverstripe/versioned-snapshots": "1.x-dev",
-        "silverstripe/versioned-admin": "^1",
-        "silverstripe/admin": "^1.7",
-        "silverstripe/vendor-plugin": "^1"
+        "silverstripe/versioned-snapshots": "^1",
+        "silverstripe/versioned-admin": "^1.7",
+        "silverstripe/vendor-plugin": "^1.6"
     },
     "require-dev": {
-        "silverstripe/versioned": "^1",
-        "silverstripe/recipe-testing": "^1 || ^2"
+        "silverstripe/recipe-testing": "^2"
     },
     "autoload": {
         "psr-4": {
