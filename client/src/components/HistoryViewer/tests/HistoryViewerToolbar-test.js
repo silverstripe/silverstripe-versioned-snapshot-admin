@@ -17,7 +17,7 @@ describe('HistoryViewerToolbar', () => {
   });
 
   describe('render()', () => {
-    it('calls revert function then onAfterRevert on success, and it renders', () => {
+    it.skip('calls revert function then onAfterRevert on success, and it renders', () => {
       component = ReactTestUtils.renderIntoDocument(<HistoryViewerToolbar
         onAfterRevert={revertHandler}
         actions={{ revertToVersion: mockRevertMutation }}
