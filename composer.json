@@ -20,7 +20,7 @@
         }
     ],
     "require": {
-        "silverstripe/graphql": "^4 | >= 3.5.1",
+        "silverstripe/graphql": "^4",
         "silverstripe/versioned-snapshots": "^1",
         "silverstripe/versioned-admin": "^1.7",
         "silverstripe/vendor-plugin": "^1.6"
@@ -35,6 +35,9 @@
         }
     },
     "extra": {
+        "branch-alias": {
+            "dev-master": "2.x-dev"
+        },
         "expose": [
             "client/dist"
         ]
