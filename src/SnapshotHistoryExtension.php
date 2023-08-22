@@ -1,16 +1,17 @@
 <?php
 
-
 namespace SilverStripe\SnapshotAdmin;
 
+use DNADesign\Elemental\Models\BaseElement;
 use SilverStripe\CMS\Model\SiteTree;
-use SilverStripe\Control\Director;
-use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\Snapshots\SnapshotPublishable;
 use SilverStripe\Versioned\Versioned;
 
+/**
+ * @method BaseElement|$this getOwner()
+ */
 class SnapshotHistoryExtension extends DataExtension
 {
     /**
@@ -18,28 +19,28 @@ class SnapshotHistoryExtension extends DataExtension
      */
     public function isSnapshotable(): bool
     {
-        return (
-            $this->owner->hasExtension(Versioned::class) &&
-            $this->owner->hasExtension(SnapshotPublishable::class) &&
-            !$this->owner instanceof SiteTree
-        );
+        $owner = $this->getOwner();
+
+        return
+            $owner->hasExtension(Versioned::class) &&
+            $owner->hasExtension(SnapshotPublishable::class) &&
+            !$owner instanceof SiteTree;
     }
 
     /**
      * @param FieldList $fields
      * @return void|null
      */
-    public function updateCMSFields(FieldList $fields)
+    public function updateCMSFields(FieldList $fields): void
     {
         if ($fields->findTab('Root.History')) {
-            return null;
-        }
-        if (!$this->owner->isSnapshotable()) {
-            return null;
+            return;
         }
 
-        $fields->addFieldToTab('Root.History', SnapshotViewerField::create(
-            'SnapshotHistory'
-        ));
+        if (!$this->getOwner()->isSnapshotable()) {
+            return;
+        }
+
+        $fields->addFieldToTab('Root.History', SnapshotViewerField::create('SnapshotHistory'));
     }
 }

@@ -235,14 +235,14 @@ class HistoryViewer extends Component {
     // Currently previewMode === MODE_VERSION is disabled as it displays incorrect relations.
 
     schemaVersionReplacements[':date'] = currentVersion.lastEdited;
-  
+
     const schemaCompareReplacements = {
       ':id': recordId,
       ':class': recordClass,
       ':from': versionFrom.version || 0,
       ':to': versionTo.version || 0,
     };
-   
+
     const schemaSearch = compare ? /:id|:class|:from|:to/g : /:id|:class|:version|:date/g;
     const schemaReplacements = compare ? schemaCompareReplacements : schemaVersionReplacements;
 

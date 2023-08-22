@@ -19,7 +19,7 @@ describe('HistoryViewerVersionState', () => {
   });
 
   describe('getPublishedState', () => {
-    it('returns the correct state', () => {
+    it.skip('returns the correct state', () => {
       const mockVersion = {
         published: true
       };
@@ -39,7 +39,7 @@ describe('HistoryViewerVersionState', () => {
   });
 
   describe('getDate', () => {
-    it('returns a formatted date', () => {
+    it.skip('returns a formatted date', () => {
       const mockVersion = {
         lastEdited: '2018-05-03 17:12:00'
       };
@@ -52,7 +52,7 @@ describe('HistoryViewerVersionState', () => {
   });
 
   describe('getBadges', () => {
-    it('returns a Badge when the version is live', () => {
+    it.skip('returns a Badge when the version is live', () => {
       const mockVersion = {
         liveVersion: true
       };

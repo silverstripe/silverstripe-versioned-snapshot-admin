@@ -138,7 +138,7 @@ class HistoryViewerVersionDetail extends PureComponent {
 
     return (
       <ToolbarComponent
-        identifier="HistoryViewer.versionDetail.Toolbar"
+        identifier="HistoryViewer.VersionDetail.Toolbar"
         isLatestVersion={isLatestVersion}
         recordId={recordId}
         typeName={typeName}
@@ -198,7 +198,7 @@ class HistoryViewerVersionDetail extends PureComponent {
 
           <div className={classnames(formClasses)}>
             <FormBuilderLoader
-              identifier={`HistoryViewer.versionDetail.${version.id}`}
+              identifier={`HistoryViewer.VersionDetail.${version.id}`}
               schemaUrl={schemaUrl}
               refetchSchemaOnMount={false}
             />

@@ -17,4 +17,7 @@ require('../legacy/ArchiveAdmin/ArchiveAdmin');
 // To do: determine better way of using webpack to pull in optional javascript
 require('../legacy/HistoryViewer/HistoryViewerEntwine');
 
+// Legacy publish/unpublish popup confirmation - copy from versioned-admin
+require('../legacy/VersionedEditForm/VersionedEditForm');
+
 require('boot');

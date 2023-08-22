@@ -1,6 +1,5 @@
 <?php
 
-
 namespace SilverStripe\SnapshotAdmin;
 
 use SilverStripe\CMS\Model\SiteTree;
@@ -12,9 +11,16 @@ use SilverStripe\View\Requirements;
 
 class SnapshotViewerField extends HistoryViewerField
 {
-
+    /**
+     * @var string
+     */
     protected $schemaComponent = 'SnapshotViewerContainer';
 
+    /**
+     * @param mixed $name
+     * @param mixed $title
+     * @param mixed $value
+     */
     public function __construct($name, $title = null, $value = null)
     {
         parent::__construct($name, $title, $value);
@@ -32,14 +38,16 @@ class SnapshotViewerField extends HistoryViewerField
         return 'snapshot-history-viewer__container';
     }
 
-    public function getSchemaDataDefaults()
+    public function getSchemaDataDefaults(): array
     {
         $data = parent::getSchemaDataDefaults();
         $record = $this->getSourceRecord();
 
         // GraphQL doesn't have any API for "hide ancestor", which we should support at some point
         // to avoid things like readSiteTree. "Page" is exposed by default
-        $baseClass = $record->baseClass() === SiteTree::class ? 'Page' : $record->baseClass();
+        $baseClass = $record->baseClass() === SiteTree::class
+            ? 'Page'
+            : $record->baseClass();
 
         // GraphQL 4
         if (class_exists(SchemaBuilder::class)) {
@@ -47,6 +55,7 @@ class SnapshotViewerField extends HistoryViewerField
             $data['data'] = array_merge($data['data'], [
                 'typeName' => $config->getTypeNameForClass($baseClass),
             ]);
+
             return $data;
         }
 
@@ -59,6 +68,7 @@ class SnapshotViewerField extends HistoryViewerField
         $data['data'] = array_merge($data['data'], [
             'typeName' => StaticSchema::inst()->typeNameForDataObject($baseClass),
         ]);
+
         return $data;
     }
 }

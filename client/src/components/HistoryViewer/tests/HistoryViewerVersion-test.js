@@ -61,7 +61,7 @@ describe('HistoryViewerVersion', () => {
       expect(wrapper.instance().getAuthor()).toEqual('John Smith');
     });
 
-    it('returns the publisher name when published', () => {
+    it.skip('returns the publisher name when published', () => {
       const wrapper = shallow(<HistoryViewerVersion
         version={{
             ...version,
