@@ -12,8 +12,8 @@ const createSnapshotsQuery = (typeName, isPreviewable) => gql`
               pageInfo {
                 totalCount
               }
-              nodes {
-
+              edges {
+                node {
                   id
                   lastEdited
                   activityDescription
@@ -42,6 +42,7 @@ const createSnapshotsQuery = (typeName, isPreviewable) => gql`
                     }
                     latestDraftVersion
                   }
+                }
               }
             }
           }

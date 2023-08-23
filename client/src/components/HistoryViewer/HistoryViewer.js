@@ -75,23 +75,25 @@ class HistoryViewer extends Component {
    */
   getVersions() {
     const { versions } = this.props;
-    const nodes = (versions && versions.snapshotHistory && versions.snapshotHistory.nodes)
-      ? versions.snapshotHistory.nodes
+    const edges = (versions && versions.snapshotHistory && versions.snapshotHistory.edges)
+      ? versions.snapshotHistory.edges
       : [];
+    const nodes = edges.map(edge => (edge.node));
+
     return nodes.map(node => ({
-        ...node,
-        ...node.originVersion,
-        // Snapshots author is authoritative
-        author: {
-          ...node.author
-        },
-        absoluteLink: (node.isFullVersion && node.originVersion)
-          ? node.originVersion.absoluteLink
-          : versions.absoluteLink,
-        version: node.isFullVersion && node.originVersion
-          ? node.originVersion.version
-          : node.baseVersion,
-      }));
+      ...node,
+      ...node.originVersion,
+      // Snapshots author is authoritative
+      author: {
+        ...node.author
+      },
+      absoluteLink: (node.isFullVersion && node.originVersion)
+        ? node.originVersion.absoluteLink
+        : versions.absoluteLink,
+      version: node.isFullVersion && node.originVersion
+        ? node.originVersion.version
+        : node.baseVersion,
+    }));
   }
 
   /**
@@ -235,14 +237,14 @@ class HistoryViewer extends Component {
     // Currently previewMode === MODE_VERSION is disabled as it displays incorrect relations.
 
     schemaVersionReplacements[':date'] = currentVersion.lastEdited;
-  
+
     const schemaCompareReplacements = {
       ':id': recordId,
       ':class': recordClass,
       ':from': versionFrom.version || 0,
       ':to': versionTo.version || 0,
     };
-   
+
     const schemaSearch = compare ? /:id|:class|:from|:to/g : /:id|:class|:version|:date/g;
     const schemaReplacements = compare ? schemaCompareReplacements : schemaVersionReplacements;
 
@@ -379,7 +381,7 @@ class HistoryViewer extends Component {
     const { compare } = this.props;
 
     if (compare && compare.versionFrom && compare.versionTo) {
-        return this.renderVersionDetail();
+      return this.renderVersionDetail();
     }
     return this.renderVersionList();
   }
