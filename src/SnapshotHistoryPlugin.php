@@ -25,10 +25,6 @@ use SilverStripe\Snapshots\Snapshot;
 use SilverStripe\Snapshots\SnapshotPublishable;
 use SilverStripe\Versioned\Versioned;
 
-if (!interface_exists(SchemaUpdater::class)) {
-    return;
-}
-
 class SnapshotHistoryPlugin implements ModelTypePlugin, SchemaUpdater
 {
     const IDENTIFIER = 'snapshotHistory';
@@ -145,7 +141,7 @@ class SnapshotHistoryPlugin implements ModelTypePlugin, SchemaUpdater
         Schema::invariant(
             $object->hasExtension(SnapshotPublishable::class),
             'Types using snapshot history must have the SnapshotPublishable extension applied. (See %s)',
-            get_class($object)
+            $object::class
         );
 
         $currentUser = UserContextProvider::get($context);
@@ -153,7 +149,7 @@ class SnapshotHistoryPlugin implements ModelTypePlugin, SchemaUpdater
         if (!$object->canViewStage(Versioned::DRAFT, $currentUser)) {
             throw new Exception(sprintf(
                 'Cannot view snapshots on %s',
-                get_class($object)
+                $object::class
             ));
         }
 

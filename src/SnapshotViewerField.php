@@ -49,24 +49,9 @@ class SnapshotViewerField extends HistoryViewerField
             ? 'Page'
             : $record->baseClass();
 
-        // GraphQL 4
-        if (class_exists(SchemaBuilder::class)) {
-            $config = SchemaBuilder::singleton()->getConfig('admin');
-            $data['data'] = array_merge($data['data'], [
-                'typeName' => $config->getTypeNameForClass($baseClass),
-            ]);
-
-            return $data;
-        }
-
-        // GraphQL 3
-        $schemaConfig = Manager::config()->get('schemas');
-        $typeNames = $schemaConfig['admin']['typeNames'] ?? [];
-        StaticSchema::inst()->setTypeNames($typeNames);
-
-        $data = parent::getSchemaDataDefaults();
+        $config = SchemaBuilder::singleton()->getConfig('admin');
         $data['data'] = array_merge($data['data'], [
-            'typeName' => StaticSchema::inst()->typeNameForDataObject($baseClass),
+            'typeName' => $config->getTypeNameForClass($baseClass),
         ]);
 
         return $data;
