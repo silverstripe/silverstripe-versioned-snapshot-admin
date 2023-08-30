@@ -1,11 +1,11 @@
 ## SilverStripe Versioned Snapshot Admin
 
-[![Build Status](https://api.travis-ci.com/silverstripe/silverstripe-versioned-snapshot-admin.svg?branch=master)](https://travis-ci.com/silverstripe/silverstripe-versioned-snapshot-admin)
-[![Latest Stable Version](https://poser.pugx.org/silverstripe/versioned-snapshot-admin/version.svg)](https://packagist.org/packages/silverstripe/versioned-snapshot-admin)
-[![Latest Unstable Version](https://poser.pugx.org/silverstripe/versioned-snapshot-admin/v/unstable.svg)](https://packagist.org/packages/silverstripe/versioned-snapshot-admin)
-[![Total Downloads](https://poser.pugx.org/silverstripe/versioned-snapshot-admin/downloads.svg)](https://packagist.org/packages/silverstripe/versioned-snapshot-admin)
-[![License](https://poser.pugx.org/silverstripe/versioned-snapshot-admin/license.svg)](https://github.com/silverstripe/silverstripe-versioned-snapshot-admin#license)
-![helpfulrobot](https://helpfulrobot.io/silverstripe/versioned-snapshot-admin/badge)
+[![Build Status](https://github.com/silverstripe/silverstripe-versioned-snapshot-admin/actions/workflows/ci.yml/badge.svg)](https://github.com/silverstripe/silverstripe-versioned-snapshot-admin/actions/workflows/ci.yml)
+[![Latest Stable Version](http://poser.pugx.org/silverstripe/versioned-snapshot-admin/v)](https://packagist.org/packages/silverstripe/versioned-snapshot-admin)
+[![Total Downloads](http://poser.pugx.org/silverstripe/versioned-snapshot-admin/downloads)](https://packagist.org/packages/silverstripe/versioned-snapshot-admin)
+[![Latest Unstable Version](http://poser.pugx.org/silverstripe/versioned-snapshot-admin/v/unstable)](https://packagist.org/packages/silverstripe/versioned-snapshot-admin)
+[![License](http://poser.pugx.org/silverstripe/versioned-snapshot-admin/license)](https://packagist.org/packages/silverstripe/versioned-snapshot-admin)
+[![PHP Version Require](http://poser.pugx.org/silverstripe/versioned-snapshot-admin/require/php)](https://packagist.org/packages/silverstripe/versioned-snapshot-admin)
 
 ## What does this offer over versioned-admin?
 
