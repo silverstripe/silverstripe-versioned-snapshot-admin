@@ -7,7 +7,7 @@
 [![License](https://poser.pugx.org/silverstripe/versioned-snapshot-admin/license.svg)](https://github.com/silverstripe/silverstripe-versioned-snapshot-admin#license)
 ![helpfulrobot](https://helpfulrobot.io/silverstripe/versioned-snapshot-admin/badge)
 
-## What does this offer over verisioned-admin?
+## What does this offer over versioned-admin?
 
 Most of the value of snapshots are explained in the [versioned-snapshots](https://github.com/silverstripe/silverstripe-versioned-snapshots) README file, but the major takeaway is that this history viewer will show you the changes that have happened to objects in your `$owns` tree as if it is native history to the owner object. In other words, it helps authors to see the answer to the question, "What happens when I publish this page?"
 
