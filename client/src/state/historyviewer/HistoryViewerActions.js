@@ -1,5 +1,7 @@
-import HISTORY_VIEWER from './HistoryViewerActionTypes';
+/* eslint-disable import/no-unresolved */
+
 import uuidv1 from 'uuid/v1';
+import HISTORY_VIEWER from './HistoryViewerActionTypes';
 
 /**
  * Show the provided version in the viewer, i.e. a detail or comparison view

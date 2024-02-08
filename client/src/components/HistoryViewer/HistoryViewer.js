@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 /* global window */
 
 import React, { Component } from 'react';
@@ -457,7 +458,6 @@ HistoryViewer.defaultProps = {
     },
   },
 };
-
 
 function mapStateToProps(state) {
   const {

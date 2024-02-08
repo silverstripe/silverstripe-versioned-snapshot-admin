@@ -1,15 +1,10 @@
 const Path = require('path');
 const webpackConfig = require('@silverstripe/webpack-config');
 const {
-  resolveJS,
-  externalJS,
-  moduleJS,
-  pluginJS,
-  moduleCSS,
-  pluginCSS,
+  JavascriptWebpackConfig,
+  CssWebpackConfig
 } = webpackConfig;
 
-const ENV = process.env.NODE_ENV;
 const PATHS = {
   MODULES: 'node_modules',
   FILES_PATH: '../',
@@ -19,37 +14,21 @@ const PATHS = {
 };
 
 const config = [
-  {
-    name: 'js',
-    entry: {
+  // JS bundle
+  new JavascriptWebpackConfig('js', PATHS, 'silverstripe-versioned-snapshot-admin')
+    .setEntry({
       bundle: `${PATHS.SRC}/bundles/bundle.js`,
-    },
-    output: {
-      path: PATHS.DIST,
-      filename: 'js/[name].js',
-    },
-    devtool: (ENV !== 'production') ? 'source-map' : '',
-    resolve: resolveJS(ENV, PATHS),
-    externals: externalJS(ENV, PATHS),
-    module: moduleJS(ENV, PATHS),
-    plugins: pluginJS(ENV, PATHS),
-  },
-  {
-    name: 'css',
-    entry: {
+    })
+    .getConfig(),
+  // sass to css
+  new CssWebpackConfig('css', PATHS)
+    .setEntry({
       bundle: `${PATHS.SRC}/styles/bundle.scss`,
-    },
-    output: {
-      path: PATHS.DIST,
-      filename: 'styles/[name].css',
-    },
-    devtool: (ENV !== 'production') ? 'source-map' : '',
-    module: moduleCSS(ENV, PATHS),
-    plugins: pluginCSS(ENV, PATHS),
-  },
+    })
+    .getConfig(),
 ];
 
 // Use WEBPACK_CHILD=js or WEBPACK_CHILD=css env var to run a single config
 module.exports = (process.env.WEBPACK_CHILD)
   ? config.find((entry) => entry.name === process.env.WEBPACK_CHILD)
-  : module.exports = config;
+  : config;

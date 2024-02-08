@@ -25,7 +25,7 @@ describe('HistoryViewerVersionState', () => {
       };
 
       component = ReactTestUtils
-          .renderIntoDocument(<HistoryViewerVersionState version={mockVersion} />);
+        .renderIntoDocument(<HistoryViewerVersionState version={mockVersion} />);
 
       expect(component.getPublishedState()).toBe('Published');
     });

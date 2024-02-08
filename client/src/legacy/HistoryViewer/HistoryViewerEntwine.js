@@ -1,3 +1,5 @@
+/* eslint-disable import/no-unresolved, react/no-deprecated */
+
 import jQuery from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';

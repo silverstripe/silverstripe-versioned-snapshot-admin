@@ -1,6 +1,6 @@
-import HISTORY_VIEWER from './HistoryViewerActionTypes';
 import { defaultCompare } from 'types/compareType';
 import { VERSION_MODE_VERSION, VERSION_MODE_DATE } from 'components/HistoryViewer/HistoryViewer';
+import HISTORY_VIEWER from './HistoryViewerActionTypes';
 
 const initialState = {
   currentPage: 1,
