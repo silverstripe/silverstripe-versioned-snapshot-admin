@@ -2,9 +2,9 @@
 /* global jest, describe, it, expect */
 
 import React from 'react';
-import { Component as HistoryViewerHeading } from '../HistoryViewerHeading';
 import Enzyme, { shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16/build/index';
+import { Component as HistoryViewerHeading } from '../HistoryViewerHeading';
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -37,4 +37,3 @@ describe('HistoryViewerHeading', () => {
     });
   });
 });
-

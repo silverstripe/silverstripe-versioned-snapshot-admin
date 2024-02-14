@@ -1,3 +1,5 @@
+/* eslint-disable import/no-unresolved */
+
 import Injector from 'lib/Injector';
 import { combineReducers } from 'redux';
 import historyViewerReducer from 'state/historyviewer/HistoryViewerReducer';

@@ -1,3 +1,5 @@
+/* eslint-disable import/no-unresolved */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { inject } from 'lib/Injector';
@@ -128,8 +130,8 @@ export default compose(
   inject(
     ['FormAction', 'SnapshotHistoryViewerSnapshotState'],
     (FormAction, HistoryViewerSnapshotState) => ({
-        FormActionComponent: FormAction,
-        StateComponent: HistoryViewerSnapshotState,
-      })
+      FormActionComponent: FormAction,
+      StateComponent: HistoryViewerSnapshotState,
+    })
   )
 )(HistoryViewerSnapshot);

@@ -1,3 +1,5 @@
+/* eslint-disable import/no-unresolved */
+
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import i18n from 'i18n';
@@ -31,7 +33,6 @@ class HistoryViewerVersionState extends Component {
     }
     return i18n._t('HistoryViewer.Saved', 'Saved');
   }
-
 
   /**
    * Return any status badges for the record

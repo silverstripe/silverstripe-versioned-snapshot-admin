@@ -1,3 +1,5 @@
+/* eslint-disable import/no-unresolved */
+
 import i18n from 'i18n';
 import React, { Component } from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu } from 'reactstrap';

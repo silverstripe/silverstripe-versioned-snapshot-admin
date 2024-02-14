@@ -1,3 +1,5 @@
+$snapshot-top-padding: $table-cell-padding * 2 + $line-height-base;
+
 .history-viewer__row--current {
   .history-viewer__version-link {
     cursor: default;
@@ -80,7 +82,7 @@
 
   &--initial {
     &:before {
-      top: ($table-cell-padding * 2 + $line-height-base) / 2;
+      top: calc($snapshot-top-padding / 2);
     }
   }
   &--muted {

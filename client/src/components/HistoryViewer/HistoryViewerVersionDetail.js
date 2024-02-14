@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved, react/no-deprecated */
 /* global document */
 
 import React, { PureComponent } from 'react';

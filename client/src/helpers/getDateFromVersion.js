@@ -1,3 +1,5 @@
+/* eslint-disable import/no-unresolved */
+
 import i18n from 'i18n';
 import moment from 'moment';
 

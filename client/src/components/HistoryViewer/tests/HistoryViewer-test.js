@@ -2,9 +2,9 @@
 /* global jest, describe, it, expect */
 
 import React from 'react';
-import { Component as HistoryViewer } from '../HistoryViewer';
 import Enzyme, { shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16/build/index';
+import { Component as HistoryViewer } from '../HistoryViewer';
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -105,9 +105,9 @@ describe('HistoryViewer', () => {
         page={1}
         compare={false}
         currentVersion={{
-            version: 123,
-            latestDraftVersion: true
-          }}
+          version: 123,
+          latestDraftVersion: true
+        }}
       />);
 
       expect(wrapper.instance().getLatestVersion().version).toEqual(123);
@@ -202,8 +202,8 @@ describe('HistoryViewer', () => {
         page={2}
         versions={versions}
         currentVersion={{
-            ID: 1,
-          }}
+          ID: 1,
+        }}
         compare={false}
       />);
 
@@ -222,13 +222,13 @@ describe('HistoryViewer', () => {
         page={2}
         versions={versions}
         currentVersion={{
-            ID: 1,
-          }}
+          ID: 1,
+        }}
         compare={{
-            versionFrom: {
-              ID: 1,
-            },
-          }}
+          versionFrom: {
+            ID: 1,
+          },
+        }}
       />);
 
       expect(wrapper.instance().isListView()).toBe(true);
@@ -246,16 +246,16 @@ describe('HistoryViewer', () => {
         page={2}
         versions={versions}
         currentVersion={{
-            ID: 1
-          }}
+          ID: 1
+        }}
         compare={{
-            versionFrom: {
-              ID: 1,
-            },
-            versionTo: {
-              ID: 2,
-            },
-          }}
+          versionFrom: {
+            ID: 1,
+          },
+          versionTo: {
+            ID: 2,
+          },
+        }}
       />);
 
       expect(wrapper.instance().isListView()).toBe(false);
@@ -290,13 +290,13 @@ describe('HistoryViewer', () => {
         limit={1}
         page={2}
         versions={{
-            Versions: {
-              pageInfo: { totalCount: 1 },
-              edges: [
-                { node: { Version: 14 } },
-              ],
-            }
-          }}
+          Versions: {
+            pageInfo: { totalCount: 1 },
+            edges: [
+              { node: { Version: 14 } },
+            ],
+          }
+        }}
       />);
 
       expect(wrapper.instance().compareModeAvailable()).toBe(false);

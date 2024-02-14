@@ -1,3 +1,5 @@
+/* eslint-disable import/no-unresolved */
+
 import Injector from 'lib/Injector';
 import HistoryViewer from 'components/HistoryViewer/HistoryViewer';
 import SnapshotViewerContainer from 'components/HistoryViewer/SnapshotViewerContainer';
@@ -38,4 +40,3 @@ export default () => {
     SnapshotHistoryViewerCompareWarning: HistoryViewerCompareWarning,
   }, { force: true });
 };
-

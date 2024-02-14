@@ -1,3 +1,5 @@
+/* eslint-disable import/no-unresolved, react/no-unused-state */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'redux';
@@ -72,11 +74,11 @@ class HistoryViewerToolbar extends Component {
                 icon="back-in-time"
                 name="revert"
                 attributes={{
-                    title: revertButtonTitle,
-                  }}
+                  title: revertButtonTitle,
+                }}
                 data={{
-                    buttonStyle: 'warning'
-                  }}
+                  buttonStyle: 'warning'
+                }}
                 disabled={isLatestVersion || isReverting || !canRollback}
                 loading={isReverting}
                 title={i18n._t('HistoryViewerToolbar.REVERT_TO_VERSION', 'Revert to this version')}
@@ -91,11 +93,11 @@ class HistoryViewerToolbar extends Component {
               >
                 {rollbackMessage}
               </Tooltip>
-                )}
+              )}
               { isPreviewable && <ViewModeComponent id="history-viewer-edit-mode" area="edit" /> }
             </div>
           </div>
-          )}
+        )}
       </RollbackMutation>
     );
   }
@@ -123,14 +125,13 @@ HistoryViewerToolbar.defaultProps = {
   canRollback: true,
 };
 
-
 function mapDispatchToProps(dispatch) {
   return {
     onAfterRevert(versionId) {
       dispatch(addMessage(i18n.sprintf(
-          i18n._t('HistoryViewerToolbar.REVERTED_MESSAGE', 'Successfully reverted to version %s'),
-          versionId
-        )));
+        i18n._t('HistoryViewerToolbar.REVERTED_MESSAGE', 'Successfully reverted to version %s'),
+        versionId
+      )));
       dispatch(showList());
     },
   };

@@ -1,3 +1,5 @@
+/* eslint-disable import/no-unresolved */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'redux';
@@ -195,6 +197,7 @@ class HistoryViewerVersion extends Component {
       </span>
     );
   }
+
   render() {
     const { version, isActive, StateComponent } = this.props;
     const rowTitle = i18n._t('HistoryViewerVersion.GO_TO_VERSION', 'Go to version {version}');

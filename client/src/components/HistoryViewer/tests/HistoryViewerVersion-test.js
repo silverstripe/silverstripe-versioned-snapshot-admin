@@ -2,9 +2,9 @@
 /* global jest, describe, it, expect */
 
 import React from 'react';
-import { Component as HistoryViewerVersion } from '../HistoryViewerVersion';
 import Enzyme, { shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16/build/index';
+import { Component as HistoryViewerVersion } from '../HistoryViewerVersion';
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -64,9 +64,9 @@ describe('HistoryViewerVersion', () => {
     it.skip('returns the publisher name when published', () => {
       const wrapper = shallow(<HistoryViewerVersion
         version={{
-            ...version,
-            published: true
-          }}
+          ...version,
+          published: true
+        }}
         StateComponent={StateComponent}
         FormActionComponent={FormActionComponent}
       />);
@@ -132,9 +132,9 @@ describe('HistoryViewerVersion', () => {
         onSelect={mockOnSelect}
         onCompareSelect={mockOnCompareSelect}
         compare={{
-            versionFrom: { version: 0 },
-            versionTo: { version: 0 },
-          }}
+          versionFrom: { version: 0 },
+          versionTo: { version: 0 },
+        }}
       />);
 
       wrapper.instance().handleClick();
@@ -193,9 +193,9 @@ describe('HistoryViewerVersion', () => {
         onCompareSelect={mockOnCompareSelect}
         isActive
         compare={{
-            versionFrom: { version: 0 },
-            versionTo: { version: 0 },
-          }}
+          versionFrom: { version: 0 },
+          versionTo: { version: 0 },
+        }}
       />);
 
       wrapper.instance().handleClose();
