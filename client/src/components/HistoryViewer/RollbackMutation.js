@@ -1,7 +1,5 @@
-/* eslint-disable import/no-unresolved */
-
 import React, { useMemo } from 'react';
-import { Mutation } from 'react-apollo';
+import { Mutation } from '@apollo/client/react/components';
 import createRollbackMutation from '../../graphql/createRollbackMutation';
 
 const RollbackMutation = ({ typeName, children }) => {

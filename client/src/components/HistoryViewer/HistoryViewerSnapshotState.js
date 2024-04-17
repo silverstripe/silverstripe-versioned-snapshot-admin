@@ -1,5 +1,3 @@
-/* eslint-disable import/no-unresolved */
-
 import { inject } from 'lib/Injector';
 import React from 'react';
 import { Component as VersionedState } from './HistoryViewerVersionState';

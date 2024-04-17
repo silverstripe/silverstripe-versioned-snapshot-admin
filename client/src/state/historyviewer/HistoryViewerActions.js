@@ -1,6 +1,4 @@
-/* eslint-disable import/no-unresolved */
-
-import uuidv1 from 'uuid/v1';
+import { v1 as uuidv1 } from 'uuid';
 import HISTORY_VIEWER from './HistoryViewerActionTypes';
 
 /**

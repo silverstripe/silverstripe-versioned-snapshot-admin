@@ -4,6 +4,5 @@ import registerReducers from 'boot/registerReducers';
 
 window.document.addEventListener('DOMContentLoaded', () => {
   registerComponents();
-
   registerReducers();
 });

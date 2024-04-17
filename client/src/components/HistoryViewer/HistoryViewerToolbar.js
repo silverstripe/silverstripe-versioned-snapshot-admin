@@ -7,18 +7,16 @@ import { connect } from 'react-redux';
 import i18n from 'i18n';
 import { inject } from 'lib/Injector';
 import { addMessage, showList } from 'state/historyviewer/HistoryViewerActions';
-import { Tooltip } from 'reactstrap';
+import { UncontrolledTooltip as Tooltip } from 'reactstrap';
 
 class HistoryViewerToolbar extends Component {
   constructor(props) {
     super(props);
 
     this.handleRevert = this.handleRevert.bind(this);
-    this.handleToggleRevertTooltip = this.handleToggleRevertTooltip.bind(this);
 
     this.state = {
       isReverting: false,
-      revertTooltipOpen: false,
       tooltipTimer: null,
     };
   }
@@ -40,12 +38,6 @@ class HistoryViewerToolbar extends Component {
     } }).then(() => handler(versionId));
   }
 
-  handleToggleRevertTooltip() {
-    this.setState(state => ({
-      revertTooltipOpen: !state.revertTooltipOpen,
-    }));
-  }
-
   render() {
     const {
       FormActionComponent,
@@ -57,11 +49,14 @@ class HistoryViewerToolbar extends Component {
       rollbackMessage,
       typeName,
     } = this.props;
-    const { isReverting, revertTooltipOpen } = this.state;
+    const { isReverting } = this.state;
 
-    const revertButtonTitle = isReverting
-      ? i18n._t('HistoryViewerToolbar.REVERT_IN_PROGRESS', 'Revert in progress...')
-      : i18n._t('HistoryViewerToolbar.REVERT_UNAVAILABLE', 'Unavailable for the current version');
+    let revertButtonTitle = '';
+    if (isReverting) {
+      revertButtonTitle = i18n._t('HistoryViewerToolbar.REVERT_IN_PROGRESS', 'Revert in progress...');
+    } else if (isLatestVersion) {
+      revertButtonTitle = i18n._t('HistoryViewerToolbar.REVERT_UNAVAILABLE', 'Unavailable for the current version');
+    }
 
     return (
       <RollbackMutation typeName={typeName}>
@@ -87,8 +82,6 @@ class HistoryViewerToolbar extends Component {
               <Tooltip
                 trigger="click hover focus"
                 placement="top"
-                isOpen={revertTooltipOpen}
-                toggle={this.handleToggleRevertTooltip}
                 target="HistoryRevertButton"
               >
                 {rollbackMessage}

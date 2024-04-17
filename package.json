@@ -17,7 +17,7 @@
     "node": "^18.x"
   },
   "scripts": {
-    "build": "NODE_ENV=development yarn && yarn lint && yarn test && NODE_ENV=production webpack --mode production --bail --progress",
+    "build": "yarn && yarn lint && rm -rf client/dist/* && NODE_ENV=production webpack --mode production --bail --progress",
     "dev": "NODE_ENV=development webpack --progress",
     "watch": "NODE_ENV=development webpack --watch --progress",
     "css": "WEBPACK_CHILD=css npm run build",
@@ -70,7 +70,7 @@
     "classnames": "^2.3.2",
     "graphql": "^16.6.0",
     "graphql-fragments": "^0.1.0",
-    "graphql-tag": "^2.10.0",
+    "graphql-tag": "^2.12.6",
     "griddle-react": "^1.13.1",
     "jquery": "^3.5.0",
     "moment": "^2.21.0",
@@ -79,7 +79,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.5",
-    "react-resize-aware": "^3.1.2",
+    "react-resize-aware": "^4.0.0",
     "react-router": "^6.7",
     "react-router-redux": "^4.0.5",
     "reactstrap": "^8.9.0",

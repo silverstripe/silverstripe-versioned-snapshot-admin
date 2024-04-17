@@ -1,8 +1,6 @@
-/* eslint-disable import/no-unresolved */
-
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { Query } from 'react-apollo';
+import { Query } from '@apollo/client/react/components';
 import { inject } from 'lib/Injector';
 import createSnapshotsQuery from '../../graphql/createSnapshotsQuery';
 

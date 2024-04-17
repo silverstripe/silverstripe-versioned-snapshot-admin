@@ -1,5 +1,3 @@
-/* eslint-disable import/no-unresolved */
-
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import i18n from 'i18n';

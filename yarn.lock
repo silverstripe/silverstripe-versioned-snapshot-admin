@@ -4297,7 +4297,7 @@ graphql-fragments@^0.1.0:
   dependencies:
     graphql-anywhere "^0.2.4"
 
-graphql-tag@^2.10.0, graphql-tag@^2.12.6:
+graphql-tag@^2.12.6:
   version "2.12.6"
   resolved "https://registry.yarnpkg.com/graphql-tag/-/graphql-tag-2.12.6.tgz#d441a569c1d2537ef10ca3d1633b48725329b5f1"
   integrity sha512-FdSNcu2QQcWnM2VNvSCCDCVS5PpPqpzgFT8+GXzqJuoDd0CBncxCY278u4mhRO7tMgo2JjgJA5aZ+nWSQ/Z+xg==
@@ -7077,10 +7077,10 @@ react-redux@^8.0.5:
     react-is "^18.0.0"
     use-sync-external-store "^1.0.0"
 
-react-resize-aware@^3.1.2:
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/react-resize-aware/-/react-resize-aware-3.1.2.tgz#a5e6fe4691a3ac8d3b0fadd37008339db2294c4f"
-  integrity sha512-sBtMIEy/9oI+Xf2o7IdWdkTokpZSPo9TWn60gqWKPG3BXg44Rg3FCIMiIjmgvRUF4eQptw6pqYTUhYwkeVSxXA==
+react-resize-aware@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/react-resize-aware/-/react-resize-aware-4.0.0.tgz#9a2e002c0a3d15285ccd81c2d3d17aff64e8a597"
+  integrity sha512-42aoj3uGcqhsMQE7yssxuy0+YYNp38CSzoGxRXUV80WUm6uYJKhAwBlOSBltxTbdZSkJXZwgq43iyywjVI9ZgA==
 
 react-router-redux@^4.0.5:
   version "4.0.8"
