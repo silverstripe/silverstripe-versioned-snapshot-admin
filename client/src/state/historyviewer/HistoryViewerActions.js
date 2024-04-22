@@ -1,5 +1,5 @@
+import { v1 as uuidv1 } from 'uuid';
 import HISTORY_VIEWER from './HistoryViewerActionTypes';
-import uuidv1 from 'uuid/v1';
 
 /**
  * Show the provided version in the viewer, i.e. a detail or comparison view

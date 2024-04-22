@@ -20,15 +20,13 @@
         }
     ],
     "require": {
-        "php": "^8",
-        "silverstripe/graphql": "^4",
-        "silverstripe/versioned-snapshots": "^1",
-        "silverstripe/versioned-admin": "^1.7",
-        "silverstripe/vendor-plugin": "^1.6",
-        "symfony/yaml": "^4"
+        "php": "^8.1",
+        "silverstripe/graphql": "^5",
+        "silverstripe/versioned-snapshots": "^2",
+        "silverstripe/versioned-admin": "^2"
     },
     "require-dev": {
-        "silverstripe/recipe-testing": "^2"
+        "silverstripe/recipe-testing": "^3"
     },
     "autoload": {
         "psr-4": {
@@ -38,7 +36,9 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.x-dev"
+            "dev-master": "3.x-dev",
+            "dev-2": "2.x-dev",
+            "dev-1": "1.x-dev"
         },
         "expose": [
             "client/dist"

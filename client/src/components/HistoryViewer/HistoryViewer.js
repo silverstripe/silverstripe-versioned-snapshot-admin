@@ -16,7 +16,7 @@ import {
 import { versionType } from 'types/versionType';
 import { compareType } from 'types/compareType';
 import classNames from 'classnames';
-import ResizeAware from 'react-resize-aware';
+import ResizeAware from 'components/ResizeAware/ResizeAwareHoc';
 import * as viewModeActions from 'state/viewMode/ViewModeActions';
 import PropTypes from 'prop-types';
 
@@ -457,7 +457,6 @@ HistoryViewer.defaultProps = {
     },
   },
 };
-
 
 function mapStateToProps(state) {
   const {

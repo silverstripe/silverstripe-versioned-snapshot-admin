@@ -1,6 +1,8 @@
+/* eslint-disable import/no-unresolved, react/no-deprecated */
+
 import jQuery from 'jquery';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import { loadComponent } from 'lib/Injector';
 
 /**
@@ -9,6 +11,8 @@ import { loadComponent } from 'lib/Injector';
  */
 jQuery.entwine('ss', ($) => {
   $('.js-injector-boot .snapshot-history-viewer__container').entwine({
+    ReactRoot: null,
+
     onmatch() {
       const cmsContent = this.closest('.cms-content').attr('id');
       const context = (cmsContent)
@@ -23,14 +27,20 @@ jQuery.entwine('ss', ($) => {
         isInGridField: schemaData.data.isInGridField || !this.hasClass('history-viewer--standalone'),
       };
 
-      ReactDOM.render(
-        <HistoryViewerComponent {...props} />,
-        this[0]
-      );
+      let root = this.getReactRoot();
+      if (!root) {
+        root = ReactDOM.createRoot(this[0]);
+      }
+      root.render(<HistoryViewerComponent {...props} />);
+      this.setReactRoot(root);
     },
 
     onunmatch() {
-      ReactDOM.unmountComponentAtNode(this[0]);
+      const root = this.getReactRoot();
+      if (root) {
+        root.unmount();
+        this.setReactRoot(null);
+      }
     }
   });
 

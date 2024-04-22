@@ -32,7 +32,6 @@ class HistoryViewerVersionState extends Component {
     return i18n._t('HistoryViewer.Saved', 'Saved');
   }
 
-
   /**
    * Return any status badges for the record
    *
