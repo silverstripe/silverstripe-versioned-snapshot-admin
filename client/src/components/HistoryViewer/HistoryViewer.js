@@ -3,7 +3,6 @@
 import React, { Component } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import Griddle from 'griddle-react';
 import historyViewerConfig from 'containers/HistoryViewer/HistoryViewerConfig';
 import i18n from 'i18n';
 import { inject } from 'lib/Injector';
@@ -16,7 +15,7 @@ import {
 import { versionType } from 'types/versionType';
 import { compareType } from 'types/compareType';
 import classNames from 'classnames';
-import ResizeAware from 'react-resize-aware';
+import ResizeAware from 'components/ResizeAware/ResizeAwareHoc';
 import * as viewModeActions from 'state/viewMode/ViewModeActions';
 import PropTypes from 'prop-types';
 
@@ -163,39 +162,64 @@ class HistoryViewer extends Component {
   }
 
   /**
-   * Handles setting the pagination page number
+   * Handles setting the pagination page number.
+   * Validates the input and ensures the page is set correctly.
    *
-   * @param {number} page
+   * Note: We are no longer using Griddle's built-in GridPagination. Instead,
+   * we created our own custom pagination component, and the `page` parameter here
+   * is NOT zero-indexed (1-based indexing is used).
+   *
+   * @param {number} page - The page number to set
    */
   handleSetPage(page) {
     const { onSetPage } = this.props;
+
+    // Ensure `page` is a valid number
+    if (typeof page !== 'number' || isNaN(page) || page < 1) {
+      console.warn(`Invalid page number: ${page}. Page number must be a positive integer.`);
+      return;
+    }
+
+    // Ensure the callback function is defined and callable
     if (typeof onSetPage === 'function') {
-      // Note: data from Griddle is zero-indexed
-      onSetPage(page + 1);
+      onSetPage(page);
+    } else {
+      console.warn('onSetPage is not a function or not provided.');
     }
   }
 
   /**
-   * Handler for incrementing the set page
+   * Increases the current page number.
+   *
+   * Note: We're using a custom pagination component with 1-based indexing instead of Griddle's default.
+   * The `page` property is already 1-based, so we add 1 to go to the next page.
    */
   handleNextPage() {
     const { page } = this.props;
-    // Note: data for Griddle needs to be zero-indexed, so don't add 1 to this
-    this.handleSetPage(page);
+
+    // Increment the page and call handleSetPage
+    this.handleSetPage(page + 1);
   }
 
   /**
-   * Handler for decrementing the set page
+   * Decreases the current page number.
+   *
+   * Note: We use a custom pagination component with 1-based indexing instead of Griddle's default GridPagination
+   * since it's no longer available.
+   * The `page` property is already 1-based, so we subtract 1 to go to the previous page.
+   * Decrementing is prevented if the page is 1 or lower.
    */
   handlePrevPage() {
     const { page } = this.props;
-    // Note: data for Griddle needs to be zero-indexed
-    const currentPage = page - 1;
-    if (currentPage < 1) {
-      this.handleSetPage(currentPage);
+
+    // Ensure we don't decrement below the first page
+    if (page <= 1) {
+      this.handleSetPage(1);
       return;
     }
-    this.handleSetPage(currentPage - 1);
+
+    // Decrement the page and call handleSetPage
+    this.handleSetPage(page - 1);
   }
 
   /**
@@ -275,15 +299,17 @@ class HistoryViewer extends Component {
 
   /**
    * Renders the react component for pagination.
-   * Currently borrows the pagination from Griddle, to keep styling consistent
-   * between the two views.
+   *
+   * Instead of previously using the built-in pagination from Griddle,
+   * we are now using a custom pagination. Styling is based on the previous design,
+   * so it is still consistent with the other tables that uses Griddle.
    *
    * See: ThumbnailView.js
    *
-   * @returns {XML|null}
+   * * @returns {JSX|null} - Returns the pagination component or `null` if not necessary.
    */
   renderPagination() {
-    const { limit, page, versions } = this.props;
+    const { limit, page, versions, setPage } = this.props;
 
     if (!versions) {
       return null;
@@ -297,21 +323,44 @@ class HistoryViewer extends Component {
       return null;
     }
 
-    const props = {
-      setPage: this.handleSetPage,
-      maxPage: Math.ceil(totalVersions / limit),
-      next: this.handleNextPage,
-      nextText: i18n._t('HistoryViewer.NEXT', 'Next'),
-      previous: this.handlePrevPage,
-      previousText: i18n._t('HistoryViewer.PREVIOUS', 'Previous'),
-      // Note: zero indexed
-      currentPage: page - 1,
-      useGriddleStyles: false,
-    };
+    const maxPage = Math.ceil(totalVersions / limit);
+    const pageNumbers = Array.from({ length: maxPage }, (_, index) => index + 1);
 
     return (
       <div className="griddle-footer">
-        <Griddle.GridPagination {...props} />
+        <ul className="pagination">
+          <li className={`page-item ${page === 1 ? 'disabled' : ''}`}>
+            <button
+              className="page-link"
+              onClick={page > 1 ? () => this.handleSetPage(page - 1) : null}
+              disabled={page === 1}
+            >
+              {i18n._t('HistoryViewer.PREVIOUS', 'Previous')}
+            </button>
+          </li>
+          {pageNumbers.map((pageNumber) => (
+            <li
+              key={pageNumber}
+              className={`page-item ${pageNumber === page ? 'active' : ''}`}
+            >
+              <button
+                className="page-link"
+                onClick={() => this.handleSetPage(pageNumber)}
+              >
+                {pageNumber}
+              </button>
+            </li>
+          ))}
+          <li className={`page-item ${page === maxPage ? 'disabled' : ''}`}>
+            <button
+              className="page-link"
+              onClick={page < maxPage ? () => this.handleSetPage(page + 1) : null}
+              disabled={page === maxPage}
+            >
+              {i18n._t('HistoryViewer.NEXT', 'Next')}
+            </button>
+          </li>
+        </ul>
       </div>
     );
   }
@@ -457,7 +506,6 @@ HistoryViewer.defaultProps = {
     },
   },
 };
-
 
 function mapStateToProps(state) {
   const {
