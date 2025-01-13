@@ -71,7 +71,6 @@
     "graphql": "^16.6.0",
     "graphql-fragments": "^0.1.0",
     "graphql-tag": "^2.12.6",
-    "griddle-react": "^1.13.1",
     "jquery": "^3.5.0",
     "moment": "^2.21.0",
     "popper.js": "^1.14.4",
