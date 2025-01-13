@@ -38,4 +38,3 @@ export default () => {
     SnapshotHistoryViewerCompareWarning: HistoryViewerCompareWarning,
   }, { force: true });
 };
-

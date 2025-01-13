@@ -1,6 +1,6 @@
-import { Component as VersionedState } from './HistoryViewerVersionState';
 import { inject } from 'lib/Injector';
 import React from 'react';
+import { Component as VersionedState } from './HistoryViewerVersionState';
 
 class HistoryViewerSnapshotState extends VersionedState {
   translateType(type) {

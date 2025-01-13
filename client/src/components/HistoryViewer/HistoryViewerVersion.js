@@ -195,6 +195,7 @@ class HistoryViewerVersion extends Component {
       </span>
     );
   }
+
   render() {
     const { version, isActive, StateComponent } = this.props;
     const rowTitle = i18n._t('HistoryViewerVersion.GO_TO_VERSION', 'Go to version {version}');
