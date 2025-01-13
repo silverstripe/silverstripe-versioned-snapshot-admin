@@ -303,7 +303,7 @@ class HistoryViewer extends Component {
    *
    * See: ThumbnailView.js
    *
-   * * @returns {JSX|null} - Returns the pagination component or `null` if not necessary.
+   * @returns {JSX|null} - Returns the pagination component or `null` if not necessary.
    */
   renderPagination() {
     const { limit, page, versions } = this.props;
