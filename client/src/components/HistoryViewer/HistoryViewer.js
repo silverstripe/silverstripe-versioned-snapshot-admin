@@ -176,20 +176,23 @@ class HistoryViewer extends Component {
 
     // Ensure `page` is a valid number
     if (typeof page !== 'number' || isNaN(page) || page < 1) {
+      console.warn(`Invalid page number: ${page}. Page number must be a positive integer.`);
       return;
     }
 
     // Ensure the callback function is defined and callable
     if (typeof onSetPage === 'function') {
       onSetPage(page);
+    } else {
+      console.warn('onSetPage is not a function or not provided.');
     }
   }
 
   /**
    * Increases the current page number.
    *
-   * Note: We're using a custom pagination component with 1-based indexing instead of
-   * Griddle's default. The `page` property is already 1-based, so we add 1 to go to the next page.
+   * Note: We're using a custom pagination component with 1-based indexing instead of Griddle's default.
+   * The `page` property is already 1-based, so we add 1 to go to the next page.
    */
   handleNextPage() {
     const { page } = this.props;
@@ -201,8 +204,8 @@ class HistoryViewer extends Component {
   /**
    * Decreases the current page number.
    *
-   * Note: We use a custom pagination component with 1-based indexing instead of
-   * Griddle's default GridPagination since it's no longer available.
+   * Note: We use a custom pagination component with 1-based indexing instead of Griddle's default GridPagination
+   * since it's no longer available.
    * The `page` property is already 1-based, so we subtract 1 to go to the previous page.
    * Decrementing is prevented if the page is 1 or lower.
    */
@@ -303,10 +306,10 @@ class HistoryViewer extends Component {
    *
    * See: ThumbnailView.js
    *
-   * @returns {JSX|null} - Returns the pagination component or `null` if not necessary.
+   * * @returns {JSX|null} - Returns the pagination component or `null` if not necessary.
    */
   renderPagination() {
-    const { limit, page, versions } = this.props;
+    const { limit, page, versions, setPage } = this.props;
 
     if (!versions) {
       return null;
@@ -329,7 +332,7 @@ class HistoryViewer extends Component {
           <li className={`page-item ${page === 1 ? 'disabled' : ''}`}>
             <button
               className="page-link"
-              onClick={page > 1 ? () => this.handleSetPage(page - 1) : null}
+              onClick={() => this.handlePrevPage()}
               disabled={page === 1}
             >
               {i18n._t('HistoryViewer.PREVIOUS', 'Previous')}
@@ -351,7 +354,7 @@ class HistoryViewer extends Component {
           <li className={`page-item ${page === maxPage ? 'disabled' : ''}`}>
             <button
               className="page-link"
-              onClick={page < maxPage ? () => this.handleSetPage(page + 1) : null}
+              onClick={() => this.handleNextPage()}
               disabled={page === maxPage}
             >
               {i18n._t('HistoryViewer.NEXT', 'Next')}
