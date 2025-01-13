@@ -12,6 +12,48 @@
     margin-left: -$panel-padding-x;
     margin-right: -$panel-padding-x;
   }
+
+  // Pagination styles
+  .griddle-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+  }
+
+  .page-item {
+    margin: 0 5px;
+  }
+
+  .page-link {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .page-link:hover {
+    background-color: #f0f0f0;
+  }
+
+  .page-item.disabled .page-link {
+    color: #6c757d;
+    cursor: not-allowed;
+  }
+
+  .page-item.active .page-link {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+  }
 }
 
 // Used in conjunction with .panel--padded, removes top and bottom padding
@@ -150,50 +192,3 @@
     transform: rotate(360deg);
   }
 }
-
-.history-viewer {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  width: 100%;
-
-  &__pagination {
-    display: flex;
-    list-style: none;
-    padding: 0;
-
-    &-item {
-      margin: 0 5px;
-
-      &--disabled {
-        .history-viewer__pagination-link {
-          color: #6c757d;
-          cursor: not-allowed;
-        }
-      }
-
-      &--active {
-        .history-viewer__pagination-link {
-          background-color: #007bff;
-          color: #fff;
-          border-color: #007bff;
-        }
-      }
-    }
-
-    &-link {
-      padding: 8px 12px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      background-color: #fff;
-      color: #007bff;
-      cursor: pointer;
-      text-decoration: none;
-
-      &:hover {
-        background-color: #f0f0f0;
-      }
-    }
-  }
-}
-
