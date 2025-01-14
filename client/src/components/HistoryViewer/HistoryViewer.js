@@ -16,7 +16,7 @@ import {
 import { versionType } from 'types/versionType';
 import { compareType } from 'types/compareType';
 import classNames from 'classnames';
-import ResizeAware from 'components/ResizeAware/ResizeAwareHoc';
+import ResizeAware from 'components/ResizeAware/ResizeAware';
 import * as viewModeActions from 'state/viewMode/ViewModeActions';
 import PropTypes from 'prop-types';
 
@@ -49,8 +49,13 @@ class HistoryViewer extends Component {
    * @param {object} prevProps
    */
   componentDidUpdate(prevProps) {
+    if (!this.props.actions || !this.props.actions.versions) {
+      return;
+    }
+
     const { page: prevPage } = prevProps;
-    const { page: currentPage, actions: { versions } } = this.props;
+    const { page: currentPage } = this.props;
+    const { actions: { versions } } = this.props;
 
     if (prevPage !== currentPage && typeof versions.goToPage === 'function') {
       versions.goToPage(currentPage);
@@ -64,7 +69,7 @@ class HistoryViewer extends Component {
   componentWillUnmount() {
     const { onSelect } = this.props;
     if (typeof onSelect === 'function') {
-      onSelect(false);
+      onSelect(0);
     }
   }
 
@@ -357,6 +362,7 @@ class HistoryViewer extends Component {
       compare,
       compare: { versionFrom: hasVersionFrom },
     } = this.props;
+
     return (
       <div className={this.getContainerClasses()}>
         <CompareWarningComponent />
