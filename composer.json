@@ -22,7 +22,7 @@
     "require": {
         "php": "^8.3",
         "silverstripe/graphql": "^5",
-        "silverstripe/versioned-snapshots": "^2",
+        "silverstripe/versioned-snapshots": "^2.1",
         "silverstripe/versioned-admin": "^2"
     },
     "require-dev": {
