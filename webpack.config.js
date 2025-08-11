@@ -1,9 +1,5 @@
 const Path = require('path');
-const webpackConfig = require('@silverstripe/webpack-config');
-const {
-  JavascriptWebpackConfig,
-  CssWebpackConfig
-} = webpackConfig;
+const { JavascriptWebpackConfig, CssWebpackConfig } = require('@silverstripe/webpack-config');
 
 const PATHS = {
   MODULES: 'node_modules',
