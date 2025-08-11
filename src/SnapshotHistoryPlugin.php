@@ -67,11 +67,14 @@ class SnapshotHistoryPlugin
                 $fields[] = 'absoluteLink';
             }
 
-            $schema->addModelbyClassName($singleton->baseClass(), static function (ModelType $model) use ($fields): void {
-                $model->addFields($fields)
-                    ->addOperation('readOne')
-                    ->addOperation('rollback');
-            });
+            $schema->addModelbyClassName(
+                $singleton->baseClass(),
+                static function (ModelType $model) use ($fields): void {
+                    $model->addFields($fields)
+                        ->addOperation('readOne')
+                        ->addOperation('rollback');
+                }
+            );
         }
     }
 
