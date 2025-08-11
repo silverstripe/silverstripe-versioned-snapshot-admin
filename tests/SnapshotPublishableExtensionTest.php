@@ -31,6 +31,7 @@ class SnapshotTest extends SapphireTest
 
     /**
      * @throws ValidationException
+     * @throws NotFoundExceptionInterface
      */
     public function testUpdateRelevantSnapshots(): void
     {
