@@ -12,7 +12,7 @@ use SilverStripe\Snapshots\SnapshotEvent;
 use SilverStripe\Snapshots\SnapshotItem;
 use SilverStripe\Snapshots\SnapshotPublishable;
 
-class SnapshotTest extends SapphireTest
+class SnapshotPublishableExtensionTest extends SapphireTest
 {
     /**
      * @var bool
