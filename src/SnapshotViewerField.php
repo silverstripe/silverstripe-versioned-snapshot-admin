@@ -3,7 +3,7 @@
 namespace SilverStripe\SnapshotAdmin;
 
 use SilverStripe\CMS\Model\SiteTree;
-use SilverStripe\GraphQL\Schema\SchemaBuilder;
+//use SilverStripe\GraphQL\Schema\SchemaBuilder;
 use SilverStripe\VersionedAdmin\Forms\HistoryViewerField;
 use SilverStripe\View\Requirements;
 
@@ -47,10 +47,10 @@ class SnapshotViewerField extends HistoryViewerField
             ? 'Page'
             : $record->baseClass();
 
-        $config = SchemaBuilder::singleton()->getConfig('admin');
-        $data['data'] = array_merge($data['data'], [
-            'typeName' => $config->getTypeNameForClass($baseClass),
-        ]);
+//        $config = SchemaBuilder::singleton()->getConfig('admin');
+//        $data['data'] = array_merge($data['data'], [
+//            'typeName' => $config->getTypeNameForClass($baseClass),
+//        ]);
 
         return $data;
     }

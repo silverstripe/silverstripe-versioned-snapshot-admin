@@ -13,8 +13,8 @@ use SilverStripe\GraphQL\Schema\DataObject\Plugin\Paginator;
 use SilverStripe\GraphQL\Schema\DataObject\Resolver;
 use SilverStripe\GraphQL\Schema\Exception\SchemaBuilderException;
 use SilverStripe\GraphQL\Schema\Field\ModelField;
-use SilverStripe\GraphQL\Schema\Interfaces\ModelTypePlugin;
-use SilverStripe\GraphQL\Schema\Interfaces\SchemaUpdater;
+//use SilverStripe\GraphQL\Schema\Interfaces\ModelTypePlugin;
+//use SilverStripe\GraphQL\Schema\Interfaces\SchemaUpdater;
 use SilverStripe\GraphQL\Schema\Registry\PluginRegistry;
 use SilverStripe\GraphQL\Schema\Schema;
 use SilverStripe\GraphQL\Schema\Type\ModelType;
@@ -30,7 +30,7 @@ use SilverStripe\Versioned\Versioned;
 /**
  * @extends Extension<PluginRegistry>
  */
-class SnapshotHistoryPlugin implements ModelTypePlugin, SchemaUpdater
+class SnapshotHistoryPlugin
 {
     private const string IDENTIFIER = 'snapshotHistory';
 
