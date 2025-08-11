@@ -1,0 +1,10 @@
+---
+Name: snapshot-admin-requirements
+After:
+  - versionedadminrequirements
+---
+SilverStripe\Admin\LeftAndMain:
+  extra_requirements_javascript:
+    - 'silverstripe/versioned-snapshot-admin:client/dist/js/bundle.js'
+  extra_requirements_css:
+    - 'silverstripe/versioned-snapshot-admin:client/dist/styles/bundle.css'
