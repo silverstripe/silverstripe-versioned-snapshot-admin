@@ -3,15 +3,16 @@
 namespace SilverStripe\SnapshotAdmin;
 
 use Exception;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DataQuery;
 use SilverStripe\Snapshots\SnapshotPublishable;
 
 /**
- * Enhance
+ * @extends Extension<DataObject>
  */
-class SnapshotPublishableExtension extends DataExtension
+class SnapshotPublishableExtension extends Extension
 {
     /**
      * We want to get the version that the snapshots should point to

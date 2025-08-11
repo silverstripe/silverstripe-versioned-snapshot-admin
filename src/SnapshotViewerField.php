@@ -3,8 +3,6 @@
 namespace SilverStripe\SnapshotAdmin;
 
 use SilverStripe\CMS\Model\SiteTree;
-use SilverStripe\GraphQL\Manager;
-use SilverStripe\GraphQL\Scaffolding\StaticSchema;
 use SilverStripe\GraphQL\Schema\SchemaBuilder;
 use SilverStripe\VersionedAdmin\Forms\HistoryViewerField;
 use SilverStripe\View\Requirements;

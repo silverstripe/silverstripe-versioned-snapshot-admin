@@ -2,9 +2,13 @@
 
 namespace SilverStripe\SnapshotAdmin;
 
+use SilverStripe\CMS\Controllers\CMSMain;
 use SilverStripe\Core\Extension;
 use SilverStripe\View\Requirements;
 
+/**
+ * @extends Extension<CMSMain>
+ */
 class CMSMainExtension extends Extension
 {
     public function init(): void

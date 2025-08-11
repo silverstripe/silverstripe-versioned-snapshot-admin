@@ -7,51 +7,27 @@ use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse_Exception;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Snapshots\SnapshotPublishable;
-use SilverStripe\Snapshots\SnapshotVersioned;
 
 /**
- * Temporary shim to provide rollback POC
- *
- * @package SilverStripe\Snapshots
+ * Temporary shim to provide rollback capability
  */
 class SnapshotAdmin extends LeftAndMain
 {
-    /**
-     * @var string
-     */
-    private static $url_segment = 'snapshot';
+    private static string $url_segment = 'snapshot';
 
-    /**
-     * @var string
-     */
-    private static $url_rule = '/$Action';
+    private static string $url_rule = '/$Action';
 
-    /**
-     * @var int
-     */
-    private static $url_priority = 10;
+    private static int $url_priority = 10;
 
-    /**
-     * @var string
-     */
-    private static $required_permission_codes = 'CMS_ACCESS_CMSMain';
+    private static string $required_permission_codes = 'CMS_ACCESS_CMSMain';
 
-    /**
-     * @var bool
-     */
-    private static $ignore_menuitem = true;
+    private static bool $ignore_menuitem = true;
 
-    /**
-     * @var array
-     */
-    private static $url_handlers = [
+    private static array $url_handlers = [
         'rollback/$RecordClass!/$RecordID!/$Snapshot!' => 'handleRollback',
     ];
 
-    /**
-     * @var array
-     */
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'handleRollback',
     ];
 
@@ -60,20 +36,21 @@ class SnapshotAdmin extends LeftAndMain
      * @return mixed
      * @throws HTTPResponse_Exception
      */
-    public function handleRollback(HTTPRequest $request)
+    public function handleRollback(HTTPRequest $request): mixed
     {
         $class = $request->param('RecordClass');
         $id = $request->param('RecordID');
         $snapshot = urldecode($request->param('Snapshot'));
         $class = str_replace('__', '\\', $class);
 
-        /** @var SnapshotPublishable|SnapshotVersioned $record */
+        /** @var SnapshotPublishable $record */
         $record = DataObject::get_by_id($class, $id);
 
         if (!$record) {
             $this->httpError(404);
         }
 
+        // TODO this method is missing
         $record->doRollbackToSnapshot($snapshot);
 
         return $this->redirectBack();

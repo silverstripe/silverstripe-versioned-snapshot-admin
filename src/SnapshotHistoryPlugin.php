@@ -4,9 +4,10 @@ namespace SilverStripe\SnapshotAdmin;
 
 use Exception;
 use GraphQL\Type\Definition\ResolveInfo;
+use Psr\Container\NotFoundExceptionInterface;
 use ReflectionException;
 use SilverStripe\Core\ClassInfo;
-use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Core\Extension;
 use SilverStripe\GraphQL\QueryHandler\UserContextProvider;
 use SilverStripe\GraphQL\Schema\DataObject\Plugin\Paginator;
 use SilverStripe\GraphQL\Schema\DataObject\Resolver;
@@ -14,10 +15,11 @@ use SilverStripe\GraphQL\Schema\Exception\SchemaBuilderException;
 use SilverStripe\GraphQL\Schema\Field\ModelField;
 use SilverStripe\GraphQL\Schema\Interfaces\ModelTypePlugin;
 use SilverStripe\GraphQL\Schema\Interfaces\SchemaUpdater;
+use SilverStripe\GraphQL\Schema\Registry\PluginRegistry;
 use SilverStripe\GraphQL\Schema\Schema;
 use SilverStripe\GraphQL\Schema\Type\ModelType;
 use SilverStripe\GraphQL\Schema\Type\Type;
-use SilverStripe\ORM\ArrayList;
+use SilverStripe\Model\List\ArrayList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Member;
 use SilverStripe\Snapshots\ActivityEntry;
@@ -25,9 +27,12 @@ use SilverStripe\Snapshots\Snapshot;
 use SilverStripe\Snapshots\SnapshotPublishable;
 use SilverStripe\Versioned\Versioned;
 
+/**
+ * @extends Extension<PluginRegistry>
+ */
 class SnapshotHistoryPlugin implements ModelTypePlugin, SchemaUpdater
 {
-    const IDENTIFIER = 'snapshotHistory';
+    private const string IDENTIFIER = 'snapshotHistory';
 
     public function getIdentifier(): string
     {
@@ -43,21 +48,26 @@ class SnapshotHistoryPlugin implements ModelTypePlugin, SchemaUpdater
     {
         // For dataobjects that have this extension, implicitly add them to the schema
         // and ensure readOne and rollback are activated.
-        foreach (ClassInfo::subclassesFor(DataObject::class, false) as $class) {
-            /** @var DataObject|SnapshotHistoryExtension $inst */
-            $inst = $class::singleton();
+        $classes = ClassInfo::subclassesFor(DataObject::class, false);
 
-            if (!$inst->hasExtension(SnapshotHistoryExtension::class) || !$inst->isSnapshotable()) {
+        foreach ($classes as $class) {
+            /** @var DataObject|SnapshotHistoryExtension $singleton */
+            $singleton = DataObject::singleton($class);
+
+            if (!$singleton->hasExtension(SnapshotHistoryExtension::class) || !$singleton->isSnapshotable()) {
                 continue;
             }
 
-            $fields = ['id', 'className'];
+            $fields = [
+                'id',
+                'className',
+            ];
 
-            if ($inst->hasMethod('absoluteLink')) {
+            if ($singleton->hasMethod('absoluteLink')) {
                 $fields[] = 'absoluteLink';
             }
 
-            $schema->addModelbyClassName($inst->baseClass(), static function (ModelType $model) use ($fields): void {
+            $schema->addModelbyClassName($singleton->baseClass(), static function (ModelType $model) use ($fields): void {
                 $model->addFields($fields)
                     ->addOperation('readOne')
                     ->addOperation('rollback');
@@ -70,11 +80,12 @@ class SnapshotHistoryPlugin implements ModelTypePlugin, SchemaUpdater
      * @param Schema $schema
      * @param array $config
      * @throws SchemaBuilderException
+     * @throws NotFoundExceptionInterface
      */
     public function apply(ModelType $type, Schema $schema, array $config = []): void
     {
         $class = $type->getModel()->getSourceClass();
-        $inst = Injector::inst()->get($class);
+        $inst = singleton($class);
 
         if (!$inst->hasExtension(SnapshotPublishable::class) || !$inst->hasExtension(Versioned::class)) {
             return;
@@ -87,7 +98,10 @@ class SnapshotHistoryPlugin implements ModelTypePlugin, SchemaUpdater
             'snapshotHistory',
             $snapshotType->getName(),
             static function (ModelField $field) use ($schema): void {
-                $field->setResolver([static::class, 'resolve']);
+                $field->setResolver([
+                    static::class,
+                    'resolve',
+                ]);
                 Paginator::create()->apply($field, $schema);
             }
         );
@@ -135,7 +149,7 @@ class SnapshotHistoryPlugin implements ModelTypePlugin, SchemaUpdater
      * @throws SchemaBuilderException
      * @throws Exception
      */
-    public static function resolve($object, array $args, $context, ResolveInfo $info): ArrayList
+    public static function resolve(mixed $object, array $args, mixed $context, ResolveInfo $info): ArrayList
     {
         /** @var DataObject&Versioned&SnapshotPublishable $object */
         Schema::invariant(
