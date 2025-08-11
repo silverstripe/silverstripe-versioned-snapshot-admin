@@ -20,7 +20,7 @@ class SnapshotPublishableExtension extends Extension
      *
      * @throws Exception
      */
-    public function updateRelevantSnapshots(DataList &$result): void
+    protected function updateRelevantSnapshots(DataList &$result): void
     {
         $itemVersionColumn = null;
         $result = $result

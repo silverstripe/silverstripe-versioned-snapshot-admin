@@ -11,6 +11,7 @@ use SilverStripe\Versioned\Versioned;
 
 /**
  * @extends Extension<BaseElement>
+ * @extends Extension<SnapshotHistoryExtension>
  */
 class SnapshotHistoryExtension extends Extension
 {
@@ -24,7 +25,7 @@ class SnapshotHistoryExtension extends Extension
             !$owner instanceof SiteTree;
     }
 
-    public function updateCMSFields(FieldList $fields): void
+    protected function updateCMSFields(FieldList $fields): void
     {
         if ($fields->findTab('Root.History')) {
             return;
