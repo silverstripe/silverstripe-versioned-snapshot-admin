@@ -10,6 +10,7 @@ use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\SecurityToken;
 use SilverStripe\Snapshots\ActivityEntry;
 use SilverStripe\Snapshots\Snapshot;
+use SilverStripe\Snapshots\SnapshotItem;
 use SilverStripe\Snapshots\SnapshotPublishable;
 use SilverStripe\Versioned\Versioned;
 use SilverStripe\VersionedAdmin\Controllers\HistoryViewerController;
@@ -42,21 +43,20 @@ class SnapshotViewerController extends HistoryViewerController
             $page = 1;
         }
 
-        /** @var DataObject|Versioned|SnapshotPublishable $obj */
-        $obj = $this->getDataObject($id, $dataClass, 404);
+        /** @var DataObject|Versioned|SnapshotPublishable $model */
+        $model = $this->getDataObject($id, $dataClass, 404);
 
-        if (!$obj->canView()) {
+        if (!$model->canView()) {
             $this->jsonError(403);
         }
 
         // Required extension is missing
-        if (!$obj->hasExtension(SnapshotPublishable::class)) {
+        if (!$model->hasExtension(SnapshotPublishable::class)) {
             $this->jsonError(403);
         }
 
-
         // Get all snapshots
-        $list = $obj->getRelevantSnapshots();
+        $list = $model->getRelevantSnapshots();
         $totalCount = $list->count();
         $limit = HistoryViewerField::config()->get('default_page_size');
         $offset = $limit * ($page - 1);
@@ -64,7 +64,7 @@ class SnapshotViewerController extends HistoryViewerController
         $list = $list->limit($limit, $offset);
         $versions = [];
 
-        $objectHash = SnapshotPublishable::singleton()->hashObjectForSnapshot($obj);
+        $objectHash = SnapshotPublishable::singleton()->hashObjectForSnapshot($model);
 
         /** @var Snapshot $record */
         foreach ($list as $record) {
@@ -115,7 +115,9 @@ class SnapshotViewerController extends HistoryViewerController
     }
 
     /**
-     * JSON endpoint to revert a record to a specific version.
+     * @param HTTPRequest $request
+     * @return HTTPResponse
+     * @throws HTTPResponse_Exception
      */
     public function apiRevert(HTTPRequest $request): HTTPResponse
     {
@@ -125,14 +127,47 @@ class SnapshotViewerController extends HistoryViewerController
 
         $id = (int) $this->getPostedJsonValue($request, 'id');
         $dataClass = $this->getPostedJsonValue($request, 'dataClass');
-        $toVersion = (int) $this->getPostedJsonValue($request, 'toVersion');
-        $obj = $this->getDataObject($id, $dataClass, 400);
+        // Note that this contains Snapshot ID, not version number
+        $snapshotID = (int) $this->getPostedJsonValue($request, 'toVersion');
 
-        if (!$obj->canEdit()) {
+        /** @var DataObject|Versioned|SnapshotPublishable $model */
+        $model = $this->getDataObject($id, $dataClass, 400);
+
+        if (!$model->canEdit()) {
             $this->jsonError(403);
         }
 
-        if (!$obj->getAtVersion($toVersion)) {
+        // Convert snapshot ID to version number
+        $snapshot = Snapshot::get()->byID($snapshotID);
+
+        // Failed to find snapshot
+        if (!$snapshot) {
+            $this->jsonError(400);
+        }
+
+        // Find the correct version
+        $toVersion = null;
+
+        /** @var SnapshotItem $item */
+        foreach ($snapshot->Items() as $item) {
+            // ID mismatch
+            if ($item->ObjectID !== $model->ID) {
+                continue;
+            }
+
+            // Class mismatch
+            if ($item->ObjectClass !== $model->ClassName) {
+                continue;
+            }
+
+            $toVersion = $item->ObjectVersion;
+        }
+
+        if (!$toVersion) {
+            $this->jsonError(400);
+        }
+
+        if (!$model->getAtVersion($toVersion)) {
             $this->jsonError(400);
         }
 
@@ -143,21 +178,35 @@ class SnapshotViewerController extends HistoryViewerController
         return $this->jsonSuccess(204);
     }
 
+    /**
+     * Copied without modification from parent class due to the method being private
+     *
+     * @param int $id
+     * @param string $dataClass
+     * @param int $missingObjectError
+     * @return DataObject
+     * @throws HTTPResponse_Exception
+     */
     private function getDataObject(int $id, string $dataClass, int $missingObjectError): DataObject
     {
         if (!$id) {
             $this->jsonError($missingObjectError);
         }
+
         if (!$dataClass || !class_exists($dataClass) || !is_a($dataClass, DataObject::class, true)) {
             $this->jsonError(400);
         }
+
         $obj = Versioned::get_all_versions($dataClass, $id)->first();
+
         if (!$obj) {
             $this->jsonError($missingObjectError);
         }
+
         if (!$obj->hasExtension(Versioned::class)) {
             $this->jsonError(400);
         }
+
         return $obj;
     }
 }

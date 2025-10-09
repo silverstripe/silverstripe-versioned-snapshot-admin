@@ -52,6 +52,8 @@ class SnapshotViewerControllerTest extends SapphireTest
         $initialSnapshot = Snapshot::singleton()->createSnapshot($page);
         $initialSnapshot->write();
 
+        $page->MetaDescription = 'Some update';
+        $page->write();
         $customSnapshot = Snapshot::singleton()->createSnapshotEvent('Custom event', [
             $page,
         ]);
@@ -59,6 +61,7 @@ class SnapshotViewerControllerTest extends SapphireTest
         $customSnapshot->OriginClass = $page->baseClass();
         $customSnapshot->write();
 
+        $page->publishSingle();
         $publishedSnapshot = Snapshot::singleton()->createSnapshot($page);
 
         // Mark this snapshot as "no modifications" as we have just published all changes
@@ -121,20 +124,18 @@ class SnapshotViewerControllerTest extends SapphireTest
                 'activityDescription' => 'Page "Page 1"',
                 'activityType' => 'MODIFIED',
                 'activityAgo' => 'less than a minute ago',
-                'originVersion' =>
-                    [
-                        'version' => 2,
-                        'absoluteLink' => 'http://localhost/page1',
-                        'author' => null,
-                        'published' => false,
-                        'publisher' => null,
-                        'latestDraftVersion' => true,
-                    ],
-                'author' =>
-                    [
-                        'firstName' => 'ADMIN',
-                        'surname' => 'User',
-                    ],
+                'originVersion' => [
+                    'version' => 2,
+                    'absoluteLink' => 'http://localhost/page1',
+                    'author' => null,
+                    'published' => true,
+                    'publisher' => null,
+                    'latestDraftVersion' => false,
+                ],
+                'author' => [
+                    'firstName' => 'ADMIN',
+                    'surname' => 'User',
+                ],
                 'isFullVersion' => true,
                 'isLiveSnapshot' => false,
                 'baseVersion' => 2,
@@ -145,23 +146,21 @@ class SnapshotViewerControllerTest extends SapphireTest
                 'activityDescription' => 'Page "Page 1"',
                 'activityType' => 'MODIFIED',
                 'activityAgo' => 'less than a minute ago',
-                'originVersion' =>
-                    [
-                        'version' => 2,
-                        'absoluteLink' => 'http://localhost/page1',
-                        'author' => null,
-                        'published' => false,
-                        'publisher' => null,
-                        'latestDraftVersion' => true,
-                    ],
-                'author' =>
-                    [
-                        'firstName' => 'ADMIN',
-                        'surname' => 'User',
-                    ],
+                'originVersion' => [
+                    'version' => 3,
+                    'absoluteLink' => 'http://localhost/page1',
+                    'author' => [],
+                    'published' => true,
+                    'publisher' => null,
+                    'latestDraftVersion' => false,
+                ],
+                'author' => [
+                    'firstName' => 'ADMIN',
+                    'surname' => 'User',
+                ],
                 'isFullVersion' => true,
                 'isLiveSnapshot' => false,
-                'baseVersion' => 2,
+                'baseVersion' => 3,
             ],
             [
                 'id' => $thirdSnapshot->ID,
@@ -169,25 +168,52 @@ class SnapshotViewerControllerTest extends SapphireTest
                 'activityDescription' => 'Page "Page 1"',
                 'activityType' => 'MODIFIED',
                 'activityAgo' => 'less than a minute ago',
-                'originVersion' =>
-                    [
-                        'version' => 2,
-                        'absoluteLink' => 'http://localhost/page1',
-                        'author' => null,
-                        'published' => false,
-                        'publisher' => null,
-                        'latestDraftVersion' => true,
-                    ],
-                'author' =>
-                    [
-                        'firstName' => 'ADMIN',
-                        'surname' => 'User',
-                    ],
+                'originVersion' => [
+                    'version' => 4,
+                    'absoluteLink' => 'http://localhost/page1',
+                    'author' => [],
+                    'published' => true,
+                    'publisher' => [],
+                    'latestDraftVersion' => true,
+                ],
+                'author' => [
+                    'firstName' => 'ADMIN',
+                    'surname' => 'User',
+                ],
                 'isFullVersion' => true,
-                'isLiveSnapshot' => false,
-                'baseVersion' => 2,
+                'isLiveSnapshot' => true,
+                'baseVersion' => 4,
             ],
         ];
         $this->assertSame($expected, $data['versions'], 'We expect specific version data including order');
+    }
+
+    /**
+     * @return void
+     * @throws HTTPResponse_Exception
+     */
+    public function testApiRevert(): void
+    {
+        /** @var Page $page */
+        $page = $this->objFromFixture(Page::class, 'page1');
+
+        $initialSnapshot = Snapshot::get()
+            ->sort('ID', 'ASC')
+            ->first();
+
+        $mockRequest = new HTTPRequest(
+            'GET',
+            '/admin/historyviewer/api/revert',
+            [
+                'id' => $page->ID,
+                'dataClass' => $page->ClassName,
+                'toVersion' => $initialSnapshot->ID,
+            ]
+        );
+        $controller = SnapshotViewerController::create();
+        $response = $controller->apiRevert($mockRequest);
+
+        $responseCode = $response->getStatusCode();
+        $this->assertEquals(204, $responseCode, 'We expect a success response code');
     }
 }
