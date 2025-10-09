@@ -187,33 +187,4 @@ class SnapshotViewerControllerTest extends SapphireTest
         ];
         $this->assertSame($expected, $data['versions'], 'We expect specific version data including order');
     }
-
-    /**
-     * @return void
-     * @throws HTTPResponse_Exception
-     */
-    public function testApiRevert(): void
-    {
-        /** @var Page $page */
-        $page = $this->objFromFixture(Page::class, 'page1');
-
-        $initialSnapshot = Snapshot::get()
-            ->sort('ID', 'ASC')
-            ->first();
-
-        $mockRequest = new HTTPRequest(
-            'GET',
-            '/admin/historyviewer/api/revert',
-            [
-                'id' => $page->ID,
-                'dataClass' => $page->ClassName,
-                'toVersion' => $initialSnapshot->ID,
-            ]
-        );
-        $controller = SnapshotViewerController::create();
-        $response = $controller->apiRevert($mockRequest);
-
-        $responseCode = $response->getStatusCode();
-        $this->assertEquals(204, $responseCode, 'We expect a success response code');
-    }
 }

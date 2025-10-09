@@ -7,10 +7,8 @@ use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Control\HTTPResponse_Exception;
 use SilverStripe\ORM\DataObject;
-use SilverStripe\Security\SecurityToken;
 use SilverStripe\Snapshots\ActivityEntry;
 use SilverStripe\Snapshots\Snapshot;
-use SilverStripe\Snapshots\SnapshotItem;
 use SilverStripe\Snapshots\SnapshotPublishable;
 use SilverStripe\Versioned\Versioned;
 use SilverStripe\VersionedAdmin\Controllers\HistoryViewerController;
@@ -112,70 +110,6 @@ class SnapshotViewerController extends HistoryViewerController
         $this->extend('updateApiRead', $data, $request);
 
         return $this->jsonSuccess(200, $data);
-    }
-
-    /**
-     * @param HTTPRequest $request
-     * @return HTTPResponse
-     * @throws HTTPResponse_Exception
-     */
-    public function apiRevert(HTTPRequest $request): HTTPResponse
-    {
-        if (!SecurityToken::inst()->checkRequest($request)) {
-            $this->jsonError(400);
-        }
-
-        $id = (int) $this->getPostedJsonValue($request, 'id');
-        $dataClass = $this->getPostedJsonValue($request, 'dataClass');
-        // Note that this contains Snapshot ID, not version number
-        $snapshotID = (int) $this->getPostedJsonValue($request, 'toVersion');
-
-        /** @var DataObject|Versioned|SnapshotPublishable $model */
-        $model = $this->getDataObject($id, $dataClass, 400);
-
-        if (!$model->canEdit()) {
-            $this->jsonError(403);
-        }
-
-        // Convert snapshot ID to version number
-        $snapshot = Snapshot::get()->byID($snapshotID);
-
-        // Failed to find snapshot
-        if (!$snapshot) {
-            $this->jsonError(400);
-        }
-
-        // Find the correct version
-        $toVersion = null;
-
-        /** @var SnapshotItem $item */
-        foreach ($snapshot->Items() as $item) {
-            // ID mismatch
-            if ($item->ObjectID !== $model->ID) {
-                continue;
-            }
-
-            // Class mismatch
-            if ($item->ObjectClass !== $model->ClassName) {
-                continue;
-            }
-
-            $toVersion = $item->ObjectVersion;
-        }
-
-        if (!$toVersion) {
-            $this->jsonError(400);
-        }
-
-        if (!$model->getAtVersion($toVersion)) {
-            $this->jsonError(400);
-        }
-
-        /** @var Versioned|DataObject $record */
-        $record = Versioned::get_latest_version($dataClass, $id);
-        $record->rollbackRecursive($toVersion);
-
-        return $this->jsonSuccess(204);
     }
 
     /**
