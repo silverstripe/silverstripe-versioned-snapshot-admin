@@ -101,9 +101,22 @@ class SnapshotViewerControllerTest extends SapphireTest
         $this->assertArrayHasKey('totalCount', $pageInfo, 'We expect to see total count field');
         $this->assertEquals(3, $pageInfo['totalCount'], 'We expect a specific total item count');
 
+        $snapshots = Snapshot::get()
+            ->sort('ID', 'ASC')
+            ->toArray();
+
+        /** @var Snapshot $firstSnapshot */
+        $firstSnapshot = array_shift($snapshots);
+
+        /** @var Snapshot $secondSnapshot */
+        $secondSnapshot = array_shift($snapshots);
+
+        /** @var Snapshot $thirdSnapshot */
+        $thirdSnapshot = array_shift($snapshots);
+
         $expected = [
             [
-                'id' => 1,
+                'id' => $firstSnapshot->ID,
                 'lastEdited' => '2025-01-01 00:00:00',
                 'activityDescription' => 'Page "Page 1"',
                 'activityType' => 'MODIFIED',
@@ -127,7 +140,7 @@ class SnapshotViewerControllerTest extends SapphireTest
                 'baseVersion' => 2,
             ],
             [
-                'id' => 2,
+                'id' => $secondSnapshot->ID,
                 'lastEdited' => '2025-01-01 00:00:00',
                 'activityDescription' => 'Page "Page 1"',
                 'activityType' => 'MODIFIED',
@@ -151,7 +164,7 @@ class SnapshotViewerControllerTest extends SapphireTest
                 'baseVersion' => 2,
             ],
             [
-                'id' => 3,
+                'id' => $thirdSnapshot->ID,
                 'lastEdited' => '2025-01-01 00:00:00',
                 'activityDescription' => 'Page "Page 1"',
                 'activityType' => 'MODIFIED',
