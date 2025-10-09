@@ -8,12 +8,9 @@ After:
 SilverStripe\Core\Injector\Injector:
   SilverStripe\VersionedAdmin\Forms\HistoryViewerField:
     class: SilverStripe\SnapshotAdmin\SnapshotViewerField
+  SilverStripe\VersionedAdmin\Controllers\HistoryViewerController:
+    class: SilverStripe\SnapshotAdmin\SnapshotViewerController
 
 SilverStripe\ORM\DataObject:
   extensions:
     snapshot-publishable: SilverStripe\SnapshotAdmin\SnapshotPublishableExtension
-
-# TODO we need to migrate graphQL schema to controller, also check HistoryViewerController
-#SilverStripe\Core\Injector\Injector:
-#  SilverStripe\CMS\Controllers\CMSPageHistoryController:
-#    class: SilverStripe\VersionedAdmin\Controllers\CMSPageHistoryViewerController
