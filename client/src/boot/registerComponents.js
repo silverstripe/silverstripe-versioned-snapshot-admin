@@ -10,7 +10,7 @@ import HistoryViewerVersionState from 'components/HistoryViewer/HistoryViewerVer
 import HistoryViewerSnapshotState from 'components/HistoryViewer/HistoryViewerSnapshotState';
 import HistoryViewerSnapshot from 'components/HistoryViewer/HistoryViewerSnapshot';
 import HistoryViewerCompareWarning from 'components/HistoryViewer/HistoryViewerCompareWarning';
-import RollbackMutation from 'components/HistoryViewer/RollbackMutation';
+// import RollbackMutation from 'components/HistoryViewer/RollbackMutation';
 
 /**
  * The reason we have not gone down the route of using the same name for components
@@ -25,7 +25,7 @@ export default () => {
   Injector.component.register('SnapshotViewer', HistoryViewer);
   Injector.component.register('SnapshotViewerContainer', SnapshotViewerContainer);
   Injector.component.register('SnapshotHistoryViewer', HistoryViewer);
-  Injector.component.register('SnapshotRollbackMutation', RollbackMutation);
+  // Injector.component.register('SnapshotRollbackMutation', RollbackMutation);
   Injector.component.registerMany({
     SnapshotHistoryViewerHeading: HistoryViewerHeading,
     SnapshotHistoryViewerToolbar: HistoryViewerToolbar,

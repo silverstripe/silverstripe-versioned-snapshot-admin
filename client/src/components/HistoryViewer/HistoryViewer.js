@@ -1,11 +1,9 @@
 /* global window */
 
 import React, { Component } from 'react';
-import { compose } from 'redux';
+import { compose, bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Griddle from 'griddle-react';
-import historyViewerConfig from 'containers/HistoryViewer/HistoryViewerConfig';
-import i18n from 'i18n';
+import Paginator from 'components/Paginator/Paginator';
 import { inject } from 'lib/Injector';
 import Loading from 'components/Loading/Loading';
 import {
@@ -18,19 +16,13 @@ import { compareType } from 'types/compareType';
 import classNames from 'classnames';
 import ResizeAware from 'components/ResizeAware/ResizeAware';
 import * as viewModeActions from 'state/viewMode/ViewModeActions';
+import * as toastsActions from 'state/toasts/ToastsActions';
 import PropTypes from 'prop-types';
-
-const VERSION_MODE_VERSION = 'VERSION';
-const VERSION_MODE_DATE = 'DATE';
-
-export {
-  VERSION_MODE_VERSION,
-  VERSION_MODE_DATE,
-};
+import i18n from 'i18n';
 
 /**
  * The HistoryViewer component is abstract, and requires an Injector component
- * to be connected providing the GraphQL query implementation for the appropriate
+ * to be connected providing the query implementation for the appropriate
  * DataObject type
  */
 class HistoryViewer extends Component {
@@ -40,26 +32,25 @@ class HistoryViewer extends Component {
     this.handleSetPage = this.handleSetPage.bind(this);
     this.handleNextPage = this.handleNextPage.bind(this);
     this.handlePrevPage = this.handlePrevPage.bind(this);
+    this.handleAfterRevert = this.handleAfterRevert.bind(this);
   }
 
-  /**
-   * Manually handle state changes in the page number, because Griddle doesn't support Redux.
-   * See: https://github.com/GriddleGriddle/Griddle/issues/626
-   *
-   * @param {object} prevProps
-   */
+  componentDidMount() {
+    // Data fetching is now handled by the parent container
+    // Display a toast if there were any pre-existing graphql errors
+    const { graphQLErrors, toastActions } = this.props;
+    if (graphQLErrors.length > 0) {
+      toastActions.error(i18n._t('Admin.UNKNOWN_ERROR', 'An unknown error has occurred.'));
+    }
+  }
+
   componentDidUpdate(prevProps) {
-    if (!this.props.actions || !this.props.actions.versions) {
-      return;
+    // Display a toast if there were any new graphql errors
+    if (prevProps.graphQLErrors.length < this.props.graphQLErrors.length) {
+      this.props.toastActions.error(i18n._t('Admin.UNKNOWN_ERROR', 'An unknown error has occurred.'));
     }
 
-    const { page: prevPage } = prevProps;
-    const { page: currentPage } = this.props;
-    const { actions: { versions } } = this.props;
-
-    if (prevPage !== currentPage && typeof versions.goToPage === 'function') {
-      versions.goToPage(currentPage);
-    }
+    // Data fetching on page change is now handled by the parent container's useEffect
   }
 
   /**
@@ -74,32 +65,9 @@ class HistoryViewer extends Component {
   }
 
   /**
-   * Returns the result of the GraphQL version history query
-   *
-   * @returns {Array}
+   * Data fetching (refreshVersionData) has been removed.
+   * It is now handled by the parent SnapshotViewerContainer.
    */
-  getVersions() {
-    const { versions } = this.props;
-    const edges = (versions && versions.snapshotHistory && versions.snapshotHistory.edges)
-      ? versions.snapshotHistory.edges
-      : [];
-    const nodes = edges.map(edge => (edge.node));
-
-    return nodes.map(node => ({
-      ...node,
-      ...node.originVersion,
-      // Snapshots author is authoritative
-      author: {
-        ...node.author
-      },
-      absoluteLink: (node.isFullVersion && node.originVersion)
-        ? node.originVersion.absoluteLink
-        : versions.absoluteLink,
-      version: node.isFullVersion && node.originVersion
-        ? node.originVersion.version
-        : node.baseVersion,
-    }));
-  }
 
   /**
    * Returns a string to be used as the "class" attribute on the history viewer container
@@ -110,10 +78,15 @@ class HistoryViewer extends Component {
     const { compare, isInGridField } = this.props;
 
     // GridFieldDetailForm provides its own padding, so apply a class to counteract this.
-    return classNames('history-viewer', 'fill-height', {
-      'history-viewer__compare-mode': compare,
-      'history-viewer--no-margins': isInGridField && !this.isListView(),
-    });
+    return classNames(
+      'history-viewer',
+      'fill-height',
+      'panel--scrollable',
+      {
+        'history-viewer__compare-mode': compare,
+        'history-viewer--no-margins': isInGridField && !this.isListView(),
+      }
+    );
   }
 
   /**
@@ -122,15 +95,15 @@ class HistoryViewer extends Component {
    * @returns {object|null}
    */
   getLatestVersion() {
-    const { currentVersion } = this.props;
+    const { currentVersion, versions } = this.props;
 
     // Check whether the "current version" (in the store) is the latest draft
     if (currentVersion && currentVersion.latestDraftVersion === true) {
       return currentVersion;
     }
 
-    // Look for one in the list of available versions
-    const latestDraftVersion = this.getVersions()
+    // Look for one in the list of available versions (from props)
+    const latestDraftVersion = versions
       .filter(version => version.latestDraftVersion === true);
 
     if (latestDraftVersion.length) {
@@ -204,12 +177,30 @@ class HistoryViewer extends Component {
   }
 
   /**
+   * Handler for after reverting
+   */
+  handleAfterRevert() {
+    const { onAfterRevert } = this.props;
+    if (window.location.href.indexOf('/admin/pages/history/show/') !== -1) {
+      // if we're editing page history, call the refresh trigger from the container
+      if (onAfterRevert) {
+        onAfterRevert();
+      }
+    } else {
+      // if we're editing a datobject, then we need to reload the entire edit form so that
+      // we're showing the correct version of the object (the one we just reverted to) in the edit form
+      // set a timeout so that the user can see the success message before the page reloads
+      setTimeout(() => window.location.reload(), 1500);
+    }
+  }
+
+  /**
    * Compare mode is not available when only one version exists
    *
    * @returns {boolean}
    */
   compareModeAvailable() {
-    return this.getVersions().length > 1;
+    return this.props.versions.length > 1;
   }
 
   /**
@@ -221,27 +212,23 @@ class HistoryViewer extends Component {
     const {
       currentVersion,
       isPreviewable,
+      isRevertable,
       recordId,
       recordClass,
-      typeName,
       schemaUrl,
-      // previewMode,
       VersionDetailComponent,
       compare,
       compare: { versionFrom = false, versionTo = false },
       previewState,
+      onAfterRevert, // Get onAfterRevert from props
     } = this.props;
     // Insert variables into the schema URL via regex replacements
     const schemaVersionReplacements = {
       ':id': recordId,
       ':class': recordClass,
-      ':date': '',
-      ':version': '',
+      ':date': currentVersion.lastEdited,
+      ':version': currentVersion.version,
     };
-
-    // Currently previewMode === MODE_VERSION is disabled as it displays incorrect relations.
-
-    schemaVersionReplacements[':date'] = currentVersion.lastEdited;
 
     const schemaCompareReplacements = {
       ':id': recordId,
@@ -255,17 +242,21 @@ class HistoryViewer extends Component {
 
     const version = compare ? versionFrom : currentVersion;
     const latestVersion = this.getLatestVersion();
+
     const props = {
       // comparison shows two versions as one, so by nature cannot be a single 'latest' version.
       isLatestVersion: !compare && latestVersion && latestVersion.version === version.version,
       isPreviewable,
+      isRevertable,
       recordId,
-      typeName,
+      recordClass,
       schemaUrl: schemaUrl.replace(schemaSearch, (match) => schemaReplacements[match]),
       version,
       compare,
       compareModeAvailable: this.compareModeAvailable(),
       previewState,
+      // Use the new handleAfterRevert method that calls the prop
+      onAfterRevert: this.handleAfterRevert,
     };
 
     return (
@@ -283,22 +274,13 @@ class HistoryViewer extends Component {
    * Currently borrows the pagination from Griddle, to keep styling consistent
    * between the two views.
    *
-   * See: ThumbnailView.js
-   *
    * @returns {XML|null}
    */
   renderPagination() {
-    const { limit, page, versions } = this.props;
+    const { limit, page, pageInfo } = this.props;
+    const totalVersions = pageInfo.totalCount;
 
-    if (!versions) {
-      return null;
-    }
-
-    const totalVersions = versions.snapshotHistory
-      ? versions.snapshotHistory.pageInfo.totalCount
-      : 0;
-
-    if (totalVersions <= limit) {
+    if (!totalVersions || totalVersions <= limit) {
       return null;
     }
 
@@ -314,18 +296,18 @@ class HistoryViewer extends Component {
       useGriddleStyles: false,
     };
 
-    return (
-      <div className="griddle-footer">
-        <Griddle.GridPagination {...props} />
-      </div>
-    );
+    return <Paginator {...props} />;
+
+    // Griddle Pagination replaced with <Paginator>
+    // return (
+    // <div className="griddle-footer">
+    //      <Griddle.GridPagination {...props} />
+    //   </div>
+    // );
   }
 
   /**
    * Render the list containing versions selected for comparison.
-   * It is not the ListComponent's place to know the context in which it is being rendered
-   * so it is the directive of this contextual component to tell it what stylistic adaptations
-   * it should present based on the context (the type of list it contains).
    *
    * @returns {HistoryViewerVersionList|null}
    */
@@ -361,6 +343,7 @@ class HistoryViewer extends Component {
       CompareWarningComponent,
       compare,
       compare: { versionFrom: hasVersionFrom },
+      versions, // Get versions from props
     } = this.props;
 
     return (
@@ -370,7 +353,7 @@ class HistoryViewer extends Component {
         <div className={isInGridField ? '' : 'panel panel--padded panel--scrollable'}>
           {this.renderComparisonSelectionList()}
           <ListComponent
-            versions={this.getVersions()}
+            versions={versions} // Pass versions from props
             showHeader={!compare || (compare && !hasVersionFrom)}
             compareModeAvailable={this.compareModeAvailable()}
           />
@@ -393,7 +376,16 @@ class HistoryViewer extends Component {
   }
 
   render() {
-    const { loading, compare, previewMode } = this.props;
+    const { graphQLErrors, loading, compare, currentVersion, recordId } = this.props;
+
+    // A toast message will be shown in componentDidMount() or componentDidUpdate()
+    if (graphQLErrors && graphQLErrors.length > 0) {
+      return null;
+    }
+
+    if (!recordId) {
+      return null;
+    }
 
     if (loading) {
       return <Loading />;
@@ -403,7 +395,7 @@ class HistoryViewer extends Component {
       return this.renderCompareMode();
     }
 
-    if (previewMode) {
+    if (currentVersion) {
       return this.renderVersionDetail();
     }
 
@@ -412,63 +404,60 @@ class HistoryViewer extends Component {
 }
 
 HistoryViewer.propTypes = {
+  loading: PropTypes.bool,
+  graphQLErrors: PropTypes.arrayOf(PropTypes.string),
+  versions: PropTypes.array, // Added versions from container
+  pageInfo: PropTypes.shape({ // Added pageInfo from container
+    totalCount: PropTypes.number,
+  }),
   contextKey: PropTypes.string,
   limit: PropTypes.number,
-  ListComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
+  ListComponent: PropTypes.elementType.isRequired,
   offset: PropTypes.number,
-  recordId: PropTypes.number.isRequired,
-  recordClass: PropTypes.string.isRequired,
-  typeName: PropTypes.string.isRequired,
+  recordId: PropTypes.number,
+  recordClass: PropTypes.string,
   currentVersion: PropTypes.oneOfType([PropTypes.bool, versionType]),
   compare: compareType,
   isInGridField: PropTypes.bool,
   isPreviewable: PropTypes.bool,
-  VersionDetailComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
-  CompareWarningComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
-  versions: PropTypes.shape({
-    versions: PropTypes.shape({
-      pageInfo: PropTypes.shape({
-        totalCount: PropTypes.number,
-      }),
-      edges: PropTypes.arrayOf(PropTypes.shape({
-        node: versionType,
-      })),
-    }),
-  }),
+  isRevertable: PropTypes.bool,
+  VersionDetailComponent: PropTypes.elementType.isRequired,
+  CompareWarningComponent: PropTypes.elementType.isRequired,
   page: PropTypes.number,
   schemaUrl: PropTypes.string,
-  // @todo replace this with import { VIEW_MODE_STATES } from 'state/viewMode/ViewModeStates'
-  // when webpack-config has this export available via silverstripe/admin
   previewState: PropTypes.oneOf(['edit', 'preview', 'split']),
   actions: PropTypes.object,
   onSelect: PropTypes.func,
   onSetPage: PropTypes.func,
   onResize: PropTypes.func,
+  onAfterRevert: PropTypes.func, // Added from container
+  toastActions: PropTypes.shape({
+    display: PropTypes.func,
+    info: PropTypes.func,
+    success: PropTypes.func,
+    warning: PropTypes.func,
+    error: PropTypes.func,
+  }),
 };
 
 HistoryViewer.defaultProps = {
+  loading: false,
+  graphQLErrors: [],
+  versions: [], // Add default
+  pageInfo: { totalCount: 0 }, // Add default
   compare: {},
   contextKey: '',
   currentVersion: false,
   isInGridField: false,
   isPreviewable: false,
-  typeName: '',
+  isRevertable: false,
   schemaUrl: '',
-  versions: {
-    versions: {
-      pageInfo: {
-        totalCount: 0,
-      },
-      edges: [],
-    },
-  },
 };
 
 function mapStateToProps(state) {
   const {
     currentPage,
     currentVersion,
-    previewMode,
     compare,
   } = state.versionedAdmin.historyViewer;
 
@@ -478,7 +467,6 @@ function mapStateToProps(state) {
     page: currentPage,
     currentVersion,
     compare,
-    previewMode,
     previewState: activeState,
   };
 }
@@ -494,7 +482,8 @@ function mapDispatchToProps(dispatch) {
     },
     onResize(panelWidth) {
       dispatch(viewModeActions.enableOrDisableSplitMode(panelWidth));
-    }
+    },
+    toastActions: bindActionCreators(toastsActions, dispatch),
   };
 }
 
@@ -502,7 +491,7 @@ export { HistoryViewer as Component };
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
-  historyViewerConfig,
+  // historyViewerConfig has been removed as it provides the GraphQL query which is no longer used.
   inject(
     ['SnapshotHistoryViewerVersionList', 'SnapshotHistoryViewerVersionDetail', 'SnapshotHistoryViewerCompareWarning'],
     (ListComponent, VersionDetailComponent, CompareWarningComponent) => ({
