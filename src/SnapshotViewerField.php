@@ -2,10 +2,9 @@
 
 namespace SilverStripe\SnapshotAdmin;
 
-use SilverStripe\CMS\Model\SiteTree;
-//use SilverStripe\GraphQL\Schema\SchemaBuilder;
 use SilverStripe\VersionedAdmin\Forms\HistoryViewerField;
 use SilverStripe\View\Requirements;
+use SilverStripe\SnapshotAdmin\SnapshotViewerController;
 
 class SnapshotViewerField extends HistoryViewerField
 {
@@ -22,6 +21,8 @@ class SnapshotViewerField extends HistoryViewerField
     public function __construct($name, $title = null, $value = null)
     {
         parent::__construct($name, $title, $value);
+
+        // Block the default versioned-admin styles/scripts as we are replacing the viewer
         Requirements::block('silverstripe/versioned-admin:client/dist/js/bundle.js');
         Requirements::block('silverstripe/versioned-admin:client/dist/styles/bundle.css');
     }
@@ -39,18 +40,11 @@ class SnapshotViewerField extends HistoryViewerField
     public function getSchemaDataDefaults(): array
     {
         $data = parent::getSchemaDataDefaults();
-        $record = $this->getSourceRecord();
 
-        // GraphQL doesn't have any API for "hide ancestor", which we should support at some point
-        // to avoid things like readSiteTree. "Page" is exposed by default
-        $baseClass = $record->baseClass() === SiteTree::class
-            ? 'Page'
-            : $record->baseClass();
+        $controller = SnapshotViewerController::singleton();
 
-//        $config = SchemaBuilder::singleton()->getConfig('admin');
-//        $data['data'] = array_merge($data['data'], [
-//            'typeName' => $config->getTypeNameForClass($baseClass),
-//        ]);
+        // This makes 'snapshotEndpoint' available in React props
+        $data['data']['snapshotEndpoint'] = $controller->Link('read');
 
         return $data;
     }
