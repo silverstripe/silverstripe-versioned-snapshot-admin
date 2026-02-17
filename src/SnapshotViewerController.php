@@ -17,13 +17,40 @@ use SilverStripe\VersionedAdmin\Forms\HistoryViewerField;
 class SnapshotViewerController extends HistoryViewerController
 {
     /**
-     * This is needed to preserve the naming convention of the JS config
-     * Without this the frontend integration of our override won't work as the section name
-     * is hard coded in the frontend components
-     *
-     * @var string|null
+     * Define the URL segment for this controller
+     * @var string
      */
-    private static ?string $section_name = HistoryViewerController::class;
+    private static string $url_segment = 'snapshot-history-viewer';
+
+    /**
+     * Allow the apiRead method to be called via URL
+     * @var array
+     */
+    private static array $allowed_actions = [
+        'apiRead',
+    ];
+
+    /**
+     * Map the 'read' URL segment to the apiRead method
+     * @var array
+     */
+    private static array $url_handlers = [
+        'GET read' => 'apiRead',
+    ];
+
+    /**
+     * Expose the endpoint URL to the React frontend
+     * This allows Config.getSection(...).endpoints.read to work
+     * @return array
+     */
+    public function getClientConfig(): array
+    {
+        $config = parent::getClientConfig();
+        $config['endpoints'] = [
+            'read' => $this->Link('read'),
+        ];
+        return $config;
+    }
 
     /**
      * @param HTTPRequest $request
@@ -33,24 +60,34 @@ class SnapshotViewerController extends HistoryViewerController
      */
     public function apiRead(HTTPRequest $request): HTTPResponse
     {
-        $id = (int) $request->getVar('id');
-        $dataClass = $request->getVar('dataClass') ?? '';
+        // Support both naming conventions
+        $id = (int) ($request->getVar('id') ?? $request->getVar('record_id'));
+        $dataClass = $request->getVar('dataClass') ?? $request->getVar('record_class');
         $page = (int) $request->getVar('page');
 
         if (!$page) {
             $page = 1;
         }
 
+        // Validate inputs
+        if (!$id || !$dataClass) {
+            return $this->jsonResponse(['error' => 'Missing id or dataClass'], 400);
+        }
+
         /** @var DataObject|Versioned|SnapshotPublishable $model */
-        $model = $this->getDataObject($id, $dataClass, 404);
+        try {
+            $model = $this->getDataObject($id, $dataClass);
+        } catch (Exception $e) {
+            return $this->jsonResponse(['error' => 'Record not found'], 404);
+        }
 
         if (!$model->canView()) {
-            $this->jsonError(403);
+            return $this->jsonResponse(['error' => 'Forbidden'], 403);
         }
 
         // Required extension is missing
         if (!$model->hasExtension(SnapshotPublishable::class)) {
-            $this->jsonError(403);
+            return $this->jsonResponse(['error' => 'Snapshot extension missing'], 400);
         }
 
         // Get all snapshots
@@ -67,7 +104,8 @@ class SnapshotViewerController extends HistoryViewerController
         /** @var Snapshot $record */
         foreach ($list as $record) {
             $author = $record->Author();
-            $isFullVersion = $record->OriginHash === $objectHash && $record->getActivityType() !== ActivityEntry::DELETED;
+            $isFullVersion = $record->OriginHash === $objectHash &&
+                $record->getActivityType() !== ActivityEntry::DELETED;
 
             /** @var DataObject|Versioned $originVersion */
             $originVersion = $record->getOriginVersion();
@@ -75,6 +113,7 @@ class SnapshotViewerController extends HistoryViewerController
                 ? $originVersion->AbsoluteLink()
                 : null;
 
+            // Build the response object
             $versions[] = [
                 'id' => $record->ID,
                 'lastEdited' => $record->LastEdited,
@@ -109,36 +148,35 @@ class SnapshotViewerController extends HistoryViewerController
 
         $this->extend('updateApiRead', $data, $request);
 
-        return $this->jsonSuccess(200, $data);
+        return $this->jsonResponse($data);
     }
 
     /**
-     * Copied without modification from parent class due to the method being private
-     *
-     * @param int $id
-     * @param string $dataClass
-     * @param int $missingObjectError
-     * @return DataObject
-     * @throws HTTPResponse_Exception
+     * Helper to return JSON response
      */
-    private function getDataObject(int $id, string $dataClass, int $missingObjectError): DataObject
+    protected function jsonResponse(array $data, int $code = 200): HTTPResponse
     {
-        if (!$id) {
-            $this->jsonError($missingObjectError);
-        }
+        $response = HTTPResponse::create();
+        $response->addHeader('Content-Type', 'application/json');
+        $response->setStatusCode($code);
+        $response->setBody(json_encode($data));
+        return $response;
+    }
 
-        if (!$dataClass || !class_exists($dataClass) || !is_a($dataClass, DataObject::class, true)) {
-            $this->jsonError(400);
+    /**
+     * Copied from parent class
+     * @throws Exception
+     */
+    private function getDataObject(int $id, string $dataClass): DataObject
+    {
+        if (!$dataClass || !class_exists($dataClass) || !is_subclass_of($dataClass, DataObject::class)) {
+            throw new Exception("Invalid data class");
         }
 
         $obj = Versioned::get_all_versions($dataClass, $id)->first();
 
         if (!$obj) {
-            $this->jsonError($missingObjectError);
-        }
-
-        if (!$obj->hasExtension(Versioned::class)) {
-            $this->jsonError(400);
+            throw new Exception("Object not found");
         }
 
         return $obj;

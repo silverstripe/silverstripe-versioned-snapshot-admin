@@ -14,13 +14,13 @@ import Loading from 'components/Loading/Loading';
 const SnapshotViewerContainer = (
   {
     data: {
-      typeName,
+      snapshotEndpoint,
       recordId,
       limit,
       page,
       recordClass,
       isPreviewable,
-      actions = {versions: {}},
+      actions = { versions: {} },
     },
     SnapshotViewerComponent,
   }) => {
@@ -41,60 +41,56 @@ const SnapshotViewerContainer = (
     setLoading(true);
     setErrors(null);
 
-    // Get the endpoint config for the new snapshot controller
-    // This MUST match the working controller from versioned-admin
-    const sectionConfig = Config.getSection('SilverStripe\\VersionedAdmin\\Controllers\\HistoryViewerController');
-    const endpoint = sectionConfig.endpoints.read;
+    if (!snapshotEndpoint) {
+      console.error('Snapshot Endpoint not provided in props.');
+      setErrors(['Configuration Error: Endpoint missing']);
+      setLoading(false);
+      return;
+    }
 
-    // TODO: URL seems to be incorrect and returns 403. Check further with versioned-admin
-    const url = `${endpoint}?dataClass=${recordClass}&id=${recordId}&page=${page}&limit=${limit}`;
+    // Build URL using prop
+    const url = `${snapshotEndpoint}?record_class=${recordClass}&record_id=${recordId}&page=${page}&limit=${limit}`;
 
-    console.log(`sectionConfig`);
-    console.log(sectionConfig);
-    console.log(`endpoint`);
-    console.log(endpoint);
-    console.log(`url`);
-    console.log(url);
-
-    // Make the backend API call
+    // backend.get automatically injects X-Security-ID (CSRF token) if available.
     backend.get(url)
-      .then(response => response.json())
+      .then(async (response) => {
+        if (!response.ok) {
+            const msg = await getJsonErrorMessage(response);
+            throw new Error(msg || `API Error: ${response.statusText}`);
+        }
+        return response.json();
+      })
       .then(responseJson => {
-        console.log(responseJson);
         setVersionsData(responseJson);
       })
-      .catch(async (err) => {
-        const message = await getJsonErrorMessage(err);
-        console.log(message);
-        setErrors([message]);
+      .catch((err) => {
+        console.error(err);
+        setErrors([err.message]);
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [recordId, recordClass, page, limit, refreshTrigger]); // Dependencies: re-fetch if these change
+  }, [recordId, recordClass, page, limit, refreshTrigger, snapshotEndpoint]); // Dependencies: re-fetch if these change
 
   // Function to pass down to trigger a refresh
   const handleRefresh = () => setRefreshTrigger((t) => t + 1);
 
-  // Show loading indicator
   if (loading) {
     return <Loading/>;
   }
 
   // Extract versions and pageInfo from state, with fallbacks
   const versions = versionsData ? versionsData.versions : [];
-  const pageInfo = versionsData ? versionsData.pageInfo : {totalCount: 0};
+  const pageInfo = versionsData ? versionsData.pageInfo : { totalCount: 0 };
 
   // Props for the underlying component
   const props = {
     loading, // Pass loading state
     versions, // Pass the list of versions
     pageInfo, // Pass pagination info
-    graphQLErrors: errors, // Pass any errors
     actions, // Pass through the original actions
     recordId,
     recordClass,
-    typeName,
     limit,
     page,
     isPreviewable, // Pass through isPreviewable
@@ -108,7 +104,6 @@ const SnapshotViewerContainer = (
 
 SnapshotViewerContainer.propTypes = {
   data: PropTypes.shape({
-    typeName: PropTypes.string.isRequired,
     recordId: PropTypes.number.isRequired,
     limit: PropTypes.number,
     page: PropTypes.number,

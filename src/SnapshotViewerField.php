@@ -2,9 +2,9 @@
 
 namespace SilverStripe\SnapshotAdmin;
 
+use SilverStripe\SnapshotAdmin\SnapshotViewerController;
 use SilverStripe\VersionedAdmin\Forms\HistoryViewerField;
 use SilverStripe\View\Requirements;
-use SilverStripe\SnapshotAdmin\SnapshotViewerController;
 
 class SnapshotViewerField extends HistoryViewerField
 {
@@ -43,7 +43,7 @@ class SnapshotViewerField extends HistoryViewerField
 
         $controller = SnapshotViewerController::singleton();
 
-        // This makes 'snapshotEndpoint' available in React props
+        // Expose the snapshot URL to the React component
         $data['data']['snapshotEndpoint'] = $controller->Link('read');
 
         return $data;
