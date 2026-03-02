@@ -37,16 +37,20 @@ class HistoryViewer extends Component {
 
   componentDidMount() {
     // Data fetching is now handled by the parent container
-    // Display a toast if there were any pre-existing graphql errors
-    const { graphQLErrors, toastActions } = this.props;
-    if (graphQLErrors.length > 0) {
+    // Display a toast if there were any pre-existing fetch errors
+    const { fetchErrors, toastActions } = this.props;
+    if (fetchErrors && fetchErrors.length > 0) {
       toastActions.error(i18n._t('Admin.UNKNOWN_ERROR', 'An unknown error has occurred.'));
     }
   }
 
   componentDidUpdate(prevProps) {
-    // Display a toast if there were any new graphql errors
-    if (prevProps.graphQLErrors.length < this.props.graphQLErrors.length) {
+    // Add safe fallbacks using optional chaining
+    const prevErrors = prevProps.fetchErrors || [];
+    const currentErrors = this.props.fetchErrors || [];
+
+    // Display a toast if there were any new fetch errors
+    if (prevErrors.length < currentErrors.length) {
       this.props.toastActions.error(i18n._t('Admin.UNKNOWN_ERROR', 'An unknown error has occurred.'));
     }
 
@@ -148,8 +152,7 @@ class HistoryViewer extends Component {
   handleSetPage(page) {
     const { onSetPage } = this.props;
     if (typeof onSetPage === 'function') {
-      // Note: data from Griddle is zero-indexed
-      onSetPage(page + 1);
+      onSetPage(page);
     }
   }
 
@@ -167,13 +170,12 @@ class HistoryViewer extends Component {
    */
   handlePrevPage() {
     const { page } = this.props;
-    // Note: data for Griddle needs to be zero-indexed
     const currentPage = page - 1;
     if (currentPage < 1) {
-      this.handleSetPage(currentPage);
+      this.handleSetPage(1); // Safely lock it to page 1
       return;
     }
-    this.handleSetPage(currentPage - 1);
+    this.handleSetPage(currentPage);
   }
 
   /**
@@ -270,9 +272,7 @@ class HistoryViewer extends Component {
   }
 
   /**
-   * Renders the react component for pagination.
-   * Currently borrows the pagination from Griddle, to keep styling consistent
-   * between the two views.
+   * Renders the React component for pagination.
    *
    * @returns {XML|null}
    */
@@ -284,26 +284,18 @@ class HistoryViewer extends Component {
       return null;
     }
 
-    const props = {
-      setPage: this.handleSetPage,
-      maxPage: Math.ceil(totalVersions / limit),
+    const paginatorProps = {
+      totalItems: totalVersions,
+      maxItemsPerPage: limit,
+      currentPage: page,
+      onChangePage: this.handleSetPage,
+      pageCount: Math.ceil(totalVersions / limit),
       next: this.handleNextPage,
       nextText: i18n._t('HistoryViewer.NEXT', 'Next'),
       previous: this.handlePrevPage,
       previousText: i18n._t('HistoryViewer.PREVIOUS', 'Previous'),
-      // Note: zero indexed
-      currentPage: page - 1,
-      useGriddleStyles: false,
     };
-
-    return <Paginator {...props} />;
-
-    // Griddle Pagination replaced with <Paginator>
-    // return (
-    // <div className="griddle-footer">
-    //      <Griddle.GridPagination {...props} />
-    //   </div>
-    // );
+    return <Paginator {...paginatorProps} />;
   }
 
   /**
@@ -376,10 +368,10 @@ class HistoryViewer extends Component {
   }
 
   render() {
-    const { graphQLErrors, loading, compare, currentVersion, recordId } = this.props;
+    const { fetchErrors, loading, compare, currentVersion, recordId } = this.props;
 
     // A toast message will be shown in componentDidMount() or componentDidUpdate()
-    if (graphQLErrors && graphQLErrors.length > 0) {
+    if (fetchErrors && fetchErrors.length > 0) {
       return null;
     }
 
@@ -405,7 +397,7 @@ class HistoryViewer extends Component {
 
 HistoryViewer.propTypes = {
   loading: PropTypes.bool,
-  graphQLErrors: PropTypes.arrayOf(PropTypes.string),
+  fetchErrors: PropTypes.arrayOf(PropTypes.string),
   versions: PropTypes.array, // Added versions from container
   pageInfo: PropTypes.shape({ // Added pageInfo from container
     totalCount: PropTypes.number,
@@ -442,7 +434,7 @@ HistoryViewer.propTypes = {
 
 HistoryViewer.defaultProps = {
   loading: false,
-  graphQLErrors: [],
+  fetchErrors: [],
   versions: [], // Add default
   pageInfo: { totalCount: 0 }, // Add default
   compare: {},
