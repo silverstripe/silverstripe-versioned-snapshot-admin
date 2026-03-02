@@ -6,6 +6,7 @@ use Exception;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Control\HTTPResponse_Exception;
+use SilverStripe\Forms\Form;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Snapshots\ActivityEntry;
 use SilverStripe\Snapshots\Snapshot;
@@ -23,15 +24,15 @@ class SnapshotViewerController extends HistoryViewerController
     private static string $url_segment = 'snapshot-history-viewer';
 
     /**
-     * Allow the apiRead method to be called via URL
      * @var array
      */
     private static array $allowed_actions = [
         'apiRead',
+        'versionForm',
+        'compareForm',
     ];
 
     /**
-     * Map the 'read' URL segment to the apiRead method
      * @var array
      */
     private static array $url_handlers = [
@@ -39,28 +40,26 @@ class SnapshotViewerController extends HistoryViewerController
     ];
 
     /**
-     * Expose the endpoint URL to the React frontend
-     * This allows Config.getSection(...).endpoints.read to work
-     * @return array
+     * Expose the REST endpoints to the React frontend
      */
     public function getClientConfig(): array
     {
         $config = parent::getClientConfig();
-        $config['endpoints'] = [
+
+        $config['endpoints'] = array_merge($config['endpoints'] ?? [], [
             'read' => $this->Link('read'),
-        ];
+            'versionForm' => $this->Link('schema/versionForm'),
+            'compareForm' => $this->Link('schema/compareForm'),
+        ]);
+
         return $config;
     }
 
     /**
-     * @param HTTPRequest $request
-     * @return HTTPResponse
-     * @throws HTTPResponse_Exception
-     * @throws Exception
+     * REST endpoint to fetch snapshot history payload
      */
     public function apiRead(HTTPRequest $request): HTTPResponse
     {
-        // Support both naming conventions
         $id = (int) ($request->getVar('id') ?? $request->getVar('record_id'));
         $dataClass = $request->getVar('dataClass') ?? $request->getVar('record_class');
         $page = (int) $request->getVar('page');
@@ -95,8 +94,8 @@ class SnapshotViewerController extends HistoryViewerController
         $totalCount = $list->count();
         $limit = HistoryViewerField::config()->get('default_page_size');
         $offset = $limit * ($page - 1);
-        $list = $list->sort('LastEdited', 'DESC');
-        $list = $list->limit($limit, $offset);
+
+        $list = $list->sort('LastEdited', 'DESC')->limit($limit, $offset);
         $versions = [];
 
         $objectHash = SnapshotPublishable::singleton()->hashObjectForSnapshot($model);
@@ -109,7 +108,7 @@ class SnapshotViewerController extends HistoryViewerController
 
             /** @var DataObject|Versioned $originVersion */
             $originVersion = $record->getOriginVersion();
-            $originVersionLink = $originVersion->hasMethod('AbsoluteLink')
+            $originVersionLink = $originVersion && $originVersion->hasMethod('AbsoluteLink')
                 ? $originVersion->AbsoluteLink()
                 : null;
 
@@ -120,14 +119,20 @@ class SnapshotViewerController extends HistoryViewerController
                 'activityDescription' => $record->getActivityDescription(),
                 'activityType' => $record->getActivityType(),
                 'activityAgo' => $record->getActivityAgo(),
-                'originVersion' => [
+                'originVersion' => $originVersion ? [
                     'version' => $originVersion->Version,
                     'absoluteLink' => $originVersionLink,
-                    'author' => $originVersion->Author(),
+                    'author' => $originVersion->Author() ? [
+                        'firstName' => $originVersion->Author()->FirstName,
+                        'surname' => $originVersion->Author()->Surname,
+                    ] : [],
                     'published' => $originVersion->isPublished(),
-                    'publisher' => $originVersion->Publisher(),
+                    'publisher' => $originVersion->Publisher() ? [
+                        'firstName' => $originVersion->Publisher()->FirstName,
+                        'surname' => $originVersion->Publisher()->Surname,
+                    ] : [],
                     'latestDraftVersion' => $originVersion->isLatestDraftVersion(),
-                ],
+                ] : [],
                 'author' => [
                     'firstName' => $author ? $author->FirstName : '',
                     'surname' => $author ? $author->Surname : '',
@@ -140,9 +145,7 @@ class SnapshotViewerController extends HistoryViewerController
         }
 
         $data = [
-            'pageInfo' => [
-                'totalCount' => $totalCount,
-            ],
+            'pageInfo' => ['totalCount' => $totalCount],
             'versions' => $versions,
         ];
 
@@ -152,8 +155,67 @@ class SnapshotViewerController extends HistoryViewerController
     }
 
     /**
-     * Helper to return JSON response
+     * REST schema endpoint for viewing a single version.
+     * Intercepts the query string to map a Snapshot ID to a Core Version ID.
      */
+    public function versionForm(?HTTPRequest $request = null): ?Form
+    {
+        $request = $request ?: $this->getRequest();
+        if (!$request) {
+            $this->jsonError(400);
+            return null;
+        }
+
+        try {
+            return $this->getVersionForm([
+                'RecordClass' => $request->getVar('RecordClass'),
+                'RecordID' => $request->getVar('RecordID'),
+                'RecordVersion' => $this->resolveSnapshotToVersionNumber($request->getVar('RecordVersion')),
+            ]);
+        } catch (\InvalidArgumentException $ex) {
+            $this->jsonError(400);
+        }
+    }
+
+    /**
+     * REST schema endpoint for comparing two versions.
+     * Intercepts the query string to map Snapshot IDs to Core Version IDs.
+     */
+    public function compareForm(?HTTPRequest $request = null): ?Form
+    {
+        $request = $request ?: $this->getRequest();
+        if (!$request) {
+            $this->jsonError(400);
+            return null;
+        }
+
+        try {
+            return $this->getCompareForm([
+                'RecordClass' => $request->getVar('RecordClass'),
+                'RecordID' => $request->getVar('RecordID'),
+                'RecordVersionFrom' => $this->resolveSnapshotToVersionNumber($request->getVar('RecordVersionFrom')),
+                'RecordVersionTo' => $this->resolveSnapshotToVersionNumber($request->getVar('RecordVersionTo')),
+            ]);
+        } catch (\InvalidArgumentException $ex) {
+            $this->jsonError(400);
+        }
+    }
+
+    /**
+     * Translates a frontend Snapshot ID into the underlying DataObject's Version Number.
+     */
+    private function resolveSnapshotToVersionNumber($snapshotID)
+    {
+        if ($snapshotID && class_exists(Snapshot::class)) {
+            /** @var Snapshot $snapshot */
+            $snapshot = Snapshot::get()->byID($snapshotID);
+            if ($snapshot && $originVersion = $snapshot->getOriginVersion()) {
+                return $originVersion->Version;
+            }
+        }
+        return $snapshotID; // Fallback to raw value
+    }
+
     protected function jsonResponse(array $data, int $code = 200): HTTPResponse
     {
         $response = HTTPResponse::create();

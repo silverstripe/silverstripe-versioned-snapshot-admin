@@ -6,11 +6,7 @@ import { connect } from 'react-redux';
 import Paginator from 'components/Paginator/Paginator';
 import { inject } from 'lib/Injector';
 import Loading from 'components/Loading/Loading';
-import {
-  setCurrentPage,
-  showVersion,
-  clearMessages,
-} from 'state/historyviewer/HistoryViewerActions';
+import { setCurrentPage, showVersion, clearMessages } from 'state/historyviewer/HistoryViewerActions';
 import { versionType } from 'types/versionType';
 import { compareType } from 'types/compareType';
 import classNames from 'classnames';
@@ -19,6 +15,7 @@ import * as viewModeActions from 'state/viewMode/ViewModeActions';
 import * as toastsActions from 'state/toasts/ToastsActions';
 import PropTypes from 'prop-types';
 import i18n from 'i18n';
+import Config from 'lib/Config';
 
 /**
  * The HistoryViewer component is abstract, and requires an Injector component
@@ -161,7 +158,6 @@ class HistoryViewer extends Component {
    */
   handleNextPage() {
     const { page } = this.props;
-    // Note: data for Griddle needs to be zero-indexed, so don't add 1 to this
     this.handleSetPage(page);
   }
 
@@ -172,7 +168,7 @@ class HistoryViewer extends Component {
     const { page } = this.props;
     const currentPage = page - 1;
     if (currentPage < 1) {
-      this.handleSetPage(1); // Safely lock it to page 1
+      this.handleSetPage(1);
       return;
     }
     this.handleSetPage(currentPage);
@@ -206,6 +202,22 @@ class HistoryViewer extends Component {
   }
 
   /**
+   * Normalizes the REST API payload to match the generic shape
+   * required by the core Silverstripe VersionDetailComponent.
+   */
+  normalizeVersion(raw) {
+    if (!raw) return raw;
+    const origin = raw.originVersion || {};
+    return {
+      ...origin,
+      ...raw,
+      version: raw.version || raw.id || raw.baseVersion || 0,
+      absoluteLink: raw.absoluteLink || origin.absoluteLink,
+      AbsoluteLink: raw.absoluteLink || origin.absoluteLink,
+    };
+  }
+
+  /**
    * Renders the detail form for a selected version
    *
    * @returns {HistoryViewerVersionDetail}
@@ -217,33 +229,39 @@ class HistoryViewer extends Component {
       isRevertable,
       recordId,
       recordClass,
-      schemaUrl,
       VersionDetailComponent,
       compare,
-      compare: { versionFrom = false, versionTo = false },
       previewState,
-      onAfterRevert, // Get onAfterRevert from props
     } = this.props;
-    // Insert variables into the schema URL via regex replacements
-    const schemaVersionReplacements = {
-      ':id': recordId,
-      ':class': recordClass,
-      ':date': currentVersion.lastEdited,
-      ':version': currentVersion.version,
-    };
 
-    const schemaCompareReplacements = {
-      ':id': recordId,
-      ':class': recordClass,
-      ':from': versionFrom.version || 0,
-      ':to': versionTo.version || 0,
-    };
+    const compareData = compare || {};
+    const versionFrom = this.normalizeVersion(compareData.versionFrom) || {};
+    const versionTo = this.normalizeVersion(compareData.versionTo) || {};
 
-    const schemaSearch = compare ? /:id|:class|:from|:to/g : /:id|:class|:version|:date/g;
-    const schemaReplacements = compare ? schemaCompareReplacements : schemaVersionReplacements;
+    // Normalize the currentVersion directly
+    const normalizedCurrentVersion = this.normalizeVersion(currentVersion) || {};
 
-    const version = compare ? versionFrom : currentVersion;
-    const latestVersion = this.getLatestVersion();
+    // Use the safely normalized version
+    const version = compare ? versionFrom : normalizedCurrentVersion;
+    const latestVersion = this.normalizeVersion(this.getLatestVersion());
+
+    // Pull REST endpoints directly from the injected PHP configuration
+    const backendConfig = Config.getSection('SilverStripe\\SnapshotAdmin\\SnapshotViewerController') || {};
+    const endpoints = backendConfig.endpoints || {};
+
+    // Pure REST base URLs
+    const baseVersionUrl = endpoints.versionForm || '/admin/snapshot-history-viewer/schema/versionForm';
+    const baseCompareUrl = endpoints.compareForm || '/admin/snapshot-history-viewer/schema/compareForm';
+
+    const encodedClass = encodeURIComponent(recordClass);
+    let finalSchemaUrl = '';
+
+    // Strictly append parameters as standard HTTP GET queries
+    if (compare) {
+      finalSchemaUrl = `${baseCompareUrl}?RecordClass=${encodedClass}&RecordID=${recordId}&RecordVersionFrom=${versionFrom.version}&RecordVersionTo=${versionTo.version}`;
+    } else {
+      finalSchemaUrl = `${baseVersionUrl}?RecordClass=${encodedClass}&RecordID=${recordId}&RecordVersion=${version.version}`;
+    }
 
     const props = {
       // comparison shows two versions as one, so by nature cannot be a single 'latest' version.
@@ -252,7 +270,7 @@ class HistoryViewer extends Component {
       isRevertable,
       recordId,
       recordClass,
-      schemaUrl: schemaUrl.replace(schemaSearch, (match) => schemaReplacements[match]),
+      schemaUrl: finalSchemaUrl,
       version,
       compare,
       compareModeAvailable: this.compareModeAvailable(),
@@ -447,17 +465,12 @@ HistoryViewer.defaultProps = {
 };
 
 function mapStateToProps(state) {
-  const {
-    currentPage,
-    currentVersion,
-    compare,
-  } = state.versionedAdmin.historyViewer;
-
+  const { currentPage, currentVersion: currentVersionId, compare } = state.versionedAdmin.historyViewer;
   const { activeState } = state.viewMode;
 
   return {
     page: currentPage,
-    currentVersion,
+    currentVersion: currentVersionId,
     compare,
     previewState: activeState,
   };
