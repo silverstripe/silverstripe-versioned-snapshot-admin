@@ -19,8 +19,7 @@ class SnapshotHistoryExtension extends Extension
     {
         $owner = $this->getOwner();
 
-        return
-            $owner->hasExtension(Versioned::class) &&
+        return $owner->hasExtension(Versioned::class) &&
             $owner->hasExtension(SnapshotPublishable::class) &&
             !$owner instanceof SiteTree;
     }

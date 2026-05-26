@@ -1,5 +1,7 @@
 import React from 'react';
+// eslint-disable-next-line import/no-unresolved
 import Config from 'lib/Config';
+// eslint-disable-next-line import/no-unresolved
 import { inject } from 'lib/Injector';
 
 const historyViewerConfig = (HistoryViewer) => {

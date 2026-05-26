@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
+// eslint-disable-next-line import/no-unresolved
 import { inject } from 'lib/Injector';
 import { versionType, defaultVersion } from 'types/versionType';
 import { compareType } from 'types/compareType';
+// eslint-disable-next-line import/no-unresolved
 import i18n from 'i18n';
 import classNames from 'classnames';
 import {

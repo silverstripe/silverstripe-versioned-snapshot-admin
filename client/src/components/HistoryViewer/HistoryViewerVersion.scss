@@ -5,6 +5,7 @@ $snapshot-top-padding: $table-cell-padding * 2 + $line-height-base;
     cursor: default;
   }
 }
+
 .history-viewer.history-viewer__compare-mode .history-viewer__snapshot {
   .history-viewer__version-link:hover {
     cursor: default;

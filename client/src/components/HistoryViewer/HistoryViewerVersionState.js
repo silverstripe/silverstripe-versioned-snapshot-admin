@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
+// eslint-disable-next-line import/no-unresolved
 import i18n from 'i18n';
 import { versionType, defaultVersion } from 'types/versionType';
+// eslint-disable-next-line import/no-unresolved
 import { inject } from 'lib/Injector';
 import PropTypes from 'prop-types';
 
