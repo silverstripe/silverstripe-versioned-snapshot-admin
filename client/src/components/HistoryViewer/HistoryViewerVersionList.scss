@@ -47,7 +47,7 @@
 
     &--current {
       // In detail views, pulls the content (and content tabs) closer to the selected version table
-       margin-bottom: calc($panel-padding-y / 2);
+      margin-bottom: calc($panel-padding-y / 2);
 
       .history-viewer__version-link:hover {
         cursor: default;
