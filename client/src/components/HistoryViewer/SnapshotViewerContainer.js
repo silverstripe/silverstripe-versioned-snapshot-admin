@@ -1,8 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Query } from '@apollo/client/react/components';
+// eslint-disable-next-line import/no-unresolved
 import { inject } from 'lib/Injector';
-import createSnapshotsQuery from '../../graphql/createSnapshotsQuery';
+import { fetchSnapshots } from '../../services/SnapshotAPI';
 
 const SnapshotViewerContainer = ({
   data: {
@@ -11,63 +11,70 @@ const SnapshotViewerContainer = ({
     limit,
     page,
     recordClass,
-    isPreviewable,
     actions = { versions: {} },
   },
   SnapshotViewerComponent,
 }) => {
-  const QUERY = useMemo(
-    () => createSnapshotsQuery(typeName, isPreviewable),
-    [typeName, isPreviewable]
-  );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [data, setData] = useState(null);
 
-  const variables = {
-    limit,
-    offset: ((page || 1) - 1) * limit,
-    page_id: recordId,
+  const fetchData = async (pageNum = page || 1) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetchSnapshots(recordId, recordClass, pageNum);
+      setData(response);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
-  return (
-    <Query query={QUERY} variables={variables} fetchPolicy="network-only">
-      {({ loading, error, data, refetch }) => {
-        let readOne = null;
-        if (data) {
-          readOne = data[`readOne${typeName}`];
+
+  // Fetch data on mount and when page changes
+  useEffect(() => {
+    fetchData(page || 1);
+  }, [recordId, recordClass, page, limit]);
+
+  const versions = data || {};
+  const pageInfo = data ? data.pageInfo : { totalCount: 0 };
+
+  // Transform data to match the expected format from GraphQL
+  const transformedVersions = {
+    ...versions,
+    snapshotHistory: {
+      pageInfo,
+      edges: (versions.versions || []).map(version => ({
+        node: version,
+      })),
+    },
+  };
+
+  const props = {
+    loading,
+    versions: transformedVersions,
+    graphQLErrors: error ? [error] : null,
+    actions: {
+      ...actions,
+      versions: {
+        ...transformedVersions,
+        // eslint-disable-next-line no-shadow
+        goToPage(pageNum) {
+          fetchData(pageNum);
         }
-        const versions = readOne || {};
+      },
+    },
+    recordId,
+    recordClass,
+    typeName,
+    limit,
+    page,
+  };
 
-        const errors = error && error.graphQLErrors &&
-                error.graphQLErrors.map((graphQLError) => graphQLError.message);
-
-        const props = {
-          loading,
-          versions,
-          graphQLErrors: errors,
-          actions: {
-            ...actions,
-            versions: {
-              ...versions,
-              // eslint-disable-next-line no-shadow
-              goToPage(page) {
-                refetch({
-                  offset: ((page || 1) - 1) * limit,
-                  limit,
-                  page_id: recordId,
-                });
-              }
-            },
-          },
-          recordId,
-          recordClass,
-          typeName,
-          limit,
-          page,
-        };
-
-        return (
-          <SnapshotViewerComponent {...props} />
-        );
-      }}
-    </Query>
+  return (
+    <SnapshotViewerComponent {...props} />
   );
 };
 

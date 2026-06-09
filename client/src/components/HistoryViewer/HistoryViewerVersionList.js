@@ -1,9 +1,11 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+// eslint-disable-next-line import/no-unresolved
 import i18n from 'i18n';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+// eslint-disable-next-line import/no-unresolved
 import { inject } from 'lib/Injector';
 import { messageType } from 'types/messageType';
 import { versionType } from 'types/versionType';
@@ -107,6 +109,7 @@ class HistoryViewerVersionList extends PureComponent {
     } = this.props;
     return (
       <div className="history-viewer__list">
+        {this.renderMessages()}
         <ul className={this.getClassNames()} role="table">
           {this.renderHeader()}
           {

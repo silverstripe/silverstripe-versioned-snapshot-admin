@@ -1,4 +1,4 @@
-/* eslint-disable import/no-unresolved, react/no-unused-state */
+/* eslint-disable import/no-unresolved */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -17,25 +17,7 @@ class HistoryViewerToolbar extends Component {
 
     this.state = {
       isReverting: false,
-      tooltipTimer: null,
     };
-  }
-
-  /**
-   * Triggers a revert action to be performed for the current record's version
-   * @param {func} rollback
-   * @returns Promise
-   */
-  handleRevert(rollback) {
-    const { onAfterRevert, recordId, versionId } = this.props;
-
-    this.setState({ isReverting: true });
-
-    const handler = typeof onAfterRevert === 'function' ? onAfterRevert : () => {};
-    return rollback({ variables: {
-      id: recordId,
-      toVersion: versionId
-    } }).then(() => handler(versionId));
   }
 
   render() {
@@ -48,6 +30,9 @@ class HistoryViewerToolbar extends Component {
       canRollback,
       rollbackMessage,
       typeName,
+      recordId,
+      recordClass,
+      versionId,
     } = this.props;
     const { isReverting } = this.state;
 
@@ -65,7 +50,7 @@ class HistoryViewerToolbar extends Component {
             <div className="btn-toolbar">
               <FormActionComponent
                 id="HistoryRevertButton"
-                onClick={() => this.handleRevert(rollback)}
+                onClick={() => this.handleRevert(rollback, recordId, recordClass, versionId)}
                 icon="back-in-time"
                 name="revert"
                 attributes={{
@@ -94,6 +79,31 @@ class HistoryViewerToolbar extends Component {
       </RollbackMutation>
     );
   }
+
+  /**
+   * Triggers a revert action to be performed for the current record's version
+   * @param {func} rollback
+   * @param {number} recordId
+   * @param {string} recordClass
+   * @param {number} versionId
+   * @returns Promise
+   */
+  handleRevert(rollback, recordId, recordClass, versionId) {
+    const { onAfterRevert } = this.props;
+
+    this.setState({ isReverting: true });
+
+    const handler = typeof onAfterRevert === 'function' ? onAfterRevert : () => {};
+    return rollback({ variables: {
+      id: recordId,
+      dataClass: recordClass,
+      toVersion: versionId
+    } })
+      .then(() => handler(versionId))
+      .catch(() => {
+        this.setState({ isReverting: false });
+      });
+  }
 }
 
 HistoryViewerToolbar.propTypes = {
@@ -106,6 +116,7 @@ HistoryViewerToolbar.propTypes = {
   isPreviewable: PropTypes.bool,
   onAfterRevert: PropTypes.func,
   recordId: PropTypes.number.isRequired,
+  recordClass: PropTypes.string.isRequired,
   typeName: PropTypes.string.isRequired,
   versionId: PropTypes.number.isRequired,
   canRollback: PropTypes.bool,
@@ -126,6 +137,7 @@ function mapDispatchToProps(dispatch) {
         versionId
       )));
       dispatch(showList());
+      setTimeout(() => window.location.reload(), 1500);
     },
   };
 }

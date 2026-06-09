@@ -1,4 +1,6 @@
+// eslint-disable-next-line import/no-unresolved
 import i18n from 'i18n';
+// eslint-disable-next-line import/no-unresolved
 import jQuery from 'jquery';
 
 jQuery.entwine('ss', ($) => {

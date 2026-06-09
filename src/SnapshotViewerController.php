@@ -3,6 +3,7 @@
 namespace SilverStripe\SnapshotAdmin;
 
 use Exception;
+use Psr\Container\NotFoundExceptionInterface;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Control\HTTPResponse_Exception;
@@ -24,6 +25,17 @@ class SnapshotViewerController extends HistoryViewerController
      * @var string|null
      */
     private static ?string $section_name = HistoryViewerController::class;
+
+    /**
+     * This configuration is intended to be the same as the parent class, but it's not inherited,
+     * hence it has to be a hard copy
+     *
+     * @var array
+     */
+    private static array $allowed_actions = [
+        'apiRead',
+        'apiRevert',
+    ];
 
     /**
      * @param HTTPRequest $request
@@ -67,13 +79,23 @@ class SnapshotViewerController extends HistoryViewerController
         /** @var Snapshot $record */
         foreach ($list as $record) {
             $author = $record->Author();
-            $isFullVersion = $record->OriginHash === $objectHash && $record->getActivityType() !== ActivityEntry::DELETED;
+            $isFullVersion = $record->OriginHash === $objectHash
+                && $record->getActivityType() !== ActivityEntry::DELETED;
 
             /** @var DataObject|Versioned $originVersion */
             $originVersion = $record->getOriginVersion();
+
+            // Version history records may contain incomplete records which we need to ignore
+            if (!$originVersion) {
+                continue;
+            }
+
             $originVersionLink = $originVersion->hasMethod('AbsoluteLink')
                 ? $originVersion->AbsoluteLink()
                 : null;
+
+            $originAuthor = $originVersion->Author();
+            $originPublisher = $originVersion->Publisher();
 
             $versions[] = [
                 'id' => $record->ID,
@@ -84,14 +106,24 @@ class SnapshotViewerController extends HistoryViewerController
                 'originVersion' => [
                     'version' => $originVersion->Version,
                     'absoluteLink' => $originVersionLink,
-                    'author' => $originVersion->Author(),
+                    'author' => $originAuthor
+                        ? [
+                            'firstName' => $originAuthor->FirstName,
+                            'surname' => $originAuthor->Surname,
+                        ]
+                        : null,
                     'published' => $originVersion->isPublished(),
-                    'publisher' => $originVersion->Publisher(),
+                    'publisher' => $originPublisher
+                        ? [
+                            'firstName' => $originPublisher->FirstName,
+                            'surname' => $originPublisher->Surname,
+                        ]
+                        : null,
                     'latestDraftVersion' => $originVersion->isLatestDraftVersion(),
                 ],
                 'author' => [
-                    'firstName' => $author ? $author->FirstName : '',
-                    'surname' => $author ? $author->Surname : '',
+                    'firstName' => $author->exists() ? $author->FirstName : '',
+                    'surname' => $author->exists() ? $author->Surname : '',
                 ],
                 'isFullVersion' => $isFullVersion,
                 'isLiveSnapshot' => $record->getIsLiveSnapshot(),
@@ -110,6 +142,65 @@ class SnapshotViewerController extends HistoryViewerController
         $this->extend('updateApiRead', $data, $request);
 
         return $this->jsonSuccess(200, $data);
+    }
+
+    /**
+     * @param HTTPRequest $request
+     * @return HTTPResponse
+     * @throws HTTPResponse_Exception
+     * @throws Exception
+     * @throws NotFoundExceptionInterface
+     */
+    public function apiRevert(HTTPRequest $request): HTTPResponse
+    {
+        $id = (int) $request->postVar('id');
+        $dataClass = $request->postVar('dataClass') ?? '';
+        $toVersion = (int) $request->postVar('toVersion');
+
+        /** @var DataObject|Versioned|SnapshotPublishable $model */
+        $model = $this->getDataObject($id, $dataClass, 404);
+
+        if (!$model->canEdit()) {
+            $this->jsonError(403);
+        }
+
+        // Required extension is missing
+        if (!$model->hasExtension(SnapshotPublishable::class)) {
+            $this->jsonError(403);
+        }
+
+        try {
+            if (!Versioned::get_version($dataClass, $id, $toVersion)) {
+                $this->jsonError(400, 'Version not found');
+            }
+
+            // Roll back to the specified version using the Versioned extension's
+            // rollbackSingle(), which calls copyVersionToStage() under the hood
+            $model->rollbackSingle($toVersion);
+
+            $data = [
+                'id' => $model->ID,
+                'className' => $model->ClassName,
+            ];
+
+            $this->extend('updateApiRevert', $data, $request);
+
+            $rollbackMessage = _t(
+                SnapshotViewerController::class . '.ROLLBACK_TO_VERSION',
+                'Rolled back to version {version}',
+                [
+                    'version' => $toVersion,
+                ]
+            );
+            $snapshot = Snapshot::singleton()->createSnapshotEvent($rollbackMessage, [
+                $model,
+            ]);
+            $snapshot?->write();
+
+            return $this->jsonSuccess(200, $data);
+        } catch (Exception $e) {
+            $this->jsonError(400, $e->getMessage());
+        }
     }
 
     /**

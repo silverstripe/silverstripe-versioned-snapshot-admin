@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+// eslint-disable-next-line import/no-unresolved
 import i18n from 'i18n';
 import { setCompareMode } from 'state/historyviewer/HistoryViewerActions';
 

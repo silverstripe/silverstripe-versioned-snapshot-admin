@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 import Injector from 'lib/Injector';
 import { combineReducers } from 'redux';
 import historyViewerReducer from 'state/historyviewer/HistoryViewerReducer';

@@ -1,20 +1,3 @@
-// Replicate Bootstrap table stylings relatively closely but using a unordered list
-.history-viewer__table {
-  padding: 0;
-
-  li {
-    display: flex;
-    list-style-type: none;
-  }
-}
-
-// In compare mode, we don't want any space between the two version lists, only a small black line.
-.history-viewer__table--comparison-selected {
-  margin-bottom: 0;
-  border-bottom: 5px solid $gray-800;
-
-}
-
 .history-viewer__heading,
 .history-viewer__row {
   border-bottom: 1px solid $table-border-color;
@@ -47,10 +30,35 @@
   }
 
   &__table {
+    // Replicate Bootstrap table stylings relatively closely but using a unordered list
+    padding: 0;
+
+    li {
+      display: flex;
+      list-style-type: none;
+    }
+
+    // In compare mode, we don't want any space between the two version lists, only a small black line.
+    &--comparison-selected {
+      margin-bottom: 0;
+      border-bottom: 5px solid $gray-800;
+
+    }
+
     &--current {
+      // In detail views, pulls the content (and content tabs) closer to the selected version table
+       margin-bottom: calc($panel-padding-y / 2);
+
       .history-viewer__version-link:hover {
         cursor: default;
       }
+    }
+  }
+
+  // Ensure that form field styles don't give extra styles to the pagination controls
+  &__pagination {
+    select {
+      width: auto;
     }
   }
 }
@@ -96,19 +104,5 @@
   .text-muted {
     // Note: !important is necessary due to its use in the base Bootstrap library
     color: $white !important;
-  }
-}
-
-// In detail views, pulls the content (and content tabs) closer to the selected version table
-.history-viewer__table--current {
-  margin-bottom: calc($panel-padding-y / 2);
-}
-
-.history-viewer {
-  // Ensure that form field styles don't give extra styles to the pagination controls
-  &__pagination {
-    select {
-      width: auto;
-    }
   }
 }
