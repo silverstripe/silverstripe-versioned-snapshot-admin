@@ -1,6 +1,7 @@
 /**
  * File: ArchiveAdmin.js
  */
+// eslint-disable-next-line import/no-unresolved
 import jQuery from 'jquery';
 
 jQuery.entwine('ss', ($) => {

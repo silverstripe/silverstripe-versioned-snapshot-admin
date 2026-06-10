@@ -3,11 +3,13 @@
 import React, { Component } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import Griddle from 'griddle-react';
 import historyViewerConfig from 'containers/HistoryViewer/HistoryViewerConfig';
-import i18n from 'i18n';
+// eslint-disable-next-line import/no-unresolved
 import { inject } from 'lib/Injector';
+// eslint-disable-next-line import/no-unresolved
 import Loading from 'components/Loading/Loading';
+// eslint-disable-next-line import/no-unresolved
+import Paginator from 'components/Paginator/Paginator';
 import {
   setCurrentPage,
   showVersion,
@@ -16,7 +18,9 @@ import {
 import { versionType } from 'types/versionType';
 import { compareType } from 'types/compareType';
 import classNames from 'classnames';
+// eslint-disable-next-line import/no-unresolved
 import ResizeAware from 'components/ResizeAware/ResizeAware';
+// eslint-disable-next-line import/no-unresolved
 import * as viewModeActions from 'state/viewMode/ViewModeActions';
 import PropTypes from 'prop-types';
 
@@ -38,8 +42,13 @@ class HistoryViewer extends Component {
     super(props);
 
     this.handleSetPage = this.handleSetPage.bind(this);
-    this.handleNextPage = this.handleNextPage.bind(this);
-    this.handlePrevPage = this.handlePrevPage.bind(this);
+  }
+
+  componentDidMount() {
+    const { onClearMessages } = this.props;
+    if (typeof onClearMessages === 'function') {
+      onClearMessages();
+    }
   }
 
   /**
@@ -53,11 +62,17 @@ class HistoryViewer extends Component {
       return;
     }
 
-    const { page: prevPage } = prevProps;
-    const { page: currentPage } = this.props;
+    const { page: prevPage, currentVersion: prevVersion } = prevProps;
+    const { page: currentPage, currentVersion } = this.props;
     const { actions: { versions } } = this.props;
 
-    if (prevPage !== currentPage && typeof versions.goToPage === 'function') {
+    // Trigger a data refresh when:
+    // 1. The page number changes (pagination), or
+    // 2. Returning to list view from a detail view (e.g. after rollback)
+    const pageChanged = prevPage !== currentPage;
+    const returnedToList = prevVersion && !currentVersion;
+
+    if ((pageChanged || returnedToList) && typeof versions.goToPage === 'function') {
       versions.goToPage(currentPage);
     }
   }
@@ -175,32 +190,8 @@ class HistoryViewer extends Component {
   handleSetPage(page) {
     const { onSetPage } = this.props;
     if (typeof onSetPage === 'function') {
-      // Note: data from Griddle is zero-indexed
-      onSetPage(page + 1);
+      onSetPage(page);
     }
-  }
-
-  /**
-   * Handler for incrementing the set page
-   */
-  handleNextPage() {
-    const { page } = this.props;
-    // Note: data for Griddle needs to be zero-indexed, so don't add 1 to this
-    this.handleSetPage(page);
-  }
-
-  /**
-   * Handler for decrementing the set page
-   */
-  handlePrevPage() {
-    const { page } = this.props;
-    // Note: data for Griddle needs to be zero-indexed
-    const currentPage = page - 1;
-    if (currentPage < 1) {
-      this.handleSetPage(currentPage);
-      return;
-    }
-    this.handleSetPage(currentPage - 1);
   }
 
   /**
@@ -260,6 +251,7 @@ class HistoryViewer extends Component {
       isLatestVersion: !compare && latestVersion && latestVersion.version === version.version,
       isPreviewable,
       recordId,
+      recordClass,
       typeName,
       schemaUrl: schemaUrl.replace(schemaSearch, (match) => schemaReplacements[match]),
       version,
@@ -303,22 +295,13 @@ class HistoryViewer extends Component {
     }
 
     const props = {
-      setPage: this.handleSetPage,
-      maxPage: Math.ceil(totalVersions / limit),
-      next: this.handleNextPage,
-      nextText: i18n._t('HistoryViewer.NEXT', 'Next'),
-      previous: this.handlePrevPage,
-      previousText: i18n._t('HistoryViewer.PREVIOUS', 'Previous'),
-      // Note: zero indexed
-      currentPage: page - 1,
-      useGriddleStyles: false,
+      totalItems: totalVersions,
+      maxItemsPerPage: limit,
+      currentPage: page,
+      onChangePage: this.handleSetPage,
     };
 
-    return (
-      <div className="griddle-footer">
-        <Griddle.GridPagination {...props} />
-      </div>
-    );
+    return <Paginator {...props} />;
   }
 
   /**
@@ -491,6 +474,9 @@ function mapDispatchToProps(dispatch) {
     },
     onSetPage(page) {
       dispatch(setCurrentPage(page));
+    },
+    onClearMessages() {
+      dispatch(clearMessages());
     },
     onResize(panelWidth) {
       dispatch(viewModeActions.enableOrDisableSplitMode(panelWidth));

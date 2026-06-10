@@ -1,0 +1,16 @@
+---
+Name: snapshot-admin-extensions
+Only:
+  moduleexists: silverstripe/cms
+After:
+  - versionedadmincmsconfig
+---
+SilverStripe\Core\Injector\Injector:
+  SilverStripe\VersionedAdmin\Forms\HistoryViewerField:
+    class: SilverStripe\SnapshotAdmin\SnapshotViewerField
+  SilverStripe\VersionedAdmin\Controllers\HistoryViewerController:
+    class: SilverStripe\SnapshotAdmin\SnapshotViewerController
+
+SilverStripe\ORM\DataObject:
+  extensions:
+    snapshot-publishable: SilverStripe\SnapshotAdmin\SnapshotPublishableExtension

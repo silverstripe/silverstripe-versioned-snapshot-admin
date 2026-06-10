@@ -51,7 +51,7 @@ export default function historyViewerReducer(state = initialState, { type, paylo
         currentVersion: false,
         currentDate: false,
         previewMode: false,
-        currentPage: 0,
+        currentPage: 1,
       };
     }
 

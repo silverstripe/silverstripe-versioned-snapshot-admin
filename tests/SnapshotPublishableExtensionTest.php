@@ -3,15 +3,16 @@
 namespace SilverStripe\SnapshotAdmin\Tests;
 
 use Page;
+use Psr\Container\NotFoundExceptionInterface;
+use SilverStripe\Core\Validation\ValidationException;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\ValidationException;
 use SilverStripe\Snapshots\Snapshot;
 use SilverStripe\Snapshots\SnapshotEvent;
 use SilverStripe\Snapshots\SnapshotItem;
 use SilverStripe\Snapshots\SnapshotPublishable;
 
-class SnapshotTest extends SapphireTest
+class SnapshotPublishableExtensionTest extends SapphireTest
 {
     /**
      * @var bool
@@ -30,6 +31,7 @@ class SnapshotTest extends SapphireTest
 
     /**
      * @throws ValidationException
+     * @throws NotFoundExceptionInterface
      */
     public function testUpdateRelevantSnapshots(): void
     {
@@ -41,7 +43,9 @@ class SnapshotTest extends SapphireTest
         $snapshots = $a1->getRelevantSnapshots();
         $versions = $snapshots->column('baseVersion');
         $versions = array_unique($versions);
-        $this->assertSame([(int) $a1->Version], $versions);
+        $this->assertSame([
+            (int) $a1->Version,
+        ], $versions);
     }
 
     /**
@@ -49,6 +53,7 @@ class SnapshotTest extends SapphireTest
      * @param array $extraObjects
      * @return Snapshot
      * @throws ValidationException
+     * @throws NotFoundExceptionInterface
      */
     private function snapshot(DataObject $obj, array $extraObjects = []): Snapshot
     {

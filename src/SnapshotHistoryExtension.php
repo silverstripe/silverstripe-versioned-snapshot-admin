@@ -4,34 +4,27 @@ namespace SilverStripe\SnapshotAdmin;
 
 use DNADesign\Elemental\Models\BaseElement;
 use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\Core\Extension;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\ORM\DataExtension;
 use SilverStripe\Snapshots\SnapshotPublishable;
 use SilverStripe\Versioned\Versioned;
 
 /**
- * @method BaseElement|$this getOwner()
+ * @extends Extension<BaseElement>
+ * @extends Extension<SnapshotHistoryExtension>
  */
-class SnapshotHistoryExtension extends DataExtension
+class SnapshotHistoryExtension extends Extension
 {
-    /**
-     * @return bool
-     */
     public function isSnapshotable(): bool
     {
         $owner = $this->getOwner();
 
-        return
-            $owner->hasExtension(Versioned::class) &&
+        return $owner->hasExtension(Versioned::class) &&
             $owner->hasExtension(SnapshotPublishable::class) &&
             !$owner instanceof SiteTree;
     }
 
-    /**
-     * @param FieldList $fields
-     * @return void|null
-     */
-    public function updateCMSFields(FieldList $fields): void
+    protected function updateCMSFields(FieldList $fields): void
     {
         if ($fields->findTab('Root.History')) {
             return;
