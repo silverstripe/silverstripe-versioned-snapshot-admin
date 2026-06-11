@@ -21,7 +21,7 @@
     ],
     "require": {
         "php": "^8.3",
-        "silverstripe/versioned-snapshots": "^3",
+        "silverstripe/versioned-snapshots": "^3.0.2",
         "silverstripe/versioned-admin": "^3"
     },
     "require-dev": {
