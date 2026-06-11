@@ -114,7 +114,11 @@ class ActivityFeedAdmin extends ModelAdmin
                     ->sort('Surname', 'ASC')
                     ->map('ID', 'Title')
                     ->toArray();
-                $authorSelectionField = DropdownField::create($authorIdField->getName(), $authorIdField->Title(), $authorValues);
+                $authorSelectionField = DropdownField::create(
+                    $authorIdField->getName(),
+                    $authorIdField->Title(),
+                    $authorValues
+                );
                 $authorSelectionField->setEmptyString('(Any)');
                 $searchFields->replaceField($authorIdField->getName(), $authorSelectionField);
             }
