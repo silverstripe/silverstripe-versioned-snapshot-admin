@@ -25,7 +25,7 @@ class ActivityFeedAdmin extends ModelAdmin
     private const string ACTIVITY_TAB = 'activity-feed';
 
     private static array $managed_models = [
-        self::ACTIVITY_TAB => [
+        ActivityFeedAdmin::ACTIVITY_TAB => [
             'title' => 'Activity feed',
             'dataClass' => Snapshot::class,
         ],
@@ -55,7 +55,7 @@ class ActivityFeedAdmin extends ModelAdmin
     {
         $modelTab = $this->modelTab;
 
-        if ($modelTab !== self::ACTIVITY_TAB) {
+        if ($modelTab !== ActivityFeedAdmin::ACTIVITY_TAB) {
             return;
         }
 
