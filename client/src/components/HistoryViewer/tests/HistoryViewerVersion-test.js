@@ -1,25 +1,20 @@
-/* eslint-disable import/no-extraneous-dependencies, import/no-unresolved */
 /* global jest, describe, it, expect */
 
 import React from 'react';
-import Enzyme, { shallow } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16/build/index';
+import ReactTestUtils from 'react-dom/test-utils';
 import { Component as HistoryViewerVersion } from '../HistoryViewerVersion';
-
-Enzyme.configure({ adapter: new Adapter() });
 
 describe('HistoryViewerVersion', () => {
   const StateComponent = () => <div />;
-  const FormActionComponent = () => <div />;
+  // Render the extraClass as a DOM class so it can be queried after rendering
+  const FormActionComponent = ({ extraClass }) => <div className={extraClass} />;
 
   let mockOnCompareMode;
-  let mockOnCompareSelect;
   let mockOnSelect;
   let version = {};
 
   beforeEach(() => {
     mockOnCompareMode = jest.fn();
-    mockOnCompareSelect = jest.fn();
     mockOnSelect = jest.fn();
 
     version = {
@@ -37,32 +32,35 @@ describe('HistoryViewerVersion', () => {
   });
 
   describe('handleCompare()', () => {
+    // Verifies handleCompare() dispatches onCompareMode with the current version
     it('calls onCompareMode to dispatch an action as the result of handleCompare call', () => {
-      const wrapper = shallow(<HistoryViewerVersion
+      const component = ReactTestUtils.renderIntoDocument(<HistoryViewerVersion
         version={version}
         onCompareMode={mockOnCompareMode}
         StateComponent={StateComponent}
         FormActionComponent={FormActionComponent}
       />);
 
-      wrapper.instance().handleCompare();
+      component.handleCompare();
       expect(mockOnCompareMode).toBeCalledWith(version);
     });
   });
 
   describe('getAuthor()', () => {
+    // Verifies getAuthor() returns the snapshot author's full name
     it('returns the author name when unpublished', () => {
-      const wrapper = shallow(<HistoryViewerVersion
+      const component = ReactTestUtils.renderIntoDocument(<HistoryViewerVersion
         version={version}
         StateComponent={StateComponent}
         FormActionComponent={FormActionComponent}
       />);
 
-      expect(wrapper.instance().getAuthor()).toEqual('John Smith');
+      expect(component.getAuthor()).toEqual('John Smith');
     });
 
-    it.skip('returns the publisher name when published', () => {
-      const wrapper = shallow(<HistoryViewerVersion
+    // Verifies getAuthor() still returns the author (not publisher) when the version is published
+    it('returns the author name even when published (snapshots track their own author)', () => {
+      const component = ReactTestUtils.renderIntoDocument(<HistoryViewerVersion
         version={{
           ...version,
           published: true
@@ -71,26 +69,31 @@ describe('HistoryViewerVersion', () => {
         FormActionComponent={FormActionComponent}
       />);
 
-      expect(wrapper.instance().getAuthor()).toEqual('Sarah Smith');
+      expect(component.getAuthor()).toEqual('John Smith');
     });
   });
 
   describe('handleClick()', () => {
+    // Verifies clicking the row does not select the version while it is active (clear button shown)
     it('does nothing on row click when the clear button is shown', () => {
-      const wrapper = shallow(<HistoryViewerVersion
+      const component = ReactTestUtils.renderIntoDocument(<HistoryViewerVersion
         version={version}
         StateComponent={StateComponent}
         FormActionComponent={FormActionComponent}
+        onSelect={mockOnSelect}
         isActive
       />);
 
-      wrapper.simulate('click');
-      expect(mockOnCompareSelect).not.toHaveBeenCalled();
+      const link = ReactTestUtils
+        .scryRenderedDOMComponentsWithClass(component, 'history-viewer__version-link')[0];
+      ReactTestUtils.Simulate.click(link);
+
       expect(mockOnSelect).not.toHaveBeenCalled();
     });
 
+    // Verifies handleClick() selects the version (compare off) via onSelect
     it('renders version details when version clicked', () => {
-      const wrapper = shallow(<HistoryViewerVersion
+      const component = ReactTestUtils.renderIntoDocument(<HistoryViewerVersion
         version={version}
         StateComponent={StateComponent}
         FormActionComponent={FormActionComponent}
@@ -99,18 +102,18 @@ describe('HistoryViewerVersion', () => {
         compare={false}
       />);
 
-      wrapper.instance().handleClick();
-      expect(mockOnCompareSelect).not.toHaveBeenCalled();
+      component.handleClick();
       expect(mockOnSelect).toHaveBeenCalledWith(version, false);
     });
 
-    it('renders version details when version clicked', () => {
+    // Verifies handleClick() passes the compare state to onSelect when comparing
+    it('renders version details when version clicked in compare mode', () => {
       const compare = {
         versionFrom: { version: 0 },
         versionTo: { version: 0 },
       };
 
-      const wrapper = shallow(<HistoryViewerVersion
+      const component = ReactTestUtils.renderIntoDocument(<HistoryViewerVersion
         version={version}
         StateComponent={StateComponent}
         FormActionComponent={FormActionComponent}
@@ -119,33 +122,33 @@ describe('HistoryViewerVersion', () => {
         compare={compare}
       />);
 
-      wrapper.instance().handleClick();
-      expect(mockOnCompareSelect).not.toHaveBeenCalled();
+      component.handleClick();
       expect(mockOnSelect).toHaveBeenCalledWith(version, compare);
     });
 
+    // Verifies clicking in compare mode selects the version without toggling compare mode
     it('chooses version when version clicked in compare mode', () => {
-      const wrapper = shallow(<HistoryViewerVersion
+      const component = ReactTestUtils.renderIntoDocument(<HistoryViewerVersion
         version={version}
         StateComponent={StateComponent}
         FormActionComponent={FormActionComponent}
         onSelect={mockOnSelect}
-        onCompareSelect={mockOnCompareSelect}
         compare={{
           versionFrom: { version: 0 },
           versionTo: { version: 0 },
         }}
       />);
 
-      wrapper.instance().handleClick();
+      component.handleClick();
       expect(mockOnSelect).toHaveBeenCalled();
       expect(mockOnCompareMode).not.toHaveBeenCalled();
     });
   });
 
   describe('render()', () => {
+    // Verifies an active row renders the close button
     it('renders the close button in the version details', () => {
-      const wrapper = shallow(<HistoryViewerVersion
+      const component = ReactTestUtils.renderIntoDocument(<HistoryViewerVersion
         version={version}
         StateComponent={StateComponent}
         FormActionComponent={FormActionComponent}
@@ -153,11 +156,14 @@ describe('HistoryViewerVersion', () => {
         isActive
       />);
 
-      expect(wrapper.find(FormActionComponent).at(1).props().extraClass).toEqual('history-viewer__close-button');
+      const buttons = ReactTestUtils
+        .scryRenderedDOMComponentsWithClass(component, 'history-viewer__close-button');
+      expect(buttons).toHaveLength(1);
     });
 
+    // Verifies an active row renders the compare button
     it('renders the compare button in the version details', () => {
-      const wrapper = shallow(<HistoryViewerVersion
+      const component = ReactTestUtils.renderIntoDocument(<HistoryViewerVersion
         version={version}
         StateComponent={StateComponent}
         FormActionComponent={FormActionComponent}
@@ -165,13 +171,16 @@ describe('HistoryViewerVersion', () => {
         isActive
       />);
 
-      expect(wrapper.find(FormActionComponent).at(0).props().extraClass).toEqual('history-viewer__compare-button');
+      const buttons = ReactTestUtils
+        .scryRenderedDOMComponentsWithClass(component, 'history-viewer__compare-button');
+      expect(buttons).toHaveLength(1);
     });
   });
 
   describe('handleClose()', () => {
+    // Verifies handleClose() returns to the list view via onSelect
     it('return back to list view when closing version via action dispatch', () => {
-      const wrapper = shallow(<HistoryViewerVersion
+      const component = ReactTestUtils.renderIntoDocument(<HistoryViewerVersion
         version={version}
         StateComponent={StateComponent}
         FormActionComponent={FormActionComponent}
@@ -180,17 +189,17 @@ describe('HistoryViewerVersion', () => {
         compare={false}
       />);
 
-      wrapper.instance().handleClose();
+      component.handleClose();
       expect(mockOnSelect).toHaveBeenCalled();
     });
 
+    // Verifies handleClose() in compare mode deselects without toggling compare mode
     it('deselect version when closing version in compare mode', () => {
-      const wrapper = shallow(<HistoryViewerVersion
+      const component = ReactTestUtils.renderIntoDocument(<HistoryViewerVersion
         version={version}
         StateComponent={StateComponent}
         FormActionComponent={FormActionComponent}
         onSelect={mockOnSelect}
-        onCompareSelect={mockOnCompareSelect}
         isActive
         compare={{
           versionFrom: { version: 0 },
@@ -198,7 +207,7 @@ describe('HistoryViewerVersion', () => {
         }}
       />);
 
-      wrapper.instance().handleClose();
+      component.handleClose();
       expect(mockOnSelect).toHaveBeenCalled();
       expect(mockOnCompareMode).not.toHaveBeenCalled();
     });

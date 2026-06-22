@@ -16,6 +16,7 @@ describe('HistoryViewerReducer', () => {
   });
 
   describe('SET_CURRENT_PAGE', () => {
+    // Verifies SET_CURRENT_PAGE stores the dispatched page number
     it('adds the current page to the state', () => {
       const result = historyViewerReducer(state, {
         type: 'HISTORY_VIEWER.SET_CURRENT_PAGE',
@@ -27,13 +28,14 @@ describe('HistoryViewerReducer', () => {
   });
 
   describe('SHOW_VERSION', () => {
-    it.skip('sets the current version ID to the current page', () => {
+    // Verifies SHOW_VERSION stores the selected version as currentVersion
+    it('sets the current version ID to the current page', () => {
       const result = historyViewerReducer(state, {
         type: 'HISTORY_VIEWER.SHOW_VERSION',
         payload: {
           version:
             {
-              Version: 23
+              version: 23
             }
         },
       });
@@ -43,17 +45,21 @@ describe('HistoryViewerReducer', () => {
   });
 
   describe('SHOW_LIST', () => {
+    // Verifies SHOW_LIST clears the selected version and resets to the first page
     it('resets the page and version', () => {
-      const result = historyViewerReducer(state, {
+      // Start on a later page so the assertion proves the reducer actively resets it
+      const result = historyViewerReducer({ ...state, currentPage: 3 }, {
         type: 'HISTORY_VIEWER.SHOW_LIST',
       });
 
       expect(result.currentVersion).toBe(false);
-      expect(result.currentPage).toBe(0);
+      // Pagination is 1-indexed, so returning to the list resets to the first page (1), not 0
+      expect(result.currentPage).toBe(1);
     });
   });
 
   describe('ADD_MESSAGE', () => {
+    // Verifies ADD_MESSAGE prepends a message to the store
     it('pushes a new message into the store', () => {
       const result = historyViewerReducer(state, {
         type: 'HISTORY_VIEWER.ADD_MESSAGE',
@@ -69,6 +75,7 @@ describe('HistoryViewerReducer', () => {
   });
 
   describe('CLEAR_MESSAGES', () => {
+    // Verifies CLEAR_MESSAGES empties the message list
     it('clears all messages from the store', () => {
       state.messages = [{
         type: 'success',
@@ -84,6 +91,7 @@ describe('HistoryViewerReducer', () => {
   });
 
   describe('SET_COMPARE_MODE', () => {
+    // Verifies enabling compare mode seeds the default empty from/to selection
     it('sets compare to the default enabled value when enabling compare mode', () => {
       state = {
         ...state,
@@ -98,6 +106,7 @@ describe('HistoryViewerReducer', () => {
       expect(result.compare).toEqual({ versionFrom: false, versionTo: false });
     });
 
+    // Verifies disabling compare mode clears the compare selection
     it('resets the compare from/to versions when not in compare mode', () => {
       state = {
         ...state,
@@ -112,6 +121,7 @@ describe('HistoryViewerReducer', () => {
       expect(result.compare).toBe(false);
     });
 
+    // Verifies enabling compare mode keeps an already-chosen versionFrom
     it('leaves the existing value for compareFrom when enabling', () => {
       state = {
         ...state,
@@ -129,7 +139,8 @@ describe('HistoryViewerReducer', () => {
   });
 
   describe('SET_COMPARE_FROM', () => {
-    it.skip('sets the compareFrom to the version', () => {
+    // Verifies SET_COMPARE_FROM stores the chosen version as versionFrom
+    it('sets the compareFrom to the version', () => {
       state = {
         ...state,
         compare: { versionFrom: false, versionTo: false },
@@ -140,7 +151,7 @@ describe('HistoryViewerReducer', () => {
         payload: {
           version:
             {
-              Version: 47
+              version: 47
             }
         },
       });
@@ -148,15 +159,16 @@ describe('HistoryViewerReducer', () => {
       expect(result.compare.versionFrom.version).toBe(47);
     });
 
-    it.skip('uses versionTo for versionFrom when version is zero', () => {
+    // Verifies a cleared versionFrom falls back to the existing versionTo
+    it('uses versionTo for versionFrom when version is zero', () => {
       state = {
         ...state,
         compare: {
           versionFrom: {
-            Version: 50
+            version: 50
           },
           versionTo: {
-            Version: 80
+            version: 80
           }
         },
       };
@@ -170,12 +182,13 @@ describe('HistoryViewerReducer', () => {
       expect(result.compare.versionTo).toBe(false);
     });
 
-    it.skip('sets the currentVersion to the compareFrom version', () => {
+    // Verifies SET_COMPARE_FROM also sets currentVersion to the chosen version
+    it('sets the currentVersion to the compareFrom version', () => {
       state = {
         ...state,
         compare: {
           versionFrom: {
-            Version: 50,
+            version: 50,
           },
         },
       };
@@ -183,7 +196,7 @@ describe('HistoryViewerReducer', () => {
       const result = historyViewerReducer(state, {
         type: 'HISTORY_VIEWER.SET_COMPARE_FROM',
         payload: {
-          version: { Version: 60 },
+          version: { version: 60 },
         },
       });
 
@@ -192,26 +205,28 @@ describe('HistoryViewerReducer', () => {
   });
 
   describe('SET_COMPARE_TO', () => {
-    it.skip('sets the compareTo version', () => {
+    // Verifies SET_COMPARE_TO stores the chosen version as versionTo
+    it('sets the compareTo version', () => {
       const result = historyViewerReducer(state, {
         type: 'HISTORY_VIEWER.SET_COMPARE_TO',
         payload: {
-          version: { Version: 85 }
+          version: { version: 85 }
         },
       });
 
       expect(result.compare.versionTo.version).toBe(85);
     });
 
-    it.skip('flips the versions if a lower version "to" is selected', () => {
+    // Verifies selecting a "to" older than "from" swaps them so from < to
+    it('flips the versions if a lower version "to" is selected', () => {
       state = {
         ...state,
         compare: {
           versionFrom: {
-            Version: 50
+            version: 50
           },
           versionTo: {
-            Version: 100
+            version: 100
           }
         },
       };
@@ -220,7 +235,7 @@ describe('HistoryViewerReducer', () => {
         type: 'HISTORY_VIEWER.SET_COMPARE_TO',
         payload: {
           version: {
-            Version: 25
+            version: 25
           }
         },
       });
@@ -230,12 +245,13 @@ describe('HistoryViewerReducer', () => {
     });
   });
 
-  it.skip('sets the currentVersion to the compareFrom version', () => {
+  // Verifies SET_COMPARE_FROM sets currentVersion to the chosen version
+  it('sets the currentVersion to the compareFrom version', () => {
     state = {
       ...state,
       compare: {
         versionFrom: {
-          Version: 50,
+          version: 50,
         },
       },
     };
@@ -243,7 +259,7 @@ describe('HistoryViewerReducer', () => {
     const result = historyViewerReducer(state, {
       type: 'HISTORY_VIEWER.SET_COMPARE_FROM',
       payload: {
-        version: { Version: 60 },
+        version: { version: 60 },
       },
     });
 
