@@ -5,7 +5,6 @@ import { render } from '@testing-library/react';
 import { Component as HistoryViewerVersionState } from '../HistoryViewerVersionState';
 
 describe('HistoryViewerVersionState', () => {
-  let component = null;
   HistoryViewerVersionState.defaultProps.BadgeComponent = () => <div />;
 
   // Render the component and return its instance so the methods under test can be called directly
@@ -18,7 +17,7 @@ describe('HistoryViewerVersionState', () => {
   describe('getClassNames()', () => {
     // Verifies getClassNames() appends extraClass to the default state class
     it('adds extra classes to the default class', () => {
-      component = renderState({ extraClass: 'foobar' });
+      const component = renderState({ extraClass: 'foobar' });
 
       expect(component.getClassNames()).toContain('foobar');
       expect(component.getClassNames()).toContain('history-viewer__version-state');
@@ -32,14 +31,14 @@ describe('HistoryViewerVersionState', () => {
         activityType: 'PUBLISHED'
       };
 
-      component = renderState({ version: mockVersion });
+      const component = renderState({ version: mockVersion });
 
       expect(component.getPublishedState()).toBe('Published');
     });
 
     // Verifies getPublishedState() falls back to "Saved" when no activity type is set
     it('defaults to "Saved" if not defined', () => {
-      component = renderState({ version: {} });
+      const component = renderState({ version: {} });
 
       expect(component.getPublishedState()).toBe('Saved');
     });
@@ -51,7 +50,7 @@ describe('HistoryViewerVersionState', () => {
       const mockVersion = {
         isLiveSnapshot: true
       };
-      component = renderState({ version: mockVersion });
+      const component = renderState({ version: mockVersion });
 
       const badge = component.getBadges();
       expect(badge.props.message).toEqual('Live');
@@ -60,7 +59,7 @@ describe('HistoryViewerVersionState', () => {
 
     // Verifies getBadges() returns an empty string when the version is not live
     it('returns an empty string when version is not live', () => {
-      component = renderState();
+      const component = renderState();
 
       expect(component.getBadges()).toBe('');
     });
