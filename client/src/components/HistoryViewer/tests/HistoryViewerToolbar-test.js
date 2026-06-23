@@ -1,7 +1,7 @@
 /* global jest, describe, it, expect */
 
 import React from 'react';
-import ReactTestUtils from 'react-dom/test-utils';
+import { render, act } from '@testing-library/react';
 import { Component as HistoryViewerToolbar } from '../HistoryViewerToolbar';
 
 describe('HistoryViewerToolbar', () => {
@@ -20,8 +20,10 @@ describe('HistoryViewerToolbar', () => {
 
   describe('handleRevert()', () => {
     // Verifies handleRevert() calls the rollback mutation with the record/version, then onAfterRevert
-    it('runs the rollback mutation then onAfterRevert on success', () => {
-      const component = ReactTestUtils.renderIntoDocument(<HistoryViewerToolbar
+    it('runs the rollback mutation then onAfterRevert on success', async () => {
+      const ref = React.createRef();
+      render(<HistoryViewerToolbar
+        ref={ref}
         onAfterRevert={revertHandler}
         RollbackMutation={RollbackMutation}
         FormActionComponent={FormActionComponent}
@@ -32,13 +34,15 @@ describe('HistoryViewerToolbar', () => {
         typeName="MockType"
       />);
 
-      return component.handleRevert(mockRollback, 123, 'MockClass', 234)
-        .then(() => {
-          expect(mockRollback).toHaveBeenCalledWith({
-            variables: { id: 123, dataClass: 'MockClass', toVersion: 234 },
-          });
-          expect(revertHandler).toHaveBeenCalledWith(234);
-        });
+      // handleRevert sets state and resolves asynchronously, so run it inside act()
+      await act(async () => {
+        await ref.current.handleRevert(mockRollback, 123, 'MockClass', 234);
+      });
+
+      expect(mockRollback).toHaveBeenCalledWith({
+        variables: { id: 123, dataClass: 'MockClass', toVersion: 234 },
+      });
+      expect(revertHandler).toHaveBeenCalledWith(234);
     });
   });
 });

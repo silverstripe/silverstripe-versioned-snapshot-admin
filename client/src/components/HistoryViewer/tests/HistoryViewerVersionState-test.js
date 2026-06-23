@@ -1,18 +1,24 @@
 /* global jest, describe, it, expect */
 
 import React from 'react';
-import ReactTestUtils from 'react-dom/test-utils';
+import { render } from '@testing-library/react';
 import { Component as HistoryViewerVersionState } from '../HistoryViewerVersionState';
 
 describe('HistoryViewerVersionState', () => {
   let component = null;
   HistoryViewerVersionState.defaultProps.BadgeComponent = () => <div />;
 
+  // Render the component and return its instance so the methods under test can be called directly
+  const renderState = (props = {}) => {
+    const ref = React.createRef();
+    render(<HistoryViewerVersionState ref={ref} {...props} />);
+    return ref.current;
+  };
+
   describe('getClassNames()', () => {
     // Verifies getClassNames() appends extraClass to the default state class
     it('adds extra classes to the default class', () => {
-      component = ReactTestUtils
-        .renderIntoDocument(<HistoryViewerVersionState extraClass="foobar" />);
+      component = renderState({ extraClass: 'foobar' });
 
       expect(component.getClassNames()).toContain('foobar');
       expect(component.getClassNames()).toContain('history-viewer__version-state');
@@ -26,16 +32,14 @@ describe('HistoryViewerVersionState', () => {
         activityType: 'PUBLISHED'
       };
 
-      component = ReactTestUtils
-        .renderIntoDocument(<HistoryViewerVersionState version={mockVersion} />);
+      component = renderState({ version: mockVersion });
 
       expect(component.getPublishedState()).toBe('Published');
     });
 
     // Verifies getPublishedState() falls back to "Saved" when no activity type is set
     it('defaults to "Saved" if not defined', () => {
-      component = ReactTestUtils
-        .renderIntoDocument(<HistoryViewerVersionState version={{}} />);
+      component = renderState({ version: {} });
 
       expect(component.getPublishedState()).toBe('Saved');
     });
@@ -47,8 +51,7 @@ describe('HistoryViewerVersionState', () => {
       const mockVersion = {
         isLiveSnapshot: true
       };
-      component = ReactTestUtils
-        .renderIntoDocument(<HistoryViewerVersionState version={mockVersion} />);
+      component = renderState({ version: mockVersion });
 
       const badge = component.getBadges();
       expect(badge.props.message).toEqual('Live');
@@ -57,8 +60,7 @@ describe('HistoryViewerVersionState', () => {
 
     // Verifies getBadges() returns an empty string when the version is not live
     it('returns an empty string when version is not live', () => {
-      component = ReactTestUtils
-        .renderIntoDocument(<HistoryViewerVersionState />);
+      component = renderState();
 
       expect(component.getBadges()).toBe('');
     });

@@ -1,7 +1,7 @@
 /* global jest, describe, it, expect */
 
 import React from 'react';
-import ReactTestUtils from 'react-dom/test-utils';
+import { render } from '@testing-library/react';
 import { Component as HistoryViewerHeading } from '../HistoryViewerHeading';
 
 describe('HistoryViewerHeading', () => {
@@ -12,25 +12,29 @@ describe('HistoryViewerHeading', () => {
   describe('handleCompareModeChange()', () => {
     // Verifies handleCompareModeChange() calls onCompareModeUnselect when compare mode is on
     it('notifies the store to leave compare mode when it is currently selected', () => {
-      const component = ReactTestUtils.renderIntoDocument(<HistoryViewerHeading
+      const ref = React.createRef();
+      render(<HistoryViewerHeading
+        ref={ref}
         compareModeSelected
         onCompareModeSelect={mockOnCompareModeSelect}
         onCompareModeUnselect={mockOnCompareModeUnselect}
       />);
 
-      component.handleCompareModeChange();
+      ref.current.handleCompareModeChange();
       expect(mockOnCompareModeUnselect).toHaveBeenCalled();
     });
 
     // Verifies handleCompareModeChange() calls onCompareModeSelect when compare mode is off
     it('notifies the store to enter compare mode when it is not currently selected', () => {
-      const component = ReactTestUtils.renderIntoDocument(<HistoryViewerHeading
+      const ref = React.createRef();
+      render(<HistoryViewerHeading
+        ref={ref}
         compareModeSelected={false}
         onCompareModeSelect={mockOnCompareModeSelect}
         onCompareModeUnselect={mockOnCompareModeUnselect}
       />);
 
-      component.handleCompareModeChange();
+      ref.current.handleCompareModeChange();
       expect(mockOnCompareModeSelect).toHaveBeenCalled();
     });
   });
