@@ -1,38 +1,36 @@
-/* eslint-disable import/no-extraneous-dependencies, import/no-unresolved */
 /* global jest, describe, it, expect */
 
 import React from 'react';
-import Enzyme, { shallow } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16/build/index';
+import ReactTestUtils from 'react-dom/test-utils';
 import { Component as HistoryViewerHeading } from '../HistoryViewerHeading';
-
-Enzyme.configure({ adapter: new Adapter() });
 
 describe('HistoryViewerHeading', () => {
   // Mock select functions to replace the ones provided by mapDispatchToProps
   const mockOnCompareModeSelect = jest.fn();
   const mockOnCompareModeUnselect = jest.fn();
 
-  describe('onChange()', () => {
-    it('triggers mapDispatchToProps functions to notify and update the Redux store', () => {
-      const wrapper = shallow(<HistoryViewerHeading
+  describe('handleCompareModeChange()', () => {
+    // Verifies handleCompareModeChange() calls onCompareModeUnselect when compare mode is on
+    it('notifies the store to leave compare mode when it is currently selected', () => {
+      const component = ReactTestUtils.renderIntoDocument(<HistoryViewerHeading
         compareModeSelected
         onCompareModeSelect={mockOnCompareModeSelect}
         onCompareModeUnselect={mockOnCompareModeUnselect}
       />);
 
-      wrapper.find('.history-viewer-heading__compare-mode-checkbox').at(0).simulate('change');
+      component.handleCompareModeChange();
       expect(mockOnCompareModeUnselect).toHaveBeenCalled();
     });
 
-    it('simulate change event in disabled compare mode', () => {
-      const wrapper = shallow(<HistoryViewerHeading
+    // Verifies handleCompareModeChange() calls onCompareModeSelect when compare mode is off
+    it('notifies the store to enter compare mode when it is not currently selected', () => {
+      const component = ReactTestUtils.renderIntoDocument(<HistoryViewerHeading
         compareModeSelected={false}
         onCompareModeSelect={mockOnCompareModeSelect}
         onCompareModeUnselect={mockOnCompareModeUnselect}
       />);
 
-      wrapper.find('.history-viewer-heading__compare-mode-checkbox').at(0).simulate('change');
+      component.handleCompareModeChange();
       expect(mockOnCompareModeSelect).toHaveBeenCalled();
     });
   });

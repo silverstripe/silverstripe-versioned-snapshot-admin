@@ -7,34 +7,37 @@ import { Component as HistoryViewerToolbar } from '../HistoryViewerToolbar';
 describe('HistoryViewerToolbar', () => {
   const FormActionComponent = () => <div />;
   const ViewModeComponent = () => <div />;
-  let component = null;
-  let mockRevertMutation;
+  // RollbackMutation is a render-prop component; hand its children the rollback function
+  let mockRollback;
+  let RollbackMutation;
   let revertHandler;
 
   beforeEach(() => {
-    mockRevertMutation = jest.fn((recordID, versionID) => Promise.resolve(versionID));
+    mockRollback = jest.fn(() => Promise.resolve());
+    RollbackMutation = ({ children }) => children(mockRollback);
     revertHandler = jest.fn();
   });
 
-  describe('render()', () => {
-    it.skip('calls revert function then onAfterRevert on success, and it renders', () => {
-      component = ReactTestUtils.renderIntoDocument(<HistoryViewerToolbar
+  describe('handleRevert()', () => {
+    // Verifies handleRevert() calls the rollback mutation with the record/version, then onAfterRevert
+    it('runs the rollback mutation then onAfterRevert on success', () => {
+      const component = ReactTestUtils.renderIntoDocument(<HistoryViewerToolbar
         onAfterRevert={revertHandler}
-        actions={{ revertToVersion: mockRevertMutation }}
+        RollbackMutation={RollbackMutation}
         FormActionComponent={FormActionComponent}
         ViewModeComponent={ViewModeComponent}
         recordId={123}
+        recordClass="MockClass"
         versionId={234}
         typeName="MockType"
       />);
 
-      return component.handleRevert()
+      return component.handleRevert(mockRollback, 123, 'MockClass', 234)
         .then(() => {
-          expect(mockRevertMutation.mock.calls.length).toBe(1);
-          expect(mockRevertMutation.mock.calls[0][0]).toBe(123);
-          expect(mockRevertMutation.mock.calls[0][1]).toBe(234);
-          expect(revertHandler.mock.calls.length).toBe(1);
-          expect(revertHandler.mock.calls[0][0]).toBe(234);
+          expect(mockRollback).toHaveBeenCalledWith({
+            variables: { id: 123, dataClass: 'MockClass', toVersion: 234 },
+          });
+          expect(revertHandler).toHaveBeenCalledWith(234);
         });
     });
   });
