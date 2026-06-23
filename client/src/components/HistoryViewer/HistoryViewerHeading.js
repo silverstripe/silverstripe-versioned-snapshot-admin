@@ -54,7 +54,7 @@ class HistoryViewerHeading extends Component {
         className="history-viewer__actions-dropdown"
       >
         <DropdownToggle className="font-icon-sliders" />
-        <DropdownMenu right>
+        <DropdownMenu end>
           <div className="form-check">
             <input
               id="history-viewer-compare-two"
