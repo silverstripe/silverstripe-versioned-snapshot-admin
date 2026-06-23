@@ -1,7 +1,7 @@
 /* global jest, describe, it, expect */
 
 import React from 'react';
-import ReactTestUtils from 'react-dom/test-utils';
+import { render } from '@testing-library/react';
 import { Component as HistoryViewerVersionList } from '../HistoryViewerVersionList';
 
 describe('HistoryViewerVersionList', () => {
@@ -9,19 +9,17 @@ describe('HistoryViewerVersionList', () => {
   const HeadingComponent = () => <li />;
   const VersionComponent = () => <div />;
 
-  const component = ReactTestUtils.renderIntoDocument(<HistoryViewerVersionList
-    FormAlertComponent={FormAlertComponent}
-    HeadingComponent={HeadingComponent}
-    VersionComponent={VersionComponent}
-    versions={[]}
-  />);
-
   describe('render()', () => {
+    // Verifies the list renders as a <ul> carrying the history-viewer table class
     it('returns an unordered list', () => {
-      const list = ReactTestUtils.scryRenderedDOMComponentsWithTag(
-        component,
-        'ul'
-      );
+      const { container } = render(<HistoryViewerVersionList
+        FormAlertComponent={FormAlertComponent}
+        HeadingComponent={HeadingComponent}
+        VersionComponent={VersionComponent}
+        versions={[]}
+      />);
+
+      const list = container.querySelectorAll('ul');
 
       expect(list[0].className).toContain('history-viewer__table');
     });
