@@ -32,28 +32,47 @@ class SnapshotViewerControllerTest extends SapphireTest
     ];
 
     /**
+     * Origin version numbers captured from each write in setUp(), so assertions reference the
+     * versions we actually wrote rather than hard-coded numbers.
+     */
+    private int $baseVersion;
+
+    private int $modifiedVersion;
+
+    private int $publishedVersion;
+
+    /**
      * @return void
      * @throws NotFoundExceptionInterface
      * @throws ValidationException
      */
     protected function setUp(): void
     {
-        // Fix the time so we can assert the data more easily
+        // Give each snapshot a distinct, increasing timestamp so the controller's
+        // "LastEdited DESC" sort is deterministic (newest first) rather than relying on an
+        // undefined database tie-break between snapshots written at the same time.
         DBDatetime::set_mock_now('2025-01-01 00:00:00');
 
         parent::setUp();
 
+        // Log in first so every version created below is attributed to a known author.
+        $this->logInWithPermission('ADMIN');
+
         /** @var Page $page */
         $page = $this->objFromFixture(Page::class, 'page1');
 
-        // Create some mock snapshot data
-        $this->logInWithPermission('ADMIN');
-
+        // Snapshot a version we authored rather than the unauthored fixture version; changing
+        // a non-Title field keeps the activity description stable.
+        $page->MetaDescription = 'Initial';
+        $page->write();
+        $this->baseVersion = (int) $page->Version;
         $initialSnapshot = Snapshot::singleton()->createSnapshot($page);
         $initialSnapshot->write();
 
+        DBDatetime::set_mock_now('2025-01-01 00:00:01');
         $page->MetaDescription = 'Some update';
         $page->write();
+        $this->modifiedVersion = (int) $page->Version;
         $customSnapshot = Snapshot::singleton()->createSnapshotEvent('Custom event', [
             $page,
         ]);
@@ -61,7 +80,9 @@ class SnapshotViewerControllerTest extends SapphireTest
         $customSnapshot->OriginClass = $page->baseClass();
         $customSnapshot->write();
 
+        DBDatetime::set_mock_now('2025-01-01 00:00:02');
         $page->publishSingle();
+        $this->publishedVersion = (int) $page->Version;
         $publishedSnapshot = Snapshot::singleton()->createSnapshot($page);
 
         // Mark this snapshot as "no modifications" as we have just published all changes
@@ -75,10 +96,6 @@ class SnapshotViewerControllerTest extends SapphireTest
      */
     public function testApiRead(): void
     {
-        // This test is failing under composer pref-low, likely not a legit issue but rather the test setup
-        // Can see differences in model IDs
-        $this->markTestSkipped();
-
         /** @var Page $page */
         $page = $this->objFromFixture(Page::class, 'page1');
 
@@ -121,65 +138,17 @@ class SnapshotViewerControllerTest extends SapphireTest
         /** @var Snapshot $thirdSnapshot */
         $thirdSnapshot = array_shift($snapshots);
 
+        // Newest first, matching the controller's "LastEdited DESC" sort: the published
+        // snapshot, then the custom event, then the initial snapshot.
         $expected = [
             [
-                'id' => $firstSnapshot->ID,
-                'lastEdited' => '2025-01-01 00:00:00',
-                'activityDescription' => 'Page "Page 1"',
-                'activityType' => 'MODIFIED',
-                'activityAgo' => 'less than a minute ago',
-                'originVersion' => [
-                    'version' => 2,
-                    'absoluteLink' => 'http://localhost/page1',
-                    'author' => [
-                        'firstName' => 'ADMIN',
-                        'surname' => 'User',
-                    ],
-                    'published' => true,
-                    'publisher' => null,
-                    'latestDraftVersion' => false,
-                ],
-                'author' => [
-                    'firstName' => 'ADMIN',
-                    'surname' => 'User',
-                ],
-                'isFullVersion' => true,
-                'isLiveSnapshot' => false,
-                'baseVersion' => 2,
-            ],
-            [
-                'id' => $secondSnapshot->ID,
-                'lastEdited' => '2025-01-01 00:00:00',
-                'activityDescription' => 'Page "Page 1"',
-                'activityType' => 'MODIFIED',
-                'activityAgo' => 'less than a minute ago',
-                'originVersion' => [
-                    'version' => 3,
-                    'absoluteLink' => 'http://localhost/page1',
-                    'author' => [
-                        'firstName' => 'ADMIN',
-                        'surname' => 'User',
-                    ],
-                    'published' => true,
-                    'publisher' => null,
-                    'latestDraftVersion' => false,
-                ],
-                'author' => [
-                    'firstName' => 'ADMIN',
-                    'surname' => 'User',
-                ],
-                'isFullVersion' => true,
-                'isLiveSnapshot' => false,
-                'baseVersion' => 3,
-            ],
-            [
                 'id' => $thirdSnapshot->ID,
-                'lastEdited' => '2025-01-01 00:00:00',
+                'lastEdited' => '2025-01-01 00:00:02',
                 'activityDescription' => 'Page "Page 1"',
                 'activityType' => 'MODIFIED',
                 'activityAgo' => 'less than a minute ago',
                 'originVersion' => [
-                    'version' => 4,
+                    'version' => $this->publishedVersion,
                     'absoluteLink' => 'http://localhost/page1',
                     'author' => [
                         'firstName' => 'ADMIN',
@@ -198,7 +167,57 @@ class SnapshotViewerControllerTest extends SapphireTest
                 ],
                 'isFullVersion' => true,
                 'isLiveSnapshot' => true,
-                'baseVersion' => 4,
+                'baseVersion' => $this->publishedVersion,
+            ],
+            [
+                'id' => $secondSnapshot->ID,
+                'lastEdited' => '2025-01-01 00:00:01',
+                'activityDescription' => 'Page "Page 1"',
+                'activityType' => 'MODIFIED',
+                'activityAgo' => 'less than a minute ago',
+                'originVersion' => [
+                    'version' => $this->modifiedVersion,
+                    'absoluteLink' => 'http://localhost/page1',
+                    'author' => [
+                        'firstName' => 'ADMIN',
+                        'surname' => 'User',
+                    ],
+                    'published' => true,
+                    'publisher' => null,
+                    'latestDraftVersion' => false,
+                ],
+                'author' => [
+                    'firstName' => 'ADMIN',
+                    'surname' => 'User',
+                ],
+                'isFullVersion' => true,
+                'isLiveSnapshot' => false,
+                'baseVersion' => $this->modifiedVersion,
+            ],
+            [
+                'id' => $firstSnapshot->ID,
+                'lastEdited' => '2025-01-01 00:00:00',
+                'activityDescription' => 'Page "Page 1"',
+                'activityType' => 'MODIFIED',
+                'activityAgo' => 'less than a minute ago',
+                'originVersion' => [
+                    'version' => $this->baseVersion,
+                    'absoluteLink' => 'http://localhost/page1',
+                    'author' => [
+                        'firstName' => 'ADMIN',
+                        'surname' => 'User',
+                    ],
+                    'published' => true,
+                    'publisher' => null,
+                    'latestDraftVersion' => false,
+                ],
+                'author' => [
+                    'firstName' => 'ADMIN',
+                    'surname' => 'User',
+                ],
+                'isFullVersion' => true,
+                'isLiveSnapshot' => false,
+                'baseVersion' => $this->baseVersion,
             ],
         ];
         $this->assertSame($expected, $data['versions'], 'We expect specific version data including order');
