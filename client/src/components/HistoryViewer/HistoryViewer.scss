@@ -86,12 +86,6 @@
     $loading-indicator-speed: 0.9s;
     $loading-indicator-animation: spinner-loader $loading-indicator-speed infinite linear;
 
-    &, &:after {
-      border-radius: 50%;
-      width: $loading-indicator-size;
-      height: $loading-indicator-size;
-    }
-
     margin-bottom: 1em;
     font-size: $font-size-sm;
     position: relative;
@@ -103,6 +97,12 @@
     transform: translateZ(0);
     -webkit-animation: $loading-indicator-animation;
     animation: $loading-indicator-animation;
+
+    &, &:after {
+      border-radius: 50%;
+      width: $loading-indicator-size;
+      height: $loading-indicator-size;
+    }
   }
 }
 
