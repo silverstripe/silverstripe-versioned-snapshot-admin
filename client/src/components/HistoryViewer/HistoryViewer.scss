@@ -86,12 +86,8 @@
     $loading-indicator-speed: 0.9s;
     $loading-indicator-animation: spinner-loader $loading-indicator-speed infinite linear;
 
-    &, &:after {
-      border-radius: 50%;
-      width: $loading-indicator-size;
-      height: $loading-indicator-size;
-    }
-
+    // Declarations must come before the nested rule below; Sass 3.0 will otherwise
+    // change the cascade order for declarations that follow nested rules.
     margin-bottom: 1em;
     font-size: $font-size-sm;
     position: relative;
@@ -103,6 +99,12 @@
     transform: translateZ(0);
     -webkit-animation: $loading-indicator-animation;
     animation: $loading-indicator-animation;
+
+    &, &:after {
+      border-radius: 50%;
+      width: $loading-indicator-size;
+      height: $loading-indicator-size;
+    }
   }
 }
 
